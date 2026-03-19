@@ -31,6 +31,18 @@ Predicting event-free survival after stem cell transplant with equity constraint
 
 ---
 
+### Playground Series S6E3 — Predict Customer Churn
+Binary classification predicting customer churn. Metric: AUC-ROC.
+
+| Notebook | Approach | OOF AUC | LB Score |
+|----------|----------|---------|----------|
+| [LightGBM Baseline](churn-s6e3/) | LightGBM 5-fold CV + feature engineering | 0.91618 | TBD |
+
+**Key techniques:** LightGBM, stratified K-fold, target encoding, pairwise interaction features, digit decomposition of numerics, original IBM Telco dataset stats as features
+**Competition:** [playground-series-s6e3](https://www.kaggle.com/competitions/playground-series-s6e3)
+
+---
+
 ### House Prices — Advanced Regression
 Predicting residential property sale prices.
 
