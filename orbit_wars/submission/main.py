@@ -88,6 +88,14 @@ SNIPE_SCORE_MULT = 1.12
 SWARM_SCORE_MULT = 1.06
 CRASH_EXPLOIT_SCORE_MULT = 1.05
 
+INDIRECT_VALUE_SCALE = 0.15
+INDIRECT_FRIENDLY_WEIGHT = 0.35
+INDIRECT_NEUTRAL_WEIGHT = 0.9
+INDIRECT_ENEMY_WEIGHT = 1.25
+INDIRECT_DISTANCE_OFFSET = 12.0
+DENSE_STATIC_NEUTRAL_COUNT = 4
+DENSE_ROTATING_NEUTRAL_SCORE_MULT = 0.86
+
 NEUTRAL_MARGIN_BASE = 2
 HOSTILE_MARGIN_BASE = 2
 MARGIN_PROD_WEIGHT = 2
@@ -1309,6 +1317,32 @@ def detect_enemy_crashes(
     return crashes
 
 
+def indirect_features(
+    planet: Planet,
+    planets: Sequence[Planet],
+    player: int,
+) -> Tuple[float, float, float]:
+    """Score a planet's neighborhood by nearby production weighted by distance."""
+
+    friendly = 0.0
+    neutral = 0.0
+    enemy = 0.0
+    for other in planets:
+        if other.id == planet.id:
+            continue
+        d = distance_planets(planet, other)
+        if d < 1.0:
+            continue
+        factor = other.production / (d + INDIRECT_DISTANCE_OFFSET)
+        if other.owner == player:
+            friendly += factor
+        elif other.owner == -1:
+            neutral += factor
+        else:
+            enemy += factor
+    return friendly, neutral, enemy
+
+
 def reaction_probe_ships(source: Planet, target: Planet) -> int:
     """Estimate a realistic fleet size for race-time comparisons."""
 
@@ -1342,6 +1376,13 @@ class DecisionLogic:
             deadline=self.deadline,
         )
         self.world = ProjectedWorld(self.state, self.predictor, deadline=self.deadline)
+
+        self.indirect_wealth_map: Dict[int, float] = {}
+        for planet in self.state.planets:
+            f, n, e = indirect_features(planet, self.state.planets, self.state.player)
+            self.indirect_wealth_map[planet.id] = (
+                f * INDIRECT_FRIENDLY_WEIGHT + n * INDIRECT_NEUTRAL_WEIGHT + e * INDIRECT_ENEMY_WEIGHT
+            )
 
         self.used_donor_ids: set[int] = set()
         self.committed_ships: Dict[int, int] = defaultdict(int)
@@ -1810,6 +1851,7 @@ class DecisionLogic:
                 return -1.0
 
         value = float(target.production * turns_profit)
+        value += self.indirect_wealth_map.get(target.id, 0.0) * turns_profit * INDIRECT_VALUE_SCALE
 
         if not is_orbiting_planet(target):
             value *= STATIC_VALUE_MULT
@@ -1868,6 +1910,9 @@ class DecisionLogic:
             score *= SWARM_SCORE_MULT
         elif mission == "crash_exploit":
             score *= CRASH_EXPLOIT_SCORE_MULT
+        static_neutrals = [p for p in self.state.neutral_planets if not is_orbiting_planet(p)]
+        if len(static_neutrals) >= DENSE_STATIC_NEUTRAL_COUNT and target.owner == -1 and is_orbiting_planet(target):
+            score *= DENSE_ROTATING_NEUTRAL_SCORE_MULT
         return score
 
     # ── Mission builders ──
@@ -2221,7 +2266,9 @@ class DecisionLogic:
                 )
                 if plan is None:
                     continue
-                value = planet.production * max(1, self.state.remaining_steps - plan.eta)
+                turns_profit = max(1, self.state.remaining_steps - plan.eta)
+                value = planet.production * turns_profit
+                value += self.indirect_wealth_map.get(planet.id, 0.0) * turns_profit * INDIRECT_VALUE_SCALE * 0.35
                 value *= REINFORCE_VALUE_MULT
                 value *= proximity * 0.5
                 score = self._score_mission(value, plan.ships, plan.eta, planet, "reinforce")
