@@ -33,19 +33,13 @@ LATE_REMAINING_TURNS = 60
 VERY_LATE_REMAINING_TURNS = 25
 SOFT_ACT_DEADLINE = 0.82
 
-MAX_TURN_LAUNCHES = 6
-SWARM_ETA_TOLERANCE = 2
+MAX_TURN_LAUNCHES = 5
+SWARM_ETA_TOLERANCE = 1
 MULTI_SOURCE_TOP_K = 4
 OPENING_MIN_PRODUCTION = 2
-OPENING_STATIC_ETA_LIMIT = 18
-OPENING_ORBITING_ETA_LIMIT = 12
-OPENING_MIN_CONFIDENCE = 0.92
-SHUN_OPENING_TURN_LIMIT = 24
-SHUN_OPENING_LAUNCH_CAP = 2
-SHUN_OPENING_ORBITING_MIN_PRODUCTION = 3
 EVAC_MIN_SHIPS = 8
 
-REACTION_TOP_K = 4
+REACTION_TOP_K = 3
 SAFE_NEUTRAL_MARGIN = 2
 CONTESTED_NEUTRAL_MARGIN = 2
 
@@ -64,17 +58,17 @@ CRASH_EXPLOIT_POST_DELAY = 1
 LATE_CAPTURE_BUFFER = 5
 VERY_LATE_CAPTURE_BUFFER = 3
 
-ATTACK_COST_WEIGHT = 0.75
-SNIPE_COST_WEIGHT = 1.08
+ATTACK_COST_WEIGHT = 0.8
+SNIPE_COST_WEIGHT = 1.2
 
-STATIC_VALUE_MULT = 1.48
-HOSTILE_VALUE_MULT = 1.95
+STATIC_VALUE_MULT = 1.4
+HOSTILE_VALUE_MULT = 1.85
 OPENING_HOSTILE_VALUE_MULT = 1.45
-SAFE_NEUTRAL_VALUE_MULT = 1.24
+SAFE_NEUTRAL_VALUE_MULT = 1.2
 CONTESTED_NEUTRAL_VALUE_MULT = 0.7
 CRASH_EXPLOIT_VALUE_MULT = 1.18
 SNIPE_VALUE_MULT = 1.12
-SWARM_VALUE_MULT = 1.10
+SWARM_VALUE_MULT = 1.05
 REINFORCE_VALUE_MULT = 1.35
 COMET_VALUE_MULT = 0.65
 EARLY_NEUTRAL_VALUE_MULT = 1.2
@@ -89,13 +83,13 @@ SWARM_SCORE_MULT = 1.06
 CRASH_EXPLOIT_SCORE_MULT = 1.05
 
 NEUTRAL_MARGIN_BASE = 2
-HOSTILE_MARGIN_BASE = 2
+HOSTILE_MARGIN_BASE = 3
 MARGIN_PROD_WEIGHT = 2
 NEUTRAL_MARGIN_CAP = 8
 HOSTILE_MARGIN_CAP = 12
 STATIC_MARGIN = 4
 CONTESTED_MARGIN = 5
-FINISHING_SEND_BONUS = 4
+FINISHING_SEND_BONUS = 3
 
 AGENT_MEMORY: Dict[str, Any] = {
     "last_owners": {},
@@ -1309,17 +1303,6 @@ def detect_enemy_crashes(
     return crashes
 
 
-def reaction_probe_ships(source: Planet, target: Planet) -> int:
-    """Estimate a realistic fleet size for race-time comparisons."""
-
-    ships = int(target.ships) + 1
-    if target.owner != -1:
-        ships += int(target.production)
-    if not is_orbiting_planet(target):
-        ships += 1
-    return max(1, min(int(source.ships), ships))
-
-
 class DecisionLogic:
     """Main Orbit Wars decision engine with unified mission scoring."""
 
@@ -1360,7 +1343,6 @@ class DecisionLogic:
         try:
             self.reaction_map = self._build_reaction_map()
             self.modes = self._build_modes()
-            self.enemy_priority = self._build_enemy_priority()
             self.crashes = detect_enemy_crashes(self.world.arrivals_by_planet, self.state.player)
             missions = self._build_all_missions()
             moves = self._commit_missions(missions)
@@ -1615,7 +1597,7 @@ class DecisionLogic:
                 break
             my_best = 10**9
             for src in sorted(self.state.my_planets, key=lambda s: distance_planets(s, target))[:REACTION_TOP_K]:
-                shot = self._plan_shot(src, target, reaction_probe_ships(src, target))
+                shot = self._plan_shot(src, target, max(1, int(src.ships)))
                 if shot is not None:
                     my_best = min(my_best, shot[1])
             enemy_best = 10**9
@@ -1623,7 +1605,7 @@ class DecisionLogic:
                 if self.expired():
                     break
                 shot = self.intercept_solver.solve_intercept(
-                    src.x, src.y, reaction_probe_ships(src, target), target,
+                    src.x, src.y, max(1, int(src.ships)), target,
                     self.state.step, self.state.angular_velocity,
                     self.state.initial_planets, from_radius=src.radius,
                 )
@@ -1633,49 +1615,24 @@ class DecisionLogic:
         return rmap
 
     def _build_modes(self) -> Dict[str, Any]:
-        owner_strength: Dict[int, int] = defaultdict(int)
-        owner_prod: Dict[int, int] = defaultdict(int)
-        for planet in self.state.planets:
-            if planet.owner != -1:
-                owner_strength[planet.owner] += int(planet.ships)
-                owner_prod[planet.owner] += int(planet.production)
-        for fleet in self.state.fleets:
-            owner_strength[fleet.owner] += int(fleet.ships)
-
-        my_total = owner_strength.get(self.state.player, 0)
-        my_prod = owner_prod.get(self.state.player, 0)
-        standings = sorted(owner_strength.items(), key=lambda item: item[1], reverse=True)
-        leader_strength = standings[0][1] if standings else my_total
-        second_strength = standings[1][1] if len(standings) > 1 else 0
-        enemy_total = sum(strength for owner, strength in standings if owner != self.state.player)
-        max_enemy_prod = max((owner_prod.get(owner, 0) for owner, _ in standings if owner != self.state.player), default=0)
-        my_rank = 1 + sum(1 for owner, strength in standings if owner != self.state.player and strength > my_total)
-        if self.state.num_players <= 2:
-            domination = (my_total - enemy_total) / max(1, my_total + enemy_total)
-            is_behind = domination < BEHIND_THRESHOLD
-            is_ahead = domination > AHEAD_THRESHOLD
-            is_dominating = is_ahead or (enemy_total > 0 and my_total > enemy_total * 1.25)
-            is_finishing = domination > FINISHING_THRESHOLD and my_prod > max_enemy_prod * FINISHING_PROD_RATIO and self.state.step > 100
-        else:
-            domination = (my_total - leader_strength) / max(1, leader_strength)
-            is_ahead = my_rank == 1 and my_total > max(1, second_strength) * 1.08
-            is_dominating = my_rank == 1 and my_total > max(1, second_strength) * 1.22
-            is_behind = my_rank >= 3 or (my_rank == 2 and my_total < leader_strength * 0.85)
-            is_finishing = (
-                my_rank == 1
-                and second_strength > 0
-                and my_total > second_strength * 1.35
-                and my_prod > max_enemy_prod * 1.15
-                and self.state.step > 120
-            )
+        my_total = sum(p.ships for p in self.state.my_planets) + sum(f.ships for f in self.state.my_fleets)
+        enemy_total = sum(p.ships for p in self.state.enemy_planets) + sum(f.ships for f in self.state.enemy_fleets)
+        my_prod = sum(p.production for p in self.state.my_planets)
+        enemy_prod = sum(p.production for p in self.state.enemy_planets)
+        denom = max(1, my_total + enemy_total)
+        domination = (my_total - enemy_total) / denom
+        is_behind = domination < BEHIND_THRESHOLD
+        is_ahead = domination > AHEAD_THRESHOLD
+        is_dominating = is_ahead or (enemy_total > 0 and my_total > enemy_total * 1.25)
+        is_finishing = domination > FINISHING_THRESHOLD and my_prod > enemy_prod * FINISHING_PROD_RATIO and self.state.step > 100
 
         mult = 1.0
         if is_ahead:
-            mult += 0.05
+            mult += AHEAD_MARGIN_BONUS
         if is_behind:
-            mult -= 0.03
+            mult -= BEHIND_MARGIN_PENALTY
         if is_finishing:
-            mult += 0.10
+            mult += FINISHING_MARGIN_BONUS
 
         return {
             "domination": domination,
@@ -1686,24 +1643,7 @@ class DecisionLogic:
             "attack_margin_mult": mult,
             "my_total": my_total,
             "enemy_total": enemy_total,
-            "my_rank": my_rank,
-            "leader_strength": leader_strength,
-            "second_strength": second_strength,
-            "owner_strength": dict(owner_strength),
-            "owner_prod": dict(owner_prod),
         }
-
-    def _build_enemy_priority(self) -> Dict[int, float]:
-        totals: Dict[int, float] = defaultdict(float)
-        for planet in self.state.enemy_planets:
-            totals[planet.owner] += planet.ships + 3.0 * planet.production
-        for fleet in self.state.enemy_fleets:
-            totals[fleet.owner] += fleet.ships
-        ranked = sorted(totals.items(), key=lambda item: item[1], reverse=True)
-        priority: Dict[int, float] = {}
-        for idx, (owner, _score) in enumerate(ranked):
-            priority[owner] = max(0.82, 1.18 - 0.12 * idx)
-        return priority
 
     def _is_safe_neutral(self, target: Planet) -> bool:
         if target.owner != -1:
@@ -1725,78 +1665,6 @@ class DecisionLogic:
             life = self.predictor.comet_remaining_life(target.id)
             if eta >= life:
                 return False
-        return True
-
-    def _shun_opening_active(self) -> bool:
-        return (
-            getattr(self.state, "num_players", 2) >= 4
-            and getattr(self.state, "step", 0) < SHUN_OPENING_TURN_LIMIT
-        )
-
-    def _turn_launch_cap(self) -> int:
-        return min(MAX_TURN_LAUNCHES, SHUN_OPENING_LAUNCH_CAP) if self._shun_opening_active() else MAX_TURN_LAUNCHES
-
-    def _opening_capture_confidence(self, target: Planet, plan: CapturePlan, mission: str) -> float:
-        if not self.state.is_opening or mission in {"reinforce", "defend", "evacuate"}:
-            return 1.0
-
-        confidence = 1.0
-        if target.owner == -1:
-            _my_t, enemy_t = self.reaction_map.get(target.id, (10**9, 10**9))
-            race_gap = enemy_t - plan.eta
-            if race_gap <= 0:
-                confidence -= 0.28
-            elif race_gap == 1:
-                confidence -= 0.10
-            elif race_gap >= 3:
-                confidence += 0.08
-        if not is_orbiting_planet(target):
-            confidence += 0.22
-        else:
-            confidence -= 0.05 * max(0, plan.eta - 8)
-        if target.production >= 4:
-            confidence += 0.22
-        elif target.production >= 3:
-            confidence += 0.10
-        elif target.production <= 1:
-            confidence -= 0.16
-        if target.owner not in (-1, self.state.player):
-            confidence -= 0.08 if self.state.is_early else 0.04
-        overpay = max(0, int(plan.ships) - int(plan.required_ships))
-        confidence -= min(0.20, 0.02 * overpay)
-        return confidence
-
-    def _opening_capture_allowed(self, target: Planet, plan: CapturePlan, mission: str) -> bool:
-        if not self.state.is_opening or mission in {"reinforce", "defend", "evacuate"}:
-            return True
-        eta_limit = OPENING_STATIC_ETA_LIMIT if not is_orbiting_planet(target) else OPENING_ORBITING_ETA_LIMIT
-        if target.owner == -1 and plan.eta > eta_limit:
-            return False
-        if (
-            self.state.is_early
-            and target.owner == -1
-            and is_orbiting_planet(target)
-            and target.production < SHUN_OPENING_ORBITING_MIN_PRODUCTION
-        ):
-            return False
-        return self._opening_capture_confidence(target, plan, mission) >= OPENING_MIN_CONFIDENCE
-
-    def _opening_mission_allowed(self, target: Planet, plan: CapturePlan, mission: str) -> bool:
-        if not self._opening_capture_allowed(target, plan, mission):
-            return False
-        if not self._shun_opening_active():
-            return True
-        if mission in {"attack", "snipe"} and target.owner not in (-1, self.state.player):
-            return False
-        if target.owner != -1:
-            return True
-        if is_orbiting_planet(target):
-            if target.production < SHUN_OPENING_ORBITING_MIN_PRODUCTION:
-                return False
-            if plan.eta > min(OPENING_ORBITING_ETA_LIMIT, 10):
-                return False
-        elif target.production <= 1 and plan.eta > 8:
-            return False
         return True
 
     # ── Unified scoring ──
@@ -1850,8 +1718,6 @@ class DecisionLogic:
             value *= 1.08
         if modes["is_dominating"] and target.owner == -1 and self._is_contested_neutral(target):
             value *= 0.92
-        if self.state.num_players >= 4 and target.owner not in (-1, self.state.player):
-            value *= self.enemy_priority.get(target.owner, 1.0)
 
         return value
 
@@ -1919,12 +1785,6 @@ class DecisionLogic:
                     break
 
     def _build_snipe_missions(self, missions: List[MissionOption]) -> None:
-        if self._shun_opening_active() and len(self.state.neutral_planets) >= 3:
-            return
-        if self.state.is_early and self.state.num_players <= 2:
-            good_neutrals = [p for p in self.state.neutral_planets if p.production >= OPENING_MIN_PRODUCTION]
-            if len(good_neutrals) >= 3:
-                return
         last_owners = AGENT_MEMORY.get("last_owners", {})
         targets = [p for p in self.state.enemy_planets if last_owners.get(p.id) == -1]
         for target in sorted(targets, key=lambda t: (t.ships, -t.production)):
@@ -1941,13 +1801,10 @@ class DecisionLogic:
                     continue
                 if not self._candidate_time_valid(target, plan.eta):
                     continue
-                if not self._opening_mission_allowed(target, plan, "snipe"):
-                    continue
                 value = self._target_value(target, plan.eta, "snipe")
                 if value <= 0:
                     continue
                 score = self._score_mission(value, plan.ships, plan.eta, target, "snipe")
-                score *= self._opening_capture_confidence(target, plan, "snipe")
                 missions.append(MissionOption(
                     score=score, source_ids=[donor.id], target_id=target.id,
                     angles=[plan.angle], etas=[plan.eta], ships=[plan.ships],
@@ -1975,8 +1832,6 @@ class DecisionLogic:
                 plan = self._settle_plan(donor, target, surplus, mission="snipe", max_turn=max_t)
                 if plan is None:
                     continue
-                if not self._opening_mission_allowed(target, plan, "comet"):
-                    continue
                 if best_plan is None or plan.eta < best_plan[1].eta:
                     best_plan = (donor, plan)
             if best_plan is None:
@@ -1989,7 +1844,6 @@ class DecisionLogic:
             if value <= 0:
                 continue
             score = self._score_mission(value, plan.ships, plan.eta, target, "snipe")
-            score *= self._opening_capture_confidence(target, plan, "comet")
             missions.append(MissionOption(
                 score=score, source_ids=[donor.id], target_id=target.id,
                 angles=[plan.angle], etas=[plan.eta], ships=[plan.ships],
@@ -2008,23 +1862,10 @@ class DecisionLogic:
             candidates = [p for p in candidates if p.production >= OPENING_MIN_PRODUCTION]
             available = self._available_my_planets()
             if available:
-                if self._shun_opening_active():
-                    candidates = [p for p in candidates if p.production >= 3 or not is_orbiting_planet(p)]
-                    candidates.sort(key=lambda t: (
-                        1 if is_orbiting_planet(t) else 0,
-                        0 if self._is_safe_neutral(t) else 1,
-                        -t.production,
-                        min(distance_planets(t, s) for s in available),
-                        t.ships / max(1, t.production),
-                    ))
-                else:
-                    candidates.sort(key=lambda t: (
-                        1 if is_orbiting_planet(t) else 0,
-                        0 if self._is_safe_neutral(t) else 1,
-                        -t.production,
-                        min(distance_planets(t, s) for s in available),
-                        t.ships / max(1, t.production),
-                    ))
+                candidates.sort(key=lambda t: (
+                    1 if is_orbiting_planet(t) else 0,
+                    min(distance_planets(t, s) for s in available),
+                ))
 
         max_eta = 14 if self.state.is_early else (18 if self.state.is_opening else 28)
         for target in candidates:
@@ -2039,13 +1880,10 @@ class DecisionLogic:
                     continue
                 if not self._candidate_time_valid(target, plan.eta):
                     continue
-                if not self._opening_mission_allowed(target, plan, "expand"):
-                    continue
                 value = self._target_value(target, plan.eta, "expand")
                 if value <= 0:
                     continue
                 score = self._score_mission(value, plan.ships, plan.eta, target, "expand")
-                score *= self._opening_capture_confidence(target, plan, "expand")
                 missions.append(MissionOption(
                     score=score, source_ids=[donor.id], target_id=target.id,
                     angles=[plan.angle], etas=[plan.eta], ships=[plan.ships],
@@ -2056,13 +1894,7 @@ class DecisionLogic:
     def _build_attack_missions(self, missions: List[MissionOption]) -> None:
         if not self.state.enemy_planets:
             return
-        if self._shun_opening_active():
-            return
-        if self.state.is_early:
-            good_neutrals = [p for p in self.state.neutral_planets if p.production >= OPENING_MIN_PRODUCTION]
-            if len(good_neutrals) >= 3:
-                return
-        elif self.state.is_opening and len(self.state.neutral_planets) > 6:
+        if self.state.is_opening and len(self.state.neutral_planets) > 6:
             return
         targets = sorted(self.state.enemy_planets, key=lambda t: (t.ships / max(1, t.production), t.ships))
         for target in targets:
@@ -2077,13 +1909,10 @@ class DecisionLogic:
                     continue
                 if not self._candidate_time_valid(target, plan.eta):
                     continue
-                if not self._opening_mission_allowed(target, plan, "attack"):
-                    continue
                 value = self._target_value(target, plan.eta, "attack")
                 if value <= 0:
                     continue
                 score = self._score_mission(value, plan.ships, plan.eta, target, "attack")
-                score *= self._opening_capture_confidence(target, plan, "attack")
                 missions.append(MissionOption(
                     score=score, source_ids=[donor.id], target_id=target.id,
                     angles=[plan.angle], etas=[plan.eta], ships=[plan.ships],
@@ -2286,109 +2115,58 @@ class DecisionLogic:
 
     # ── Commit loop ──
 
-    def _mission_blocks_target(self, mission: MissionOption) -> bool:
-        return mission.mission not in {"reinforce", "defend", "evacuate"}
-
-    def _mission_can_commit(
-        self,
-        mission: MissionOption,
-        extra_used_sources: Optional[set[int]] = None,
-        extra_target_ids: Optional[set[int]] = None,
-        existing_moves: int = 0,
-    ) -> bool:
-        extra_used_sources = extra_used_sources or set()
-        extra_target_ids = extra_target_ids or set()
-        turn_launch_cap = self._turn_launch_cap()
-        if existing_moves + len(mission.source_ids) > turn_launch_cap:
-            return False
-        if any(sid in self.used_donor_ids or sid in extra_used_sources for sid in mission.source_ids):
-            return False
-        if self._mission_blocks_target(mission) and (
-            mission.target_id in self.targeted_planet_ids or mission.target_id in extra_target_ids
-        ):
-            return False
-        for i, sid in enumerate(mission.source_ids):
-            src = self.state.planets_by_id.get(sid)
-            if src is None:
-                return False
-            if self._effective_planet(src).ships < mission.ships[i]:
-                return False
-        return True
-
     def _commit_missions(self, missions: List[MissionOption]) -> List[PlannedMove]:
-        remaining = sorted(missions, key=lambda m: -m.score)
+        missions.sort(key=lambda m: -m.score)
         moves: List[PlannedMove] = []
-        turn_launch_cap = self._turn_launch_cap()
 
-        while remaining and not self.expired() and len(moves) < turn_launch_cap:
-            horizon = min(len(remaining), 10)
-            best_idx = None
-            best_value = -float("inf")
-
-            for idx in range(horizon):
-                mission = remaining[idx]
-                if not self._mission_can_commit(mission, existing_moves=len(moves)):
-                    continue
-
-                pending_sources = set(mission.source_ids)
-                pending_targets = {mission.target_id} if self._mission_blocks_target(mission) else set()
-                follower_bonus = 0.0
-                follower_horizon = min(len(remaining), 10)
-                for follower in remaining[:follower_horizon]:
-                    if follower is mission:
-                        continue
-                    if self._mission_can_commit(
-                        follower,
-                        extra_used_sources=pending_sources,
-                        extra_target_ids=pending_targets,
-                        existing_moves=len(moves) + len(mission.source_ids),
-                    ):
-                        follower_bonus = max(follower_bonus, follower.score)
-                value = mission.score + 0.55 * follower_bonus
-                if value > best_value:
-                    best_value = value
-                    best_idx = idx
-
-            if best_idx is None:
+        for mission in missions:
+            if self.expired() or len(moves) >= MAX_TURN_LAUNCHES:
                 break
 
-            mission = remaining.pop(best_idx)
+            # Check source availability
+            if any(sid in self.used_donor_ids for sid in mission.source_ids):
+                continue
+            if mission.mission != "reinforce" and mission.mission != "defend" and mission.mission != "evacuate":
+                if mission.target_id in self.targeted_planet_ids:
+                    continue
+
             if len(mission.source_ids) == 1:
+                # Single-source mission: re-verify surplus
                 src_id = mission.source_ids[0]
                 src = self.state.planets_by_id.get(src_id)
                 if src is None:
                     continue
-                if self._effective_planet(src).ships < mission.ships[0]:
+                effective_src = self._effective_planet(src)
+                if effective_src.ships < mission.ships[0]:
                     continue
                 move = PlannedMove(
-                    src_id,
-                    mission.target_id,
-                    mission.angles[0],
-                    mission.ships[0],
-                    mission.etas[0],
-                    mission.mission,
+                    src_id, mission.target_id,
+                    mission.angles[0], mission.ships[0],
+                    mission.etas[0], mission.mission,
                 )
                 moves.append(move)
                 self._commit_move(move)
             else:
-                if len(moves) + len(mission.source_ids) > turn_launch_cap:
-                    continue
+                # Multi-source swarm: commit all sources
                 can_commit = True
                 for i, sid in enumerate(mission.source_ids):
                     src = self.state.planets_by_id.get(sid)
-                    if src is None or self._effective_planet(src).ships < mission.ships[i]:
+                    if src is None:
+                        can_commit = False
+                        break
+                    effective_src = self._effective_planet(src)
+                    if effective_src.ships < mission.ships[i]:
                         can_commit = False
                         break
                 if not can_commit:
                     continue
+                if len(moves) + len(mission.source_ids) > MAX_TURN_LAUNCHES:
+                    continue
                 for i, sid in enumerate(mission.source_ids):
                     move = PlannedMove(
-                        sid,
-                        mission.target_id,
-                        mission.angles[i],
-                        mission.ships[i],
-                        mission.etas[i],
-                        mission.mission,
+                        sid, mission.target_id,
+                        mission.angles[i], mission.ships[i],
+                        mission.etas[i], mission.mission,
                     )
                     moves.append(move)
                     self._commit_move(move)
@@ -2420,3 +2198,83 @@ __all__ = [
     "DecisionLogic",
     "agent",
 ]
+
+
+class _DynamicModesMixin:
+    def _build_modes(self) -> Dict[str, Any]:
+        owner_strength: Dict[int, int] = defaultdict(int)
+        owner_prod: Dict[int, int] = defaultdict(int)
+        for planet in self.state.planets:
+            if planet.owner != -1:
+                owner_strength[planet.owner] += int(planet.ships)
+                owner_prod[planet.owner] += int(planet.production)
+        for fleet in self.state.fleets:
+            owner_strength[fleet.owner] += int(fleet.ships)
+
+        my_total = owner_strength.get(self.state.player, 0)
+        my_prod = owner_prod.get(self.state.player, 0)
+        standings = sorted(owner_strength.items(), key=lambda item: item[1], reverse=True)
+        leader_strength = standings[0][1] if standings else my_total
+        second_strength = standings[1][1] if len(standings) > 1 else 0
+        enemy_total = sum(strength for owner, strength in standings if owner != self.state.player)
+        max_enemy_prod = max((owner_prod.get(owner, 0) for owner, _ in standings if owner != self.state.player), default=0)
+        my_rank = 1 + sum(1 for owner, strength in standings if owner != self.state.player and strength > my_total)
+        domination = (my_total - leader_strength) / max(1, leader_strength)
+
+        if self.state.num_players <= 2:
+            is_behind = domination < BEHIND_THRESHOLD
+            is_ahead = domination > AHEAD_THRESHOLD
+            is_dominating = is_ahead or (enemy_total > 0 and my_total > enemy_total * 1.25)
+            is_finishing = domination > FINISHING_THRESHOLD and my_prod > max_enemy_prod * FINISHING_PROD_RATIO and self.state.step > 100
+        else:
+            is_ahead = my_rank == 1 and my_total > max(1, second_strength) * 1.08
+            is_dominating = my_rank == 1 and my_total > max(1, second_strength) * 1.22
+            is_behind = my_rank >= 3 or (my_rank == 2 and my_total < leader_strength * 0.85)
+            is_finishing = (
+                my_rank == 1
+                and second_strength > 0
+                and my_total > second_strength * 1.35
+                and my_prod > max_enemy_prod * 1.15
+                and self.state.step > 120
+            )
+
+        mult = 1.0
+        if is_ahead:
+            mult += 0.05
+        if is_behind:
+            mult -= 0.03
+        if is_finishing:
+            mult += 0.10
+
+        return {
+            "domination": domination,
+            "is_behind": is_behind,
+            "is_ahead": is_ahead,
+            "is_dominating": is_dominating,
+            "is_finishing": is_finishing,
+            "attack_margin_mult": mult,
+            "my_total": my_total,
+            "enemy_total": enemy_total,
+            "my_rank": my_rank,
+            "leader_strength": leader_strength,
+            "second_strength": second_strength,
+            "owner_strength": dict(owner_strength),
+            "owner_prod": dict(owner_prod),
+        }
+
+
+# Variant patch: dynamic mode thresholds.
+class DecisionLogicV12(_DynamicModesMixin, DecisionLogic):
+    pass
+
+
+DecisionLogic = DecisionLogicV12
+
+
+def agent(obs: Any, config: Any) -> List[List[float | int]]:
+    try:
+        logic = DecisionLogic(obs, config)
+        return logic.decide()
+    except Exception as exc:
+        AGENT_MEMORY["last_error"] = str(exc)
+        return []
