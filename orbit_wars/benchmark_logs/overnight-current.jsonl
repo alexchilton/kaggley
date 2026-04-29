@@ -1,0 +1,632 @@
+{"benchmark": "v5", "cycle": 1, "duration_sec": 11.055, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1785, "timestamp": "2026-04-27T19:03:09.276024+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 129.316, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 5030, "timestamp": "2026-04-27T19:05:18.593394+00:00", "variant": "v6", "winner": "v6"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 15.534, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3027, "timestamp": "2026-04-27T19:05:34.129535+00:00", "variant": "v6", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 13.084, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5688, "timestamp": "2026-04-27T19:05:47.223502+00:00", "variant": "v6", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 85.309, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 6807, "timestamp": "2026-04-27T19:07:12.536866+00:00", "variant": "v6"}
+{"cycle": 1, "duration_sec": 41.895, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T19:07:54.433162+00:00", "variant": "v6"}
+{"cycle": 1, "duration_sec": 36.789, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 10351, "timestamp": "2026-04-27T19:08:31.233689+00:00", "variant": "v6"}
+{"cycle": 1, "duration_sec": 20.041, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 4978, "timestamp": "2026-04-27T19:08:51.276336+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 14.52, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3067, "timestamp": "2026-04-27T19:09:05.797897+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 140.556, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2298, "timestamp": "2026-04-27T19:11:26.355021+00:00", "variant": "v7", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 20.17, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3456, "timestamp": "2026-04-27T19:11:46.526405+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 26.065, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4446, "timestamp": "2026-04-27T19:12:12.593101+00:00", "variant": "v7", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 118.25, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 882, "timestamp": "2026-04-27T19:14:10.844018+00:00", "variant": "v7"}
+{"cycle": 1, "duration_sec": 42.897, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 7565, "timestamp": "2026-04-27T19:14:53.743563+00:00", "variant": "v7"}
+{"cycle": 1, "duration_sec": 19.135, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T19:15:12.885420+00:00", "variant": "v7"}
+{"cycle": 1, "duration_sec": 115.944, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 1631, "timestamp": "2026-04-27T19:17:08.842740+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 28.373, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1345, "timestamp": "2026-04-27T19:17:37.219100+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 70.115, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 8137, "timestamp": "2026-04-27T19:18:47.335627+00:00", "variant": "v8", "winner": "v8"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 40.932, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -154, "timestamp": "2026-04-27T19:19:28.271696+00:00", "variant": "v8", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 50.093, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1956, "timestamp": "2026-04-27T19:20:18.366151+00:00", "variant": "v8", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 41.356, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T19:20:59.723501+00:00", "variant": "v8"}
+{"cycle": 1, "duration_sec": 101.856, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 1276, "timestamp": "2026-04-27T19:22:41.581902+00:00", "variant": "v8"}
+{"cycle": 1, "duration_sec": 105.61, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 19594, "timestamp": "2026-04-27T19:24:27.194262+00:00", "variant": "v8"}
+{"cycle": 1, "duration_sec": 38.841, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 5120, "timestamp": "2026-04-27T19:25:06.036182+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 69.197, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -15358, "timestamp": "2026-04-27T19:26:15.235030+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 8.503, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2192, "timestamp": "2026-04-27T19:26:23.746821+00:00", "variant": "v9", "winner": "v9"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 23.483, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -6352, "timestamp": "2026-04-27T19:26:47.234507+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 47.355, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5684, "timestamp": "2026-04-27T19:27:34.593885+00:00", "variant": "v9", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 74.837, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T19:28:49.436312+00:00", "variant": "v9"}
+{"cycle": 1, "duration_sec": 27.194, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T19:29:16.631236+00:00", "variant": "v9"}
+{"cycle": 1, "duration_sec": 29.563, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 2354, "timestamp": "2026-04-27T19:29:46.201697+00:00", "variant": "v9"}
+{"cycle": 1, "duration_sec": 35.451, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T19:30:21.662351+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 78.57, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -12373, "timestamp": "2026-04-27T19:31:40.237284+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 71.057, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 1739, "timestamp": "2026-04-27T19:32:51.302653+00:00", "variant": "v10", "winner": "v10"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 7.998, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2807, "timestamp": "2026-04-27T19:32:59.307153+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 10.665, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1439, "timestamp": "2026-04-27T19:33:09.982042+00:00", "variant": "v10", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 62.822, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T19:34:12.808203+00:00", "variant": "v10"}
+{"cycle": 1, "duration_sec": 103.17, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 5771, "timestamp": "2026-04-27T19:35:55.983612+00:00", "variant": "v10"}
+{"cycle": 1, "duration_sec": 33.541, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T19:36:29.529992+00:00", "variant": "v10"}
+{"cycle": 1, "duration_sec": 148.978, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 6518, "timestamp": "2026-04-27T19:38:58.512699+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 55.478, "mode": "2p", "reward_diff": 0, "seat": 0, "ship_diff": 30, "timestamp": "2026-04-27T19:39:54.011865+00:00", "variant": "v11", "winner": "draw"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 72.074, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7081, "timestamp": "2026-04-27T19:41:06.121356+00:00", "variant": "v11", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 34.215, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -9649, "timestamp": "2026-04-27T19:41:40.347215+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 31.304, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7401, "timestamp": "2026-04-27T19:42:11.672017+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 97.457, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 6150, "timestamp": "2026-04-27T19:43:49.141270+00:00", "variant": "v11"}
+{"cycle": 1, "duration_sec": 79.532, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T19:45:08.678159+00:00", "variant": "v11"}
+{"cycle": 1, "duration_sec": 65.968, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 6509, "timestamp": "2026-04-27T19:46:14.656785+00:00", "variant": "v11"}
+{"cycle": 1, "duration_sec": 31.123, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T19:46:45.791723+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 46.193, "mode": "2p", "reward_diff": 0, "seat": 0, "ship_diff": 0, "timestamp": "2026-04-27T19:47:31.996702+00:00", "variant": "v12", "winner": "draw"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 79.825, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": 0, "timestamp": "2026-04-27T19:48:51.832288+00:00", "variant": "v12", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 4.469, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1862, "timestamp": "2026-04-27T19:48:56.313059+00:00", "variant": "v12", "winner": "A"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 27.533, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5344, "timestamp": "2026-04-27T19:49:23.858269+00:00", "variant": "v12", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 106.584, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 7938, "timestamp": "2026-04-27T19:51:10.452507+00:00", "variant": "v12"}
+{"cycle": 1, "duration_sec": 124.046, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 4705, "timestamp": "2026-04-27T19:53:14.512106+00:00", "variant": "v12"}
+{"cycle": 1, "duration_sec": 25.305, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T19:53:39.820232+00:00", "variant": "v12"}
+{"cycle": 1, "duration_sec": 90.465, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 6056, "timestamp": "2026-04-27T19:55:10.287222+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 74.027, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 18550, "timestamp": "2026-04-27T19:56:24.315197+00:00", "variant": "v13", "winner": "A"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 63.929, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 25, "timestamp": "2026-04-27T19:57:28.245543+00:00", "variant": "v13", "winner": "v13"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 7.444, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -370, "timestamp": "2026-04-27T19:57:35.691525+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 47.418, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 18821, "timestamp": "2026-04-27T19:58:23.121728+00:00", "variant": "v13", "winner": "v13"}
+{"cycle": 1, "duration_sec": 81.473, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 10388, "timestamp": "2026-04-27T19:59:44.596699+00:00", "variant": "v13"}
+{"cycle": 1, "duration_sec": 41.429, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T20:00:26.026983+00:00", "variant": "v13"}
+{"cycle": 1, "duration_sec": 14.467, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 2039, "timestamp": "2026-04-27T20:00:40.495648+00:00", "variant": "v13"}
+{"cycle": 1, "duration_sec": 95.64, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 17233, "timestamp": "2026-04-27T20:02:16.140236+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 7.851, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2430, "timestamp": "2026-04-27T20:02:23.993025+00:00", "variant": "v14", "winner": "A"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 150.35, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -18783, "timestamp": "2026-04-27T20:04:54.351127+00:00", "variant": "v14", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 17.865, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3257, "timestamp": "2026-04-27T20:05:12.217926+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 61.485, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6890, "timestamp": "2026-04-27T20:06:13.722408+00:00", "variant": "v14", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 28.011, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T20:06:41.734513+00:00", "variant": "v14"}
+{"cycle": 1, "duration_sec": 15.388, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T20:06:57.123709+00:00", "variant": "v14"}
+{"cycle": 1, "duration_sec": 119.262, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 1257, "timestamp": "2026-04-27T20:08:56.387279+00:00", "variant": "v14"}
+{"cycle": 1, "duration_sec": 112.791, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T20:10:49.181796+00:00", "variant": "v14"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 95.439, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -16368, "timestamp": "2026-04-27T20:12:24.624534+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "v5", "cycle": 1, "duration_sec": 87.038, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -16423, "timestamp": "2026-04-27T20:13:51.665684+00:00", "variant": "v15", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 68.043, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1350, "timestamp": "2026-04-27T20:14:59.709655+00:00", "variant": "v15", "winner": "A"}
+{"benchmark": "baseline", "cycle": 1, "duration_sec": 59.031, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7576, "timestamp": "2026-04-27T20:15:58.742731+00:00", "variant": "v15", "winner": "baseline"}
+{"cycle": 1, "duration_sec": 106.104, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 7184, "timestamp": "2026-04-27T20:17:44.848821+00:00", "variant": "v15"}
+{"cycle": 1, "duration_sec": 90.621, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 17, "timestamp": "2026-04-27T20:19:15.471524+00:00", "variant": "v15"}
+{"cycle": 1, "duration_sec": 19.66, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T20:19:35.132737+00:00", "variant": "v15"}
+{"cycle": 1, "duration_sec": 114.32, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 1304, "timestamp": "2026-04-27T20:21:29.453508+00:00", "variant": "v15"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 35.547, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 22449, "timestamp": "2026-04-27T20:22:05.007765+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 67.358, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": 799, "timestamp": "2026-04-27T20:23:12.367608+00:00", "variant": "v6", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 12.993, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3539, "timestamp": "2026-04-27T20:23:25.362554+00:00", "variant": "v6", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 30.488, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3325, "timestamp": "2026-04-27T20:23:55.851829+00:00", "variant": "v6", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 22.279, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 3063, "timestamp": "2026-04-27T20:24:18.131652+00:00", "variant": "v6"}
+{"cycle": 2, "duration_sec": 72.649, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T20:25:30.783257+00:00", "variant": "v6"}
+{"cycle": 2, "duration_sec": 23.475, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T20:25:54.260939+00:00", "variant": "v6"}
+{"cycle": 2, "duration_sec": 31.691, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 3819, "timestamp": "2026-04-27T20:26:25.953261+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 118.765, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2513, "timestamp": "2026-04-27T20:28:24.720052+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 10.764, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7302, "timestamp": "2026-04-27T20:28:35.485938+00:00", "variant": "v7", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 16.341, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2192, "timestamp": "2026-04-27T20:28:51.839401+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 7.916, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5299, "timestamp": "2026-04-27T20:28:59.757005+00:00", "variant": "v7", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 87.441, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T20:30:27.208012+00:00", "variant": "v7"}
+{"cycle": 2, "duration_sec": 42.032, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T20:31:09.260681+00:00", "variant": "v7"}
+{"cycle": 2, "duration_sec": 111.853, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 690, "timestamp": "2026-04-27T20:33:01.115043+00:00", "variant": "v7"}
+{"cycle": 2, "duration_sec": 10.094, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T20:33:11.210978+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 83.878, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2460, "timestamp": "2026-04-27T20:34:35.098309+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 90.662, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 6147, "timestamp": "2026-04-27T20:36:05.764101+00:00", "variant": "v8", "winner": "v8"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 53.931, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 3805, "timestamp": "2026-04-27T20:36:59.696477+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 27.948, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4665, "timestamp": "2026-04-27T20:37:27.646077+00:00", "variant": "v8", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 104.818, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 8864, "timestamp": "2026-04-27T20:39:12.465374+00:00", "variant": "v8"}
+{"cycle": 2, "duration_sec": 96.811, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 11593, "timestamp": "2026-04-27T20:40:49.279103+00:00", "variant": "v8"}
+{"cycle": 2, "duration_sec": 24.932, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 8276, "timestamp": "2026-04-27T20:41:14.213137+00:00", "variant": "v8"}
+{"cycle": 2, "duration_sec": 126.487, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 10817, "timestamp": "2026-04-27T20:43:20.701510+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 70.354, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -6359, "timestamp": "2026-04-27T20:44:31.059294+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 61.308, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 5356, "timestamp": "2026-04-27T20:45:32.369167+00:00", "variant": "v9", "winner": "v9"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 32.699, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -11640, "timestamp": "2026-04-27T20:46:05.075414+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 69.083, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 16845, "timestamp": "2026-04-27T20:47:14.185081+00:00", "variant": "v9", "winner": "v9"}
+{"cycle": 2, "duration_sec": 14.554, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T20:47:28.753693+00:00", "variant": "v9"}
+{"cycle": 2, "duration_sec": 16.477, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T20:47:45.254770+00:00", "variant": "v9"}
+{"cycle": 2, "duration_sec": 67.028, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T20:48:52.299549+00:00", "variant": "v9"}
+{"cycle": 2, "duration_sec": 20.625, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T20:49:12.938357+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 98.526, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -5810, "timestamp": "2026-04-27T20:50:51.477064+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 77.835, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 14227, "timestamp": "2026-04-27T20:52:09.336566+00:00", "variant": "v10", "winner": "v10"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 53.664, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -6758, "timestamp": "2026-04-27T20:53:03.005472+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 42.641, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5381, "timestamp": "2026-04-27T20:53:45.662574+00:00", "variant": "v10", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 102.363, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 4119, "timestamp": "2026-04-27T20:55:28.040202+00:00", "variant": "v10"}
+{"cycle": 2, "duration_sec": 97.232, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 3812, "timestamp": "2026-04-27T20:57:05.290484+00:00", "variant": "v10"}
+{"cycle": 2, "duration_sec": 112.445, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 9651, "timestamp": "2026-04-27T20:58:57.746728+00:00", "variant": "v10"}
+{"cycle": 2, "duration_sec": 94.31, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T21:00:32.062273+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 55.829, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 7498, "timestamp": "2026-04-27T21:01:27.900711+00:00", "variant": "v11", "winner": "A"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 19.004, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3244, "timestamp": "2026-04-27T21:01:46.912076+00:00", "variant": "v11", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 7.931, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1805, "timestamp": "2026-04-27T21:01:54.857645+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 12.392, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1139, "timestamp": "2026-04-27T21:02:07.261034+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 31.167, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T21:02:38.440316+00:00", "variant": "v11"}
+{"cycle": 2, "duration_sec": 24.8, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T21:03:03.252323+00:00", "variant": "v11"}
+{"cycle": 2, "duration_sec": 61.226, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T21:04:04.493753+00:00", "variant": "v11"}
+{"cycle": 2, "duration_sec": 13.741, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 3257, "timestamp": "2026-04-27T21:04:18.251856+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 51.503, "mode": "2p", "reward_diff": 0, "seat": 0, "ship_diff": 0, "timestamp": "2026-04-27T21:05:09.766436+00:00", "variant": "v12", "winner": "draw"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 69.386, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": 0, "timestamp": "2026-04-27T21:06:19.181387+00:00", "variant": "v12", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 45.94, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -11645, "timestamp": "2026-04-27T21:07:05.143451+00:00", "variant": "v12", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 2.621, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -215, "timestamp": "2026-04-27T21:07:07.787286+00:00", "variant": "v12", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 51.432, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T21:07:59.231032+00:00", "variant": "v12"}
+{"cycle": 2, "duration_sec": 116.859, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 7931, "timestamp": "2026-04-27T21:09:56.103675+00:00", "variant": "v12"}
+{"cycle": 2, "duration_sec": 23.511, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T21:10:19.632405+00:00", "variant": "v12"}
+{"cycle": 2, "duration_sec": 108.956, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 9970, "timestamp": "2026-04-27T21:12:08.593803+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 54.585, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -9445, "timestamp": "2026-04-27T21:13:03.192779+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 39.568, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3314, "timestamp": "2026-04-27T21:13:42.773135+00:00", "variant": "v13", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 15.158, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -5154, "timestamp": "2026-04-27T21:13:57.952621+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 47.873, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2937, "timestamp": "2026-04-27T21:14:45.837822+00:00", "variant": "v13", "winner": "v13"}
+{"cycle": 2, "duration_sec": 71.49, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 5985, "timestamp": "2026-04-27T21:15:57.355531+00:00", "variant": "v13"}
+{"cycle": 2, "duration_sec": 112.703, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 8002, "timestamp": "2026-04-27T21:17:50.078143+00:00", "variant": "v13"}
+{"cycle": 2, "duration_sec": 98.666, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 8393, "timestamp": "2026-04-27T21:19:28.770195+00:00", "variant": "v13"}
+{"cycle": 2, "duration_sec": 85.195, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 11863, "timestamp": "2026-04-27T21:20:54.009370+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 18.644, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 6076, "timestamp": "2026-04-27T21:21:12.658719+00:00", "variant": "v14", "winner": "A"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 102.25, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -880, "timestamp": "2026-04-27T21:22:54.920829+00:00", "variant": "v14", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 34.113, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -7596, "timestamp": "2026-04-27T21:23:29.046161+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 53.296, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6363, "timestamp": "2026-04-27T21:24:22.346346+00:00", "variant": "v14", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 20.966, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T21:24:43.330346+00:00", "variant": "v14"}
+{"cycle": 2, "duration_sec": 128.729, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 8837, "timestamp": "2026-04-27T21:26:52.069619+00:00", "variant": "v14"}
+{"cycle": 2, "duration_sec": 119.281, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 608, "timestamp": "2026-04-27T21:28:51.363451+00:00", "variant": "v14"}
+{"cycle": 2, "duration_sec": 42.547, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T21:29:33.923267+00:00", "variant": "v14"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 18.978, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2896, "timestamp": "2026-04-27T21:29:52.916994+00:00", "variant": "v15", "winner": "A"}
+{"benchmark": "v5", "cycle": 2, "duration_sec": 13.678, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 3730, "timestamp": "2026-04-27T21:30:06.617864+00:00", "variant": "v15", "winner": "v15"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 24.707, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4741, "timestamp": "2026-04-27T21:30:31.338939+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "baseline", "cycle": 2, "duration_sec": 16.645, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3388, "timestamp": "2026-04-27T21:30:47.993398+00:00", "variant": "v15", "winner": "baseline"}
+{"cycle": 2, "duration_sec": 124.632, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 14388, "timestamp": "2026-04-27T21:32:52.630020+00:00", "variant": "v15"}
+{"cycle": 2, "duration_sec": 90.757, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 5198, "timestamp": "2026-04-27T21:34:23.412265+00:00", "variant": "v15"}
+{"cycle": 2, "duration_sec": 28.304, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T21:34:51.733216+00:00", "variant": "v15"}
+{"cycle": 2, "duration_sec": 29.236, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T21:35:20.979351+00:00", "variant": "v15"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 23.786, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 4404, "timestamp": "2026-04-27T21:35:44.802730+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 78.149, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 1651, "timestamp": "2026-04-27T21:37:02.965684+00:00", "variant": "v6", "winner": "v6"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 20.543, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3228, "timestamp": "2026-04-27T21:37:23.579098+00:00", "variant": "v6", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 16.547, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5269, "timestamp": "2026-04-27T21:37:40.159595+00:00", "variant": "v6", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 52.853, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T21:38:33.018794+00:00", "variant": "v6"}
+{"cycle": 3, "duration_sec": 111.051, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 8572, "timestamp": "2026-04-27T21:40:24.082980+00:00", "variant": "v6"}
+{"cycle": 3, "duration_sec": 56.885, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 6430, "timestamp": "2026-04-27T21:41:20.985830+00:00", "variant": "v6"}
+{"cycle": 3, "duration_sec": 121.561, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 5343, "timestamp": "2026-04-27T21:43:22.559866+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 78.751, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 15092, "timestamp": "2026-04-27T21:44:41.316398+00:00", "variant": "v7", "winner": "A"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 56.071, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5053, "timestamp": "2026-04-27T21:45:37.405128+00:00", "variant": "v7", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 69.314, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2922, "timestamp": "2026-04-27T21:46:46.731352+00:00", "variant": "v7", "winner": "A"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 15.562, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3703, "timestamp": "2026-04-27T21:47:02.322960+00:00", "variant": "v7", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 102.837, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 7793, "timestamp": "2026-04-27T21:48:45.177183+00:00", "variant": "v7"}
+{"cycle": 3, "duration_sec": 81.858, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T21:50:07.051771+00:00", "variant": "v7"}
+{"cycle": 3, "duration_sec": 38.581, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T21:50:45.648106+00:00", "variant": "v7"}
+{"cycle": 3, "duration_sec": 139.449, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 6082, "timestamp": "2026-04-27T21:53:05.110367+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 14.611, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 3108, "timestamp": "2026-04-27T21:53:19.727545+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 71.671, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": 368, "timestamp": "2026-04-27T21:54:31.414384+00:00", "variant": "v8", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 28.94, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3934, "timestamp": "2026-04-27T21:55:00.370066+00:00", "variant": "v8", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 8.848, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1714, "timestamp": "2026-04-27T21:55:09.241539+00:00", "variant": "v8", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 89.167, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T21:56:38.412720+00:00", "variant": "v8"}
+{"cycle": 3, "duration_sec": 21.85, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T21:57:00.278375+00:00", "variant": "v8"}
+{"cycle": 3, "duration_sec": 35.273, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T21:57:35.567550+00:00", "variant": "v8"}
+{"cycle": 3, "duration_sec": 75.774, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 11678, "timestamp": "2026-04-27T21:58:51.348436+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 81.322, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 3272, "timestamp": "2026-04-27T22:00:12.684486+00:00", "variant": "v9", "winner": "A"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 73.39, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2264, "timestamp": "2026-04-27T22:01:26.088553+00:00", "variant": "v9", "winner": "v9"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 16.002, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1366, "timestamp": "2026-04-27T22:01:42.101425+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 17.127, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 1794, "timestamp": "2026-04-27T22:01:59.244833+00:00", "variant": "v9", "winner": "v9"}
+{"cycle": 3, "duration_sec": 32.312, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T22:02:31.562008+00:00", "variant": "v9"}
+{"cycle": 3, "duration_sec": 75.24, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 2409, "timestamp": "2026-04-27T22:03:46.818122+00:00", "variant": "v9"}
+{"cycle": 3, "duration_sec": 122.005, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 2294, "timestamp": "2026-04-27T22:05:48.837139+00:00", "variant": "v9"}
+{"cycle": 3, "duration_sec": 89.35, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 5360, "timestamp": "2026-04-27T22:07:18.206048+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 14.3, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 5590, "timestamp": "2026-04-27T22:07:32.512259+00:00", "variant": "v10", "winner": "A"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 14.31, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4468, "timestamp": "2026-04-27T22:07:46.838264+00:00", "variant": "v10", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 12.401, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3569, "timestamp": "2026-04-27T22:07:59.254821+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 44.965, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 1102, "timestamp": "2026-04-27T22:08:44.224571+00:00", "variant": "v10", "winner": "v10"}
+{"cycle": 3, "duration_sec": 146.885, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 2085, "timestamp": "2026-04-27T22:11:11.122027+00:00", "variant": "v10"}
+{"cycle": 3, "duration_sec": 14.883, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 1172, "timestamp": "2026-04-27T22:11:26.020971+00:00", "variant": "v10"}
+{"cycle": 3, "duration_sec": 38.16, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T22:12:04.195003+00:00", "variant": "v10"}
+{"cycle": 3, "duration_sec": 70.315, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T22:13:14.522158+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 84.969, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4, "timestamp": "2026-04-27T22:14:39.506173+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 85.079, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -121, "timestamp": "2026-04-27T22:16:04.600079+00:00", "variant": "v11", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 19.592, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 4463, "timestamp": "2026-04-27T22:16:24.197346+00:00", "variant": "v11", "winner": "A"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 14.232, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3664, "timestamp": "2026-04-27T22:16:38.439227+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 64.556, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 8637, "timestamp": "2026-04-27T22:17:43.014405+00:00", "variant": "v11"}
+{"cycle": 3, "duration_sec": 25.057, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T22:18:08.078663+00:00", "variant": "v11"}
+{"cycle": 3, "duration_sec": 89.723, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 3073, "timestamp": "2026-04-27T22:19:37.823032+00:00", "variant": "v11"}
+{"cycle": 3, "duration_sec": 85.683, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 17428, "timestamp": "2026-04-27T22:21:03.512258+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 68.341, "mode": "2p", "reward_diff": 0, "seat": 0, "ship_diff": 0, "timestamp": "2026-04-27T22:22:11.872725+00:00", "variant": "v12", "winner": "draw"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 54.204, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": 0, "timestamp": "2026-04-27T22:23:06.088663+00:00", "variant": "v12", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 27.621, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3589, "timestamp": "2026-04-27T22:23:33.726045+00:00", "variant": "v12", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 12.505, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -945, "timestamp": "2026-04-27T22:23:46.246384+00:00", "variant": "v12", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 97.619, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 13831, "timestamp": "2026-04-27T22:25:23.870210+00:00", "variant": "v12"}
+{"cycle": 3, "duration_sec": 66.767, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 6346, "timestamp": "2026-04-27T22:26:30.648366+00:00", "variant": "v12"}
+{"cycle": 3, "duration_sec": 14.853, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T22:26:45.506927+00:00", "variant": "v12"}
+{"cycle": 3, "duration_sec": 13.254, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T22:26:58.764460+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 93.273, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": 965, "timestamp": "2026-04-27T22:28:32.045357+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 40.147, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 12984, "timestamp": "2026-04-27T22:29:12.208454+00:00", "variant": "v13", "winner": "v13"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 47.333, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1026, "timestamp": "2026-04-27T22:29:59.546607+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 20.087, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2705, "timestamp": "2026-04-27T22:30:19.648236+00:00", "variant": "v13", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 103.735, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 9036, "timestamp": "2026-04-27T22:32:03.394519+00:00", "variant": "v13"}
+{"cycle": 3, "duration_sec": 111.131, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 17149, "timestamp": "2026-04-27T22:33:54.541428+00:00", "variant": "v13"}
+{"cycle": 3, "duration_sec": 101.273, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 12940, "timestamp": "2026-04-27T22:35:35.827942+00:00", "variant": "v13"}
+{"cycle": 3, "duration_sec": 17.581, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T22:35:53.424694+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 77.533, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -15642, "timestamp": "2026-04-27T22:37:10.978171+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 32.552, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -8992, "timestamp": "2026-04-27T22:37:43.542462+00:00", "variant": "v14", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 20.707, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -7816, "timestamp": "2026-04-27T22:38:04.260363+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 32.048, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5592, "timestamp": "2026-04-27T22:38:36.324924+00:00", "variant": "v14", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 85.57, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 460, "timestamp": "2026-04-27T22:40:01.911917+00:00", "variant": "v14"}
+{"cycle": 3, "duration_sec": 83.171, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 12924, "timestamp": "2026-04-27T22:41:25.095103+00:00", "variant": "v14"}
+{"cycle": 3, "duration_sec": 101.388, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 9728, "timestamp": "2026-04-27T22:43:06.500624+00:00", "variant": "v14"}
+{"cycle": 3, "duration_sec": 62.329, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 2178, "timestamp": "2026-04-27T22:44:08.843840+00:00", "variant": "v14"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 90.269, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1524, "timestamp": "2026-04-27T22:45:39.125083+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "v5", "cycle": 3, "duration_sec": 13.776, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1848, "timestamp": "2026-04-27T22:45:52.906125+00:00", "variant": "v15", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 29.584, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4336, "timestamp": "2026-04-27T22:46:22.502176+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "baseline", "cycle": 3, "duration_sec": 25.067, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6360, "timestamp": "2026-04-27T22:46:47.587726+00:00", "variant": "v15", "winner": "baseline"}
+{"cycle": 3, "duration_sec": 26.902, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T22:47:14.504141+00:00", "variant": "v15"}
+{"cycle": 3, "duration_sec": 123.852, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 239, "timestamp": "2026-04-27T22:49:18.372481+00:00", "variant": "v15"}
+{"cycle": 3, "duration_sec": 115.48, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 551, "timestamp": "2026-04-27T22:51:13.857568+00:00", "variant": "v15"}
+{"cycle": 3, "duration_sec": 20.922, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 3293, "timestamp": "2026-04-27T22:51:34.784691+00:00", "variant": "v15"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 64.897, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2081, "timestamp": "2026-04-27T22:52:39.689026+00:00", "variant": "v6", "winner": "B"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 12.511, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2825, "timestamp": "2026-04-27T22:52:52.214618+00:00", "variant": "v6", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 14.371, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3319, "timestamp": "2026-04-27T22:53:06.596569+00:00", "variant": "v6", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 23.332, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4891, "timestamp": "2026-04-27T22:53:29.939208+00:00", "variant": "v6", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 95.622, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 2028, "timestamp": "2026-04-27T22:55:05.585300+00:00", "variant": "v6"}
+{"cycle": 4, "duration_sec": 14.044, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T22:55:19.645724+00:00", "variant": "v6"}
+{"cycle": 4, "duration_sec": 64.889, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 16852, "timestamp": "2026-04-27T22:56:24.548505+00:00", "variant": "v6"}
+{"cycle": 4, "duration_sec": 87.563, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 2897, "timestamp": "2026-04-27T22:57:52.123609+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 53.541, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -18478, "timestamp": "2026-04-27T22:58:45.683363+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 53.598, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2417, "timestamp": "2026-04-27T22:59:39.286597+00:00", "variant": "v7", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 41.928, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -10299, "timestamp": "2026-04-27T23:00:21.226831+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 26.304, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7056, "timestamp": "2026-04-27T23:00:47.544482+00:00", "variant": "v7", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 65.903, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T23:01:53.458258+00:00", "variant": "v7"}
+{"cycle": 4, "duration_sec": 21.424, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T23:02:14.894850+00:00", "variant": "v7"}
+{"cycle": 4, "duration_sec": 21.527, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T23:02:36.444281+00:00", "variant": "v7"}
+{"cycle": 4, "duration_sec": 120.584, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 13205, "timestamp": "2026-04-27T23:04:37.051453+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 44.521, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1321, "timestamp": "2026-04-27T23:05:21.585328+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 83.9, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2340, "timestamp": "2026-04-27T23:06:45.498737+00:00", "variant": "v8", "winner": "v8"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 18.404, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4504, "timestamp": "2026-04-27T23:07:03.910502+00:00", "variant": "v8", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 18.802, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5485, "timestamp": "2026-04-27T23:07:22.731251+00:00", "variant": "v8", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 121.431, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 3489, "timestamp": "2026-04-27T23:09:24.176127+00:00", "variant": "v8"}
+{"cycle": 4, "duration_sec": 18.13, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T23:09:42.323042+00:00", "variant": "v8"}
+{"cycle": 4, "duration_sec": 69.101, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 3710, "timestamp": "2026-04-27T23:10:51.435715+00:00", "variant": "v8"}
+{"cycle": 4, "duration_sec": 80.583, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 7853, "timestamp": "2026-04-27T23:12:12.023065+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 98.512, "mode": "2p", "reward_diff": 0, "seat": 0, "ship_diff": 0, "timestamp": "2026-04-27T23:13:50.550598+00:00", "variant": "v9", "winner": "draw"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 79.41, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": 0, "timestamp": "2026-04-27T23:15:09.975820+00:00", "variant": "v9", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 7.632, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2862, "timestamp": "2026-04-27T23:15:17.626914+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 12.927, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2939, "timestamp": "2026-04-27T23:15:30.564581+00:00", "variant": "v9", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 58.267, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T23:16:28.846899+00:00", "variant": "v9"}
+{"cycle": 4, "duration_sec": 64.983, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 6790, "timestamp": "2026-04-27T23:17:33.852980+00:00", "variant": "v9"}
+{"cycle": 4, "duration_sec": 25.816, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T23:17:59.681167+00:00", "variant": "v9"}
+{"cycle": 4, "duration_sec": 105.732, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 16686, "timestamp": "2026-04-27T23:19:45.419287+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 96.13, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -25435, "timestamp": "2026-04-27T23:21:21.554035+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 132.853, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -17540, "timestamp": "2026-04-27T23:23:34.424664+00:00", "variant": "v10", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 7.31, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2191, "timestamp": "2026-04-27T23:23:41.747670+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 28.582, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7880, "timestamp": "2026-04-27T23:24:10.335884+00:00", "variant": "v10", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 17.326, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T23:24:27.676502+00:00", "variant": "v10"}
+{"cycle": 4, "duration_sec": 54.811, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T23:25:22.504920+00:00", "variant": "v10"}
+{"cycle": 4, "duration_sec": 96.518, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T23:26:59.039036+00:00", "variant": "v10"}
+{"cycle": 4, "duration_sec": 133.312, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 151, "timestamp": "2026-04-27T23:29:12.358006+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 120.537, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2904, "timestamp": "2026-04-27T23:31:12.911260+00:00", "variant": "v11", "winner": "A"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 101.908, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": -788, "timestamp": "2026-04-27T23:32:54.835467+00:00", "variant": "v11", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 6.599, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2992, "timestamp": "2026-04-27T23:33:01.472161+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 17.684, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4285, "timestamp": "2026-04-27T23:33:19.176162+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 89.898, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 5192, "timestamp": "2026-04-27T23:34:49.095383+00:00", "variant": "v11"}
+{"cycle": 4, "duration_sec": 110.794, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 4352, "timestamp": "2026-04-27T23:36:39.904028+00:00", "variant": "v11"}
+{"cycle": 4, "duration_sec": 15.186, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T23:36:55.095799+00:00", "variant": "v11"}
+{"cycle": 4, "duration_sec": 112.819, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 13353, "timestamp": "2026-04-27T23:38:47.919163+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 95.514, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1780, "timestamp": "2026-04-27T23:40:23.447866+00:00", "variant": "v12", "winner": "B"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 11.878, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2453, "timestamp": "2026-04-27T23:40:35.345962+00:00", "variant": "v12", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 51.212, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 14547, "timestamp": "2026-04-27T23:41:26.571722+00:00", "variant": "v12", "winner": "A"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 20.911, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5538, "timestamp": "2026-04-27T23:41:47.500158+00:00", "variant": "v12", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 49.453, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-27T23:42:36.963053+00:00", "variant": "v12"}
+{"cycle": 4, "duration_sec": 59.612, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 7897, "timestamp": "2026-04-27T23:43:36.592496+00:00", "variant": "v12"}
+{"cycle": 4, "duration_sec": 63.309, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T23:44:39.918643+00:00", "variant": "v12"}
+{"cycle": 4, "duration_sec": 13.807, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-27T23:44:53.746139+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 54.295, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 30, "timestamp": "2026-04-27T23:45:48.051670+00:00", "variant": "v13", "winner": "A"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 37.696, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4474, "timestamp": "2026-04-27T23:46:25.765593+00:00", "variant": "v13", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 11.531, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3538, "timestamp": "2026-04-27T23:46:37.309888+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 6.671, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2998, "timestamp": "2026-04-27T23:46:43.991817+00:00", "variant": "v13", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 71.828, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 1902, "timestamp": "2026-04-27T23:47:55.833277+00:00", "variant": "v13"}
+{"cycle": 4, "duration_sec": 37.277, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T23:48:33.123199+00:00", "variant": "v13"}
+{"cycle": 4, "duration_sec": 69.521, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 1574, "timestamp": "2026-04-27T23:49:42.657440+00:00", "variant": "v13"}
+{"cycle": 4, "duration_sec": 133.85, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 10529, "timestamp": "2026-04-27T23:51:56.526117+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 101.943, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1710, "timestamp": "2026-04-27T23:53:38.482167+00:00", "variant": "v14", "winner": "A"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 90.308, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1791, "timestamp": "2026-04-27T23:55:08.801606+00:00", "variant": "v14", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 13.996, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3576, "timestamp": "2026-04-27T23:55:22.823146+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 27.079, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4803, "timestamp": "2026-04-27T23:55:49.908325+00:00", "variant": "v14", "winner": "baseline"}
+{"cycle": 4, "duration_sec": 82.217, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 10865, "timestamp": "2026-04-27T23:57:12.138598+00:00", "variant": "v14"}
+{"cycle": 4, "duration_sec": 125.347, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-27T23:59:17.506773+00:00", "variant": "v14"}
+{"cycle": 4, "duration_sec": 39.057, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-27T23:59:56.579574+00:00", "variant": "v14"}
+{"cycle": 4, "duration_sec": 83.179, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T00:01:19.764690+00:00", "variant": "v14"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 94.277, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1033, "timestamp": "2026-04-28T00:02:54.058530+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "v5", "cycle": 4, "duration_sec": 88.679, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -18441, "timestamp": "2026-04-28T00:04:22.749251+00:00", "variant": "v15", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 36.617, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2926, "timestamp": "2026-04-28T00:04:59.384707+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "baseline", "cycle": 4, "duration_sec": 88.577, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 6209, "timestamp": "2026-04-28T00:06:27.966972+00:00", "variant": "v15", "winner": "v15"}
+{"cycle": 4, "duration_sec": 20.164, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 5961, "timestamp": "2026-04-28T00:06:48.147160+00:00", "variant": "v15"}
+{"cycle": 4, "duration_sec": 36.872, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T00:07:25.032129+00:00", "variant": "v15"}
+{"cycle": 4, "duration_sec": 25.423, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T00:07:50.471224+00:00", "variant": "v15"}
+{"cycle": 4, "duration_sec": 150.577, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T00:10:21.060512+00:00", "variant": "v15"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 12.879, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1973, "timestamp": "2026-04-28T00:10:33.962367+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 67.256, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 8545, "timestamp": "2026-04-28T00:11:41.235657+00:00", "variant": "v6", "winner": "v6"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 39.864, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 12019, "timestamp": "2026-04-28T00:12:21.114315+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 5.663, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -951, "timestamp": "2026-04-28T00:12:26.793413+00:00", "variant": "v6", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 113.664, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T00:14:20.467524+00:00", "variant": "v6"}
+{"cycle": 5, "duration_sec": 39.25, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T00:14:59.735856+00:00", "variant": "v6"}
+{"cycle": 5, "duration_sec": 31.529, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T00:15:31.270216+00:00", "variant": "v6"}
+{"cycle": 5, "duration_sec": 45.548, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T00:16:16.832899+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 96.688, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 5956, "timestamp": "2026-04-28T00:17:53.526400+00:00", "variant": "v7", "winner": "A"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 78.007, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -12464, "timestamp": "2026-04-28T00:19:11.552166+00:00", "variant": "v7", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 11.038, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2088, "timestamp": "2026-04-28T00:19:22.599280+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 42.181, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7000, "timestamp": "2026-04-28T00:20:04.790210+00:00", "variant": "v7", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 23.145, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T00:20:27.952715+00:00", "variant": "v7"}
+{"cycle": 5, "duration_sec": 50.216, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T00:21:18.178628+00:00", "variant": "v7"}
+{"cycle": 5, "duration_sec": 100.509, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 328, "timestamp": "2026-04-28T00:22:58.720488+00:00", "variant": "v7"}
+{"cycle": 5, "duration_sec": 95.975, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 11388, "timestamp": "2026-04-28T00:24:34.701301+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 70.049, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 12289, "timestamp": "2026-04-28T00:25:44.763250+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 52.813, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 19939, "timestamp": "2026-04-28T00:26:37.588953+00:00", "variant": "v8", "winner": "v8"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 6.198, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2616, "timestamp": "2026-04-28T00:26:43.801859+00:00", "variant": "v8", "winner": "B"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 18.489, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6976, "timestamp": "2026-04-28T00:27:02.305865+00:00", "variant": "v8", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 58.68, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 10337, "timestamp": "2026-04-28T00:28:01.000839+00:00", "variant": "v8"}
+{"cycle": 5, "duration_sec": 18.892, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 5027, "timestamp": "2026-04-28T00:28:19.921784+00:00", "variant": "v8"}
+{"cycle": 5, "duration_sec": 32.079, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 16871, "timestamp": "2026-04-28T00:28:52.013673+00:00", "variant": "v8"}
+{"cycle": 5, "duration_sec": 19.725, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 2591, "timestamp": "2026-04-28T00:29:11.754442+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 20.476, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3474, "timestamp": "2026-04-28T00:29:32.244605+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 62.325, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -21785, "timestamp": "2026-04-28T00:30:34.577611+00:00", "variant": "v9", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 17.363, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -404, "timestamp": "2026-04-28T00:30:51.955294+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 9.49, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3400, "timestamp": "2026-04-28T00:31:01.460147+00:00", "variant": "v9", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 106.494, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 13077, "timestamp": "2026-04-28T00:32:47.969147+00:00", "variant": "v9"}
+{"cycle": 5, "duration_sec": 115.047, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 5333, "timestamp": "2026-04-28T00:34:43.022971+00:00", "variant": "v9"}
+{"cycle": 5, "duration_sec": 14.12, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T00:34:57.157240+00:00", "variant": "v9"}
+{"cycle": 5, "duration_sec": 92.855, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 11281, "timestamp": "2026-04-28T00:36:30.024912+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 89.342, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -9950, "timestamp": "2026-04-28T00:37:59.381455+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 15.141, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2574, "timestamp": "2026-04-28T00:38:14.533689+00:00", "variant": "v10", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 53.368, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 21224, "timestamp": "2026-04-28T00:39:07.921914+00:00", "variant": "v10", "winner": "A"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 34.879, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -11152, "timestamp": "2026-04-28T00:39:42.812918+00:00", "variant": "v10", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 32.199, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T00:40:15.024972+00:00", "variant": "v10"}
+{"cycle": 5, "duration_sec": 117.018, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 3795, "timestamp": "2026-04-28T00:42:12.059099+00:00", "variant": "v10"}
+{"cycle": 5, "duration_sec": 21.266, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T00:42:33.344156+00:00", "variant": "v10"}
+{"cycle": 5, "duration_sec": 38.426, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T00:43:11.774384+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 71.072, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3117, "timestamp": "2026-04-28T00:44:22.861109+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 72.671, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 9683, "timestamp": "2026-04-28T00:45:35.548454+00:00", "variant": "v11", "winner": "v11"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 19.902, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1892, "timestamp": "2026-04-28T00:45:55.467531+00:00", "variant": "v11", "winner": "A"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 5.551, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -384, "timestamp": "2026-04-28T00:46:01.033201+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 118.708, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 7719, "timestamp": "2026-04-28T00:47:59.759439+00:00", "variant": "v11"}
+{"cycle": 5, "duration_sec": 45.966, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 7879, "timestamp": "2026-04-28T00:48:45.739481+00:00", "variant": "v11"}
+{"cycle": 5, "duration_sec": 86.478, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 9904, "timestamp": "2026-04-28T00:50:12.234599+00:00", "variant": "v11"}
+{"cycle": 5, "duration_sec": 89.597, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 6475, "timestamp": "2026-04-28T00:51:41.842612+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 81.584, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": 74, "timestamp": "2026-04-28T00:53:03.438014+00:00", "variant": "v12", "winner": "B"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 53.95, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 6865, "timestamp": "2026-04-28T00:53:57.402279+00:00", "variant": "v12", "winner": "v12"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 7.578, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2672, "timestamp": "2026-04-28T00:54:04.993224+00:00", "variant": "v12", "winner": "B"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 20.48, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3347, "timestamp": "2026-04-28T00:54:25.487379+00:00", "variant": "v12", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 39.647, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 5268, "timestamp": "2026-04-28T00:55:05.151493+00:00", "variant": "v12"}
+{"cycle": 5, "duration_sec": 15.08, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T00:55:20.247412+00:00", "variant": "v12"}
+{"cycle": 5, "duration_sec": 43.214, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 6128, "timestamp": "2026-04-28T00:56:03.474245+00:00", "variant": "v12"}
+{"cycle": 5, "duration_sec": 79.441, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T00:57:22.932749+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 53.179, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 8066, "timestamp": "2026-04-28T00:58:16.116670+00:00", "variant": "v13", "winner": "A"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 53.546, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2049, "timestamp": "2026-04-28T00:59:09.676217+00:00", "variant": "v13", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 57.133, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1861, "timestamp": "2026-04-28T01:00:06.814498+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 19.765, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 6148, "timestamp": "2026-04-28T01:00:26.593290+00:00", "variant": "v13", "winner": "v13"}
+{"cycle": 5, "duration_sec": 93.52, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 1207, "timestamp": "2026-04-28T01:02:00.129280+00:00", "variant": "v13"}
+{"cycle": 5, "duration_sec": 108.408, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 8891, "timestamp": "2026-04-28T01:03:48.542804+00:00", "variant": "v13"}
+{"cycle": 5, "duration_sec": 133.507, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 3936, "timestamp": "2026-04-28T01:06:02.063151+00:00", "variant": "v13"}
+{"cycle": 5, "duration_sec": 72.989, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 9795, "timestamp": "2026-04-28T01:07:15.070650+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 94.032, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 789, "timestamp": "2026-04-28T01:08:49.122696+00:00", "variant": "v14", "winner": "A"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 70.452, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7865, "timestamp": "2026-04-28T01:09:59.582558+00:00", "variant": "v14", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 40.207, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2315, "timestamp": "2026-04-28T01:10:39.800399+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 9.23, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3105, "timestamp": "2026-04-28T01:10:49.047694+00:00", "variant": "v14", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 76.636, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T01:12:05.694693+00:00", "variant": "v14"}
+{"cycle": 5, "duration_sec": 43.535, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T01:12:49.244990+00:00", "variant": "v14"}
+{"cycle": 5, "duration_sec": 29.642, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T01:13:18.892049+00:00", "variant": "v14"}
+{"cycle": 5, "duration_sec": 23.918, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T01:13:42.815583+00:00", "variant": "v14"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 17.153, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2767, "timestamp": "2026-04-28T01:13:59.973958+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "v5", "cycle": 5, "duration_sec": 85.585, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -7761, "timestamp": "2026-04-28T01:15:25.571872+00:00", "variant": "v15", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 21.02, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -6053, "timestamp": "2026-04-28T01:15:46.609112+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "baseline", "cycle": 5, "duration_sec": 3.192, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -258, "timestamp": "2026-04-28T01:15:49.820626+00:00", "variant": "v15", "winner": "baseline"}
+{"cycle": 5, "duration_sec": 42.851, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T01:16:32.676013+00:00", "variant": "v15"}
+{"cycle": 5, "duration_sec": 156.627, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 4542, "timestamp": "2026-04-28T01:19:09.315230+00:00", "variant": "v15"}
+{"cycle": 5, "duration_sec": 16.287, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T01:19:25.607035+00:00", "variant": "v15"}
+{"cycle": 5, "duration_sec": 22.82, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T01:19:48.443481+00:00", "variant": "v15"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 40.014, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 10956, "timestamp": "2026-04-28T01:20:28.480210+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 15.664, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2444, "timestamp": "2026-04-28T01:20:44.159860+00:00", "variant": "v6", "winner": "v6"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 6.259, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 3384, "timestamp": "2026-04-28T01:20:50.431684+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 13.616, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3117, "timestamp": "2026-04-28T01:21:04.073254+00:00", "variant": "v6", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 101.977, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 4473, "timestamp": "2026-04-28T01:22:46.067371+00:00", "variant": "v6"}
+{"cycle": 6, "duration_sec": 110.167, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 12190, "timestamp": "2026-04-28T01:24:36.250445+00:00", "variant": "v6"}
+{"cycle": 6, "duration_sec": 22.221, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 4507, "timestamp": "2026-04-28T01:24:58.488187+00:00", "variant": "v6"}
+{"cycle": 6, "duration_sec": 47.028, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T01:25:45.531368+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 48.885, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 15537, "timestamp": "2026-04-28T01:26:34.428677+00:00", "variant": "v7", "winner": "A"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 121.694, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2643, "timestamp": "2026-04-28T01:28:36.127072+00:00", "variant": "v7", "winner": "v7"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 17.037, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -6602, "timestamp": "2026-04-28T01:28:53.177448+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 14.099, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2899, "timestamp": "2026-04-28T01:29:07.289731+00:00", "variant": "v7", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 48.32, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T01:29:55.630768+00:00", "variant": "v7"}
+{"cycle": 6, "duration_sec": 36.839, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 5373, "timestamp": "2026-04-28T01:30:32.487924+00:00", "variant": "v7"}
+{"cycle": 6, "duration_sec": 21.92, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T01:30:54.413446+00:00", "variant": "v7"}
+{"cycle": 6, "duration_sec": 55.848, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 11811, "timestamp": "2026-04-28T01:31:50.274963+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 14.237, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2298, "timestamp": "2026-04-28T01:32:04.517883+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 95.874, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 9075, "timestamp": "2026-04-28T01:33:40.409626+00:00", "variant": "v8", "winner": "v8"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 61.109, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2792, "timestamp": "2026-04-28T01:34:41.542495+00:00", "variant": "v8", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 15.026, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4533, "timestamp": "2026-04-28T01:34:56.579296+00:00", "variant": "v8", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 90.681, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T01:36:27.279267+00:00", "variant": "v8"}
+{"cycle": 6, "duration_sec": 30.898, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T01:36:58.192882+00:00", "variant": "v8"}
+{"cycle": 6, "duration_sec": 27.152, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T01:37:25.358175+00:00", "variant": "v8"}
+{"cycle": 6, "duration_sec": 137.127, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 9860, "timestamp": "2026-04-28T01:39:42.497912+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 66.583, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1762, "timestamp": "2026-04-28T01:40:49.094389+00:00", "variant": "v9", "winner": "A"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 25.181, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 3474, "timestamp": "2026-04-28T01:41:14.292113+00:00", "variant": "v9", "winner": "v9"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 25.601, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -9707, "timestamp": "2026-04-28T01:41:39.909470+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 40.862, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6987, "timestamp": "2026-04-28T01:42:20.790258+00:00", "variant": "v9", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 57.495, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T01:43:18.304147+00:00", "variant": "v9"}
+{"cycle": 6, "duration_sec": 69.517, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 6597, "timestamp": "2026-04-28T01:44:27.849532+00:00", "variant": "v9"}
+{"cycle": 6, "duration_sec": 84.196, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 1556, "timestamp": "2026-04-28T01:45:52.067498+00:00", "variant": "v9"}
+{"cycle": 6, "duration_sec": 81.918, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 10107, "timestamp": "2026-04-28T01:47:13.991537+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 116.815, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3583, "timestamp": "2026-04-28T01:49:10.823413+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 84.192, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -20193, "timestamp": "2026-04-28T01:50:35.029609+00:00", "variant": "v10", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 62.437, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3565, "timestamp": "2026-04-28T01:51:37.482339+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 33.862, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6982, "timestamp": "2026-04-28T01:52:11.349607+00:00", "variant": "v10", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 24.025, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T01:52:35.385781+00:00", "variant": "v10"}
+{"cycle": 6, "duration_sec": 79.556, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 1039, "timestamp": "2026-04-28T01:53:54.958140+00:00", "variant": "v10"}
+{"cycle": 6, "duration_sec": 16.258, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T01:54:11.221466+00:00", "variant": "v10"}
+{"cycle": 6, "duration_sec": 41.66, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T01:54:52.901699+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 22.113, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 4597, "timestamp": "2026-04-28T01:55:15.035404+00:00", "variant": "v11", "winner": "A"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 63.399, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": 0, "timestamp": "2026-04-28T01:56:18.439998+00:00", "variant": "v11", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 17.87, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2689, "timestamp": "2026-04-28T01:56:36.322389+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 12.172, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4145, "timestamp": "2026-04-28T01:56:48.510919+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 98.759, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 330, "timestamp": "2026-04-28T01:58:27.278761+00:00", "variant": "v11"}
+{"cycle": 6, "duration_sec": 18.367, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 2986, "timestamp": "2026-04-28T01:58:45.663831+00:00", "variant": "v11"}
+{"cycle": 6, "duration_sec": 51.74, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 13734, "timestamp": "2026-04-28T01:59:37.423593+00:00", "variant": "v11"}
+{"cycle": 6, "duration_sec": 96.357, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 17056, "timestamp": "2026-04-28T02:01:13.799060+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 59.668, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": -1205, "timestamp": "2026-04-28T02:02:13.480636+00:00", "variant": "v12", "winner": "A"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 123.824, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 745, "timestamp": "2026-04-28T02:04:17.315305+00:00", "variant": "v12", "winner": "v12"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 12.582, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4400, "timestamp": "2026-04-28T02:04:29.932262+00:00", "variant": "v12", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 11.636, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2939, "timestamp": "2026-04-28T02:04:41.578761+00:00", "variant": "v12", "winner": "v12"}
+{"cycle": 6, "duration_sec": 15.795, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 9250, "timestamp": "2026-04-28T02:04:57.385991+00:00", "variant": "v12"}
+{"cycle": 6, "duration_sec": 69.11, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 17351, "timestamp": "2026-04-28T02:06:06.510600+00:00", "variant": "v12"}
+{"cycle": 6, "duration_sec": 23.5, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T02:06:30.028254+00:00", "variant": "v12"}
+{"cycle": 6, "duration_sec": 94.118, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 8102, "timestamp": "2026-04-28T02:08:04.156404+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 54.263, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 315, "timestamp": "2026-04-28T02:08:58.433144+00:00", "variant": "v13", "winner": "A"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 252.746, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": 0, "timestamp": "2026-04-28T02:13:11.202977+00:00", "variant": "v13", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 28.824, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -10059, "timestamp": "2026-04-28T02:13:40.046056+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 35.897, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 15544, "timestamp": "2026-04-28T02:14:15.961273+00:00", "variant": "v13", "winner": "v13"}
+{"cycle": 6, "duration_sec": 95.774, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 3281, "timestamp": "2026-04-28T02:15:51.740693+00:00", "variant": "v13"}
+{"cycle": 6, "duration_sec": 14.606, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T02:16:06.363543+00:00", "variant": "v13"}
+{"cycle": 6, "duration_sec": 88.693, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 10016, "timestamp": "2026-04-28T02:17:35.061720+00:00", "variant": "v13"}
+{"cycle": 6, "duration_sec": 17.502, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T02:17:52.580380+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 90.605, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -7986, "timestamp": "2026-04-28T02:19:23.200339+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 101.829, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2197, "timestamp": "2026-04-28T02:21:05.044981+00:00", "variant": "v14", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 22.246, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2148, "timestamp": "2026-04-28T02:21:27.304905+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 40.279, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -9242, "timestamp": "2026-04-28T02:22:07.602010+00:00", "variant": "v14", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 149.363, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 330, "timestamp": "2026-04-28T02:24:36.984115+00:00", "variant": "v14"}
+{"cycle": 6, "duration_sec": 88.089, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 377, "timestamp": "2026-04-28T02:26:05.090892+00:00", "variant": "v14"}
+{"cycle": 6, "duration_sec": 25.608, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T02:26:30.713637+00:00", "variant": "v14"}
+{"cycle": 6, "duration_sec": 16.495, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T02:26:47.213295+00:00", "variant": "v14"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 115.654, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4721, "timestamp": "2026-04-28T02:28:42.882829+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "v5", "cycle": 6, "duration_sec": 122.471, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": 138, "timestamp": "2026-04-28T02:30:45.369292+00:00", "variant": "v15", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 22.564, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -5420, "timestamp": "2026-04-28T02:31:07.949359+00:00", "variant": "v15", "winner": "B"}
+{"benchmark": "baseline", "cycle": 6, "duration_sec": 44.211, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6952, "timestamp": "2026-04-28T02:31:52.177619+00:00", "variant": "v15", "winner": "baseline"}
+{"cycle": 6, "duration_sec": 22.413, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T02:32:14.609942+00:00", "variant": "v15"}
+{"cycle": 6, "duration_sec": 54.196, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T02:33:08.821868+00:00", "variant": "v15"}
+{"cycle": 6, "duration_sec": 139.996, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T02:35:28.836395+00:00", "variant": "v15"}
+{"cycle": 6, "duration_sec": 131.152, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 9512, "timestamp": "2026-04-28T02:37:39.993830+00:00", "variant": "v15"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 62.742, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 14701, "timestamp": "2026-04-28T02:38:42.760052+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 19.099, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2648, "timestamp": "2026-04-28T02:39:01.871532+00:00", "variant": "v6", "winner": "v6"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 49.767, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 8879, "timestamp": "2026-04-28T02:39:51.654286+00:00", "variant": "v6", "winner": "A"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 59.383, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 5067, "timestamp": "2026-04-28T02:40:51.054347+00:00", "variant": "v6", "winner": "v6"}
+{"cycle": 7, "duration_sec": 22.941, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T02:41:14.016835+00:00", "variant": "v6"}
+{"cycle": 7, "duration_sec": 109.194, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 7664, "timestamp": "2026-04-28T02:43:03.227562+00:00", "variant": "v6"}
+{"cycle": 7, "duration_sec": 81.21, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 11928, "timestamp": "2026-04-28T02:44:24.453465+00:00", "variant": "v6"}
+{"cycle": 7, "duration_sec": 95.069, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 11772, "timestamp": "2026-04-28T02:45:59.540527+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 26.689, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 3548, "timestamp": "2026-04-28T02:46:26.248345+00:00", "variant": "v7", "winner": "A"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 17.508, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2569, "timestamp": "2026-04-28T02:46:43.765320+00:00", "variant": "v7", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 19.793, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -5886, "timestamp": "2026-04-28T02:47:03.566156+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 11.135, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -836, "timestamp": "2026-04-28T02:47:14.712642+00:00", "variant": "v7", "winner": "baseline"}
+{"cycle": 7, "duration_sec": 17.953, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 4006, "timestamp": "2026-04-28T02:47:32.678638+00:00", "variant": "v7"}
+{"cycle": 7, "duration_sec": 96.852, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T02:49:09.534794+00:00", "variant": "v7"}
+{"cycle": 7, "duration_sec": 15.141, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 3176, "timestamp": "2026-04-28T02:49:24.684019+00:00", "variant": "v7"}
+{"cycle": 7, "duration_sec": 14.347, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T02:49:39.049002+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 28.83, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 5125, "timestamp": "2026-04-28T02:50:07.894184+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 13.912, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 2755, "timestamp": "2026-04-28T02:50:21.820615+00:00", "variant": "v8", "winner": "v8"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 10.605, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1497, "timestamp": "2026-04-28T02:50:32.469941+00:00", "variant": "v8", "winner": "B"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 11.264, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 3102, "timestamp": "2026-04-28T02:50:43.752199+00:00", "variant": "v8", "winner": "v8"}
+{"cycle": 7, "duration_sec": 32.51, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T02:51:16.285420+00:00", "variant": "v8"}
+{"cycle": 7, "duration_sec": 100.994, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 4693, "timestamp": "2026-04-28T02:52:57.294218+00:00", "variant": "v8"}
+{"cycle": 7, "duration_sec": 27.802, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 16771, "timestamp": "2026-04-28T02:53:25.111254+00:00", "variant": "v8"}
+{"cycle": 7, "duration_sec": 70.96, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T02:54:36.075330+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 25.078, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4302, "timestamp": "2026-04-28T02:55:01.160724+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 63.888, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 1483, "timestamp": "2026-04-28T02:56:05.053617+00:00", "variant": "v9", "winner": "v9"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 46.83, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -8037, "timestamp": "2026-04-28T02:56:51.898617+00:00", "variant": "v9", "winner": "B"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 19.983, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3079, "timestamp": "2026-04-28T02:57:11.895954+00:00", "variant": "v9", "winner": "baseline"}
+{"cycle": 7, "duration_sec": 21.639, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T02:57:33.540628+00:00", "variant": "v9"}
+{"cycle": 7, "duration_sec": 18.382, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T02:57:51.932381+00:00", "variant": "v9"}
+{"cycle": 7, "duration_sec": 103.537, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 6946, "timestamp": "2026-04-28T02:59:35.473723+00:00", "variant": "v9"}
+{"cycle": 7, "duration_sec": 101.367, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 8996, "timestamp": "2026-04-28T03:01:16.845792+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 111.266, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -9192, "timestamp": "2026-04-28T03:03:08.143349+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 23.221, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3537, "timestamp": "2026-04-28T03:03:31.377466+00:00", "variant": "v10", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 16.467, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -5087, "timestamp": "2026-04-28T03:03:47.878924+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 7.646, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -412, "timestamp": "2026-04-28T03:03:55.534602+00:00", "variant": "v10", "winner": "baseline"}
+{"cycle": 7, "duration_sec": 132.633, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 3, "timestamp": "2026-04-28T03:06:08.183789+00:00", "variant": "v10"}
+{"cycle": 7, "duration_sec": 140.951, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 2613, "timestamp": "2026-04-28T03:08:29.151912+00:00", "variant": "v10"}
+{"cycle": 7, "duration_sec": 36.988, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 26955, "timestamp": "2026-04-28T03:09:06.161145+00:00", "variant": "v10"}
+{"cycle": 7, "duration_sec": 121.935, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 2376, "timestamp": "2026-04-28T03:11:08.109159+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 52.235, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2428, "timestamp": "2026-04-28T03:12:00.349257+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 103.412, "mode": "2p", "reward_diff": 0, "seat": 1, "ship_diff": 0, "timestamp": "2026-04-28T03:13:43.783636+00:00", "variant": "v11", "winner": "draw"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 29.669, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -5758, "timestamp": "2026-04-28T03:14:13.466117+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 9.316, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1138, "timestamp": "2026-04-28T03:14:22.786801+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 7, "duration_sec": 77.798, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 18007, "timestamp": "2026-04-28T03:15:40.590367+00:00", "variant": "v11"}
+{"cycle": 7, "duration_sec": 49.197, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 15458, "timestamp": "2026-04-28T03:16:29.793651+00:00", "variant": "v11"}
+{"cycle": 7, "duration_sec": 13.717, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T03:16:43.527848+00:00", "variant": "v11"}
+{"cycle": 7, "duration_sec": 12.516, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T03:16:56.056588+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 25.597, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2164, "timestamp": "2026-04-28T03:17:21.669155+00:00", "variant": "v12", "winner": "A"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 73.467, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3994, "timestamp": "2026-04-28T03:18:35.154891+00:00", "variant": "v12", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 51.226, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2831, "timestamp": "2026-04-28T03:19:26.386201+00:00", "variant": "v12", "winner": "A"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 44.666, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 267, "timestamp": "2026-04-28T03:20:11.064589+00:00", "variant": "v12", "winner": "v12"}
+{"cycle": 7, "duration_sec": 20.131, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T03:20:31.213668+00:00", "variant": "v12"}
+{"cycle": 7, "duration_sec": 57.024, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 24016, "timestamp": "2026-04-28T03:21:28.248908+00:00", "variant": "v12"}
+{"cycle": 7, "duration_sec": 101.125, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 10866, "timestamp": "2026-04-28T03:23:09.388276+00:00", "variant": "v12"}
+{"cycle": 7, "duration_sec": 91.753, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 3973, "timestamp": "2026-04-28T03:24:41.153387+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 24.291, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2961, "timestamp": "2026-04-28T03:25:05.458207+00:00", "variant": "v13", "winner": "A"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 48.816, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 8, "timestamp": "2026-04-28T03:25:54.290686+00:00", "variant": "v13", "winner": "v13"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 80.837, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 12626, "timestamp": "2026-04-28T03:27:15.146823+00:00", "variant": "v13", "winner": "A"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 20.584, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4527, "timestamp": "2026-04-28T03:27:35.743963+00:00", "variant": "v13", "winner": "baseline"}
+{"cycle": 7, "duration_sec": 90.475, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 10907, "timestamp": "2026-04-28T03:29:06.234837+00:00", "variant": "v13"}
+{"cycle": 7, "duration_sec": 88.182, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 7808, "timestamp": "2026-04-28T03:30:34.436993+00:00", "variant": "v13"}
+{"cycle": 7, "duration_sec": 109.947, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 13891, "timestamp": "2026-04-28T03:32:24.389528+00:00", "variant": "v13"}
+{"cycle": 7, "duration_sec": 80.661, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 7389, "timestamp": "2026-04-28T03:33:45.054907+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 104.991, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2191, "timestamp": "2026-04-28T03:35:30.057739+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 20.596, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 6954, "timestamp": "2026-04-28T03:35:50.668519+00:00", "variant": "v14", "winner": "v14"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 64.424, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -8878, "timestamp": "2026-04-28T03:36:55.098676+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 51.251, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 10423, "timestamp": "2026-04-28T03:37:46.367297+00:00", "variant": "v14", "winner": "v14"}
+{"cycle": 7, "duration_sec": 128.901, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 5198, "timestamp": "2026-04-28T03:39:55.279302+00:00", "variant": "v14"}
+{"cycle": 7, "duration_sec": 70.007, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T03:41:05.299852+00:00", "variant": "v14"}
+{"cycle": 7, "duration_sec": 33.991, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T03:41:39.301404+00:00", "variant": "v14"}
+{"cycle": 7, "duration_sec": 102.984, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 4209, "timestamp": "2026-04-28T03:43:22.300278+00:00", "variant": "v14"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 16.823, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 4580, "timestamp": "2026-04-28T03:43:39.143917+00:00", "variant": "v15", "winner": "A"}
+{"benchmark": "v5", "cycle": 7, "duration_sec": 136.974, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -11561, "timestamp": "2026-04-28T03:45:56.129743+00:00", "variant": "v15", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 30.377, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 23324, "timestamp": "2026-04-28T03:46:26.520840+00:00", "variant": "v15", "winner": "A"}
+{"benchmark": "baseline", "cycle": 7, "duration_sec": 44.106, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -6379, "timestamp": "2026-04-28T03:47:10.646171+00:00", "variant": "v15", "winner": "baseline"}
+{"cycle": 7, "duration_sec": 28.288, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T03:47:38.939359+00:00", "variant": "v15"}
+{"cycle": 7, "duration_sec": 137.486, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 84, "timestamp": "2026-04-28T03:49:56.437060+00:00", "variant": "v15"}
+{"cycle": 7, "duration_sec": 133.069, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 2079, "timestamp": "2026-04-28T03:52:09.511191+00:00", "variant": "v15"}
+{"cycle": 7, "duration_sec": 32.205, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T03:52:41.728616+00:00", "variant": "v15"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 17.629, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4253, "timestamp": "2026-04-28T03:52:59.377170+00:00", "variant": "v6", "winner": "B"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 66.496, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 1143, "timestamp": "2026-04-28T03:54:05.884591+00:00", "variant": "v6", "winner": "v6"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 20.629, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -6082, "timestamp": "2026-04-28T03:54:26.527099+00:00", "variant": "v6", "winner": "B"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 47.727, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -4393, "timestamp": "2026-04-28T03:55:14.269794+00:00", "variant": "v6", "winner": "baseline"}
+{"cycle": 8, "duration_sec": 14.78, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 2326, "timestamp": "2026-04-28T03:55:29.064923+00:00", "variant": "v6"}
+{"cycle": 8, "duration_sec": 59.524, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 7543, "timestamp": "2026-04-28T03:56:28.604547+00:00", "variant": "v6"}
+{"cycle": 8, "duration_sec": 95.647, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 9599, "timestamp": "2026-04-28T03:58:04.279807+00:00", "variant": "v6"}
+{"cycle": 8, "duration_sec": 58.419, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T03:59:02.710909+00:00", "variant": "v6"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 26.633, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -7093, "timestamp": "2026-04-28T03:59:29.361635+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 61.296, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -16706, "timestamp": "2026-04-28T04:00:30.679199+00:00", "variant": "v7", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 6.541, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -1986, "timestamp": "2026-04-28T04:00:37.236937+00:00", "variant": "v7", "winner": "B"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 52.236, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 10745, "timestamp": "2026-04-28T04:01:29.477063+00:00", "variant": "v7", "winner": "v7"}
+{"cycle": 8, "duration_sec": 12.759, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T04:01:42.251453+00:00", "variant": "v7"}
+{"cycle": 8, "duration_sec": 70.257, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 0, "timestamp": "2026-04-28T04:02:52.528926+00:00", "variant": "v7"}
+{"cycle": 8, "duration_sec": 24.538, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T04:03:17.085721+00:00", "variant": "v7"}
+{"cycle": 8, "duration_sec": 66.712, "mode": "4p", "rank": 1, "reward": 1, "seat": 3, "ships": 8545, "timestamp": "2026-04-28T04:04:23.814523+00:00", "variant": "v7"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 83.572, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2384, "timestamp": "2026-04-28T04:05:47.412936+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 75.437, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": -645, "timestamp": "2026-04-28T04:07:02.862122+00:00", "variant": "v8", "winner": "v8"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 67.942, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 7356, "timestamp": "2026-04-28T04:08:10.816971+00:00", "variant": "v8", "winner": "A"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 15.097, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -3741, "timestamp": "2026-04-28T04:08:25.928914+00:00", "variant": "v8", "winner": "baseline"}
+{"cycle": 8, "duration_sec": 76.581, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 1552, "timestamp": "2026-04-28T04:09:42.526069+00:00", "variant": "v8"}
+{"cycle": 8, "duration_sec": 67.834, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 8856, "timestamp": "2026-04-28T04:10:50.376548+00:00", "variant": "v8"}
+{"cycle": 8, "duration_sec": 50.009, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 535, "timestamp": "2026-04-28T04:11:40.397348+00:00", "variant": "v8"}
+{"cycle": 8, "duration_sec": 131.328, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 1218, "timestamp": "2026-04-28T04:13:51.730900+00:00", "variant": "v8"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 86.534, "mode": "2p", "reward_diff": 0, "seat": 0, "ship_diff": 0, "timestamp": "2026-04-28T04:15:18.282039+00:00", "variant": "v9", "winner": "draw"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 59.652, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 732, "timestamp": "2026-04-28T04:16:17.948950+00:00", "variant": "v9", "winner": "v9"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 32.86, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 6663, "timestamp": "2026-04-28T04:16:50.820464+00:00", "variant": "v9", "winner": "A"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 7.645, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -745, "timestamp": "2026-04-28T04:16:58.475949+00:00", "variant": "v9", "winner": "baseline"}
+{"cycle": 8, "duration_sec": 37.218, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T04:17:35.705516+00:00", "variant": "v9"}
+{"cycle": 8, "duration_sec": 94.955, "mode": "4p", "rank": 2, "reward": -1, "seat": 1, "ships": 6071, "timestamp": "2026-04-28T04:19:10.665973+00:00", "variant": "v9"}
+{"cycle": 8, "duration_sec": 62.888, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T04:20:13.571169+00:00", "variant": "v9"}
+{"cycle": 8, "duration_sec": 106.139, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 6512, "timestamp": "2026-04-28T04:21:59.723895+00:00", "variant": "v9"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 85.023, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -12425, "timestamp": "2026-04-28T04:23:24.756840+00:00", "variant": "v10", "winner": "B"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 36.025, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 4400, "timestamp": "2026-04-28T04:24:00.799506+00:00", "variant": "v10", "winner": "v10"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 30.073, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 23179, "timestamp": "2026-04-28T04:24:30.891790+00:00", "variant": "v10", "winner": "A"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 11.352, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -2824, "timestamp": "2026-04-28T04:24:42.260839+00:00", "variant": "v10", "winner": "baseline"}
+{"cycle": 8, "duration_sec": 13.019, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T04:24:55.298349+00:00", "variant": "v10"}
+{"cycle": 8, "duration_sec": 102.617, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 12121, "timestamp": "2026-04-28T04:26:37.926848+00:00", "variant": "v10"}
+{"cycle": 8, "duration_sec": 29.721, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T04:27:07.669604+00:00", "variant": "v10"}
+{"cycle": 8, "duration_sec": 74.994, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 1402, "timestamp": "2026-04-28T04:28:22.676437+00:00", "variant": "v10"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 76.302, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 1545, "timestamp": "2026-04-28T04:29:38.992635+00:00", "variant": "v11", "winner": "A"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 53.022, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 5991, "timestamp": "2026-04-28T04:30:32.029978+00:00", "variant": "v11", "winner": "v11"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 43.661, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": 1008, "timestamp": "2026-04-28T04:31:15.706843+00:00", "variant": "v11", "winner": "B"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 27.248, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5291, "timestamp": "2026-04-28T04:31:42.978101+00:00", "variant": "v11", "winner": "baseline"}
+{"cycle": 8, "duration_sec": 74.148, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T04:32:57.140619+00:00", "variant": "v11"}
+{"cycle": 8, "duration_sec": 99.934, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 12360, "timestamp": "2026-04-28T04:34:37.079758+00:00", "variant": "v11"}
+{"cycle": 8, "duration_sec": 59.254, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 2671, "timestamp": "2026-04-28T04:35:36.356445+00:00", "variant": "v11"}
+{"cycle": 8, "duration_sec": 63.541, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 7696, "timestamp": "2026-04-28T04:36:39.902382+00:00", "variant": "v11"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 109.166, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2373, "timestamp": "2026-04-28T04:38:29.084594+00:00", "variant": "v12", "winner": "A"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 25.585, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 7306, "timestamp": "2026-04-28T04:38:54.684644+00:00", "variant": "v12", "winner": "v12"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 9.625, "mode": "2p", "reward_diff": 2, "seat": 0, "ship_diff": 2029, "timestamp": "2026-04-28T04:39:04.324019+00:00", "variant": "v12", "winner": "A"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 10.243, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -5480, "timestamp": "2026-04-28T04:39:14.587331+00:00", "variant": "v12", "winner": "baseline"}
+{"cycle": 8, "duration_sec": 23.744, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T04:39:38.361679+00:00", "variant": "v12"}
+{"cycle": 8, "duration_sec": 82.512, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 22726, "timestamp": "2026-04-28T04:41:00.884731+00:00", "variant": "v12"}
+{"cycle": 8, "duration_sec": 91.081, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 7037, "timestamp": "2026-04-28T04:42:31.971044+00:00", "variant": "v12"}
+{"cycle": 8, "duration_sec": 28.531, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 0, "timestamp": "2026-04-28T04:43:00.514470+00:00", "variant": "v12"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 58.57, "mode": "2p", "reward_diff": 0, "seat": 0, "ship_diff": 0, "timestamp": "2026-04-28T04:43:59.090081+00:00", "variant": "v13", "winner": "draw"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 67.036, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 1231, "timestamp": "2026-04-28T04:45:06.137824+00:00", "variant": "v13", "winner": "v13"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 8.357, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -3217, "timestamp": "2026-04-28T04:45:14.510378+00:00", "variant": "v13", "winner": "B"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 47.051, "mode": "2p", "reward_diff": 2, "seat": 1, "ship_diff": 13633, "timestamp": "2026-04-28T04:46:01.579778+00:00", "variant": "v13", "winner": "v13"}
+{"cycle": 8, "duration_sec": 75.234, "mode": "4p", "rank": 1, "reward": 1, "seat": 0, "ships": 11140, "timestamp": "2026-04-28T04:47:16.832797+00:00", "variant": "v13"}
+{"cycle": 8, "duration_sec": 110.585, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 8359, "timestamp": "2026-04-28T04:49:07.429416+00:00", "variant": "v13"}
+{"cycle": 8, "duration_sec": 94.261, "mode": "4p", "rank": 1, "reward": 1, "seat": 2, "ships": 8753, "timestamp": "2026-04-28T04:50:41.696343+00:00", "variant": "v13"}
+{"cycle": 8, "duration_sec": 68.708, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 1643, "timestamp": "2026-04-28T04:51:50.411241+00:00", "variant": "v13"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 87.206, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -4708, "timestamp": "2026-04-28T04:53:17.633833+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "v5", "cycle": 8, "duration_sec": 115.514, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -23430, "timestamp": "2026-04-28T04:55:13.159161+00:00", "variant": "v14", "winner": "v5"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 72.497, "mode": "2p", "reward_diff": -2, "seat": 0, "ship_diff": -2318, "timestamp": "2026-04-28T04:56:25.660612+00:00", "variant": "v14", "winner": "B"}
+{"benchmark": "baseline", "cycle": 8, "duration_sec": 9.471, "mode": "2p", "reward_diff": -2, "seat": 1, "ship_diff": -1905, "timestamp": "2026-04-28T04:56:35.152490+00:00", "variant": "v14", "winner": "baseline"}
+{"cycle": 8, "duration_sec": 30.314, "mode": "4p", "rank": 2, "reward": -1, "seat": 0, "ships": 0, "timestamp": "2026-04-28T04:57:05.543851+00:00", "variant": "v14"}
+{"cycle": 8, "duration_sec": 175.688, "mode": "4p", "rank": 1, "reward": 1, "seat": 1, "ships": 16846, "timestamp": "2026-04-28T05:00:01.256707+00:00", "variant": "v14"}
+{"cycle": 8, "duration_sec": 80.808, "mode": "4p", "rank": 2, "reward": -1, "seat": 2, "ships": 0, "timestamp": "2026-04-28T05:01:22.177465+00:00", "variant": "v14"}
+{"cycle": 8, "duration_sec": 147.911, "mode": "4p", "rank": 2, "reward": -1, "seat": 3, "ships": 5972, "timestamp": "2026-04-28T05:03:50.090720+00:00", "variant": "v14"}

@@ -112,6 +112,11 @@ MULTI_ENEMY_STACK_WINDOW = 3
 PROACTIVE_ENEMY_TOP_K = 3
 PROACTIVE_KEEP_RATIO = 0.18
 STACKED_PROACTIVE_KEEP_RATIO = 0.22
+FOUR_PLAYER_PIVOT_PROD_RATIO = 1.18
+FOUR_PLAYER_PIVOT_STAGE_DISTANCE = 22.0
+FOUR_PLAYER_PIVOT_SAFE_NEUTRAL_LIMIT = 2
+FOUR_PLAYER_PIVOT_HOSTILE_BONUS = 1.18
+FOUR_PLAYER_PREP_HOSTILE_DAMP = 0.82
 
 AGENT_MEMORY: Dict[str, Any] = {
     "last_owners": {},
@@ -1509,6 +1514,28 @@ class DecisionLogic:
             best_stacked = max(best_stacked, running)
         return max(proactive, int(best_stacked * STACKED_PROACTIVE_KEEP_RATIO))
 
+    def _four_player_safe_neutral_count(self) -> int:
+        if self.state.num_players < 4:
+            return 0
+        count = 0
+        for target in getattr(self.state, "neutral_planets", []):
+            if target.production < OPENING_MIN_PRODUCTION:
+                continue
+            my_t, enemy_t = self.reaction_map.get(target.id, (10**9, 10**9))
+            if my_t <= min(18, enemy_t + 1):
+                count += 1
+        return count
+
+    def _four_player_stage_ready(self) -> bool:
+        enemy_planets = getattr(self.state, "enemy_planets", [])
+        if self.state.num_players < 4 or not enemy_planets:
+            return False
+        for planet in getattr(self.state, "my_planets", []):
+            nearest_enemy = min(distance_planets(planet, enemy) for enemy in enemy_planets)
+            if nearest_enemy <= FOUR_PLAYER_PIVOT_STAGE_DISTANCE and planet.ships >= 10:
+                return True
+        return False
+
     def _planet_surplus(self, planet: Planet, turns_ahead: int = DEFENSE_HORIZON) -> int:
         cache_key = (planet.id, self.committed_ships.get(planet.id, 0))
         if cache_key in self.surplus_cache:
@@ -1723,6 +1750,25 @@ class DecisionLogic:
                 and self.state.step > 120
             )
 
+        four_player_safe_neutral_count = 0
+        four_player_stage_ready = False
+        four_player_pivot_ready = False
+        four_player_map_saturated = False
+        if self.state.num_players >= 4:
+            four_player_safe_neutral_count = self._four_player_safe_neutral_count()
+            four_player_stage_ready = self._four_player_stage_ready()
+            four_player_map_saturated = (
+                four_player_safe_neutral_count <= FOUR_PLAYER_PIVOT_SAFE_NEUTRAL_LIMIT
+            )
+            four_player_pivot_ready = (
+                four_player_stage_ready
+                and (
+                    four_player_map_saturated
+                    or my_prod >= max(1, max_enemy_prod) * FOUR_PLAYER_PIVOT_PROD_RATIO
+                    or is_ahead
+                )
+            )
+
         is_cleanup = (
             enemy_total > 0
             and enemy_planet_count <= CLEANUP_MAX_ENEMY_PLANETS
@@ -1758,6 +1804,10 @@ class DecisionLogic:
             "owner_prod": dict(owner_prod),
             "owner_planet_counts": dict(owner_planet_counts),
             "enemy_planet_count": enemy_planet_count,
+            "four_player_safe_neutral_count": four_player_safe_neutral_count,
+            "four_player_stage_ready": four_player_stage_ready,
+            "four_player_map_saturated": four_player_map_saturated,
+            "four_player_pivot_ready": four_player_pivot_ready,
         }
 
     def _build_enemy_priority(self) -> Dict[int, float]:
@@ -1988,6 +2038,10 @@ class DecisionLogic:
             value *= 0.92
         if self.state.num_players >= 4 and target.owner not in (-1, self.state.player):
             value *= self.enemy_priority.get(target.owner, 1.0)
+            if modes.get("four_player_pivot_ready"):
+                value *= FOUR_PLAYER_PIVOT_HOSTILE_BONUS
+            else:
+                value *= FOUR_PLAYER_PREP_HOSTILE_DAMP
 
         return value
 
@@ -2194,6 +2248,9 @@ class DecisionLogic:
             return
         if self._shun_opening_active():
             return
+        if self.state.num_players >= 4 and not self.modes.get("four_player_pivot_ready"):
+            if self.modes.get("four_player_safe_neutral_count", 0) > FOUR_PLAYER_PIVOT_SAFE_NEUTRAL_LIMIT:
+                return
         if self.state.is_early:
             good_neutrals = [p for p in self.state.neutral_planets if p.production >= OPENING_MIN_PRODUCTION]
             if len(good_neutrals) >= 3:

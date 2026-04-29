@@ -35,10 +35,11 @@ SOFT_ACT_DEADLINE = 0.82
 
 MAX_TURN_LAUNCHES = 6
 DUEL_OPENING_LAUNCH_CAP = 4
-DUEL_OPENING_CAP_TURN = 16
+DUEL_HOSTILE_DELAY = 20
+DUEL_PIVOT_TURN = 32
+DUEL_ROTATING_MAX_ETA = 13
 DUEL_SAFE_ROTATING_PROD_THRESHOLD = 4
 DUEL_SAFE_ROTATING_ETA_LIMIT = 10
-DUEL_ROTATING_MAX_ETA = 13
 SWARM_ETA_TOLERANCE = 2
 MULTI_SOURCE_TOP_K = 4
 OPENING_MIN_PRODUCTION = 2
@@ -93,6 +94,14 @@ SNIPE_SCORE_MULT = 1.12
 SWARM_SCORE_MULT = 1.06
 CRASH_EXPLOIT_SCORE_MULT = 1.05
 
+INDIRECT_VALUE_SCALE = 0.15
+INDIRECT_FRIENDLY_WEIGHT = 0.35
+INDIRECT_NEUTRAL_WEIGHT = 0.9
+INDIRECT_ENEMY_WEIGHT = 1.25
+INDIRECT_DISTANCE_OFFSET = 12.0
+DENSE_STATIC_NEUTRAL_COUNT = 4
+DENSE_ROTATING_NEUTRAL_SCORE_MULT = 0.86
+
 NEUTRAL_MARGIN_BASE = 2
 HOSTILE_MARGIN_BASE = 2
 MARGIN_PROD_WEIGHT = 2
@@ -106,6 +115,7 @@ CLEANUP_MAX_ENEMY_PLANETS = 4
 CLEANUP_STRENGTH_RATIO = 2.8
 CLEANUP_PROD_RATIO = 2.4
 CLEANUP_TARGET_VALUE_BONUS = 85.0
+CLEANUP_ATTACK_SCORE_MULT = 1.4
 PROACTIVE_DEFENSE_HORIZON = 12
 MULTI_ENEMY_PROACTIVE_HORIZON = 14
 MULTI_ENEMY_STACK_WINDOW = 3
@@ -1325,6 +1335,32 @@ def detect_enemy_crashes(
     return crashes
 
 
+def indirect_features(
+    planet: Planet,
+    planets: Sequence[Planet],
+    player: int,
+) -> Tuple[float, float, float]:
+    """Score a planet's neighborhood by nearby production weighted by distance."""
+
+    friendly = 0.0
+    neutral = 0.0
+    enemy = 0.0
+    for other in planets:
+        if other.id == planet.id:
+            continue
+        d = distance_planets(planet, other)
+        if d < 1.0:
+            continue
+        factor = other.production / (d + INDIRECT_DISTANCE_OFFSET)
+        if other.owner == player:
+            friendly += factor
+        elif other.owner == -1:
+            neutral += factor
+        else:
+            enemy += factor
+    return friendly, neutral, enemy
+
+
 def reaction_probe_ships(source: Planet, target: Planet) -> int:
     """Estimate a realistic fleet size for race-time comparisons."""
 
@@ -1358,6 +1394,13 @@ class DecisionLogic:
             deadline=self.deadline,
         )
         self.world = ProjectedWorld(self.state, self.predictor, deadline=self.deadline)
+
+        self.indirect_wealth_map: Dict[int, float] = {}
+        for planet in self.state.planets:
+            f, n, e = indirect_features(planet, self.state.planets, self.state.player)
+            self.indirect_wealth_map[planet.id] = (
+                f * INDIRECT_FRIENDLY_WEIGHT + n * INDIRECT_NEUTRAL_WEIGHT + e * INDIRECT_ENEMY_WEIGHT
+            )
 
         self.used_donor_ids: set[int] = set()
         self.committed_ships: Dict[int, int] = defaultdict(int)
@@ -1478,7 +1521,12 @@ class DecisionLogic:
         return self.shot_cache[key]
 
     def _proactive_keep(self, planet: Planet) -> int:
-        if self.state.num_players < 4 or not self.state.enemy_planets:
+        if (
+            not self.state.enemy_planets
+            or self.modes.get("is_cleanup")
+            or self.state.num_players > 2
+            or not self.state.is_opening
+        ):
             return 0
         proactive = 0
         threats: List[Tuple[int, int]] = []
@@ -1571,6 +1619,8 @@ class DecisionLogic:
         if self.expired():
             return None
         max_ships = min(int(max_ships), int(source.ships))
+        original_cap = max_ships
+        max_ships = min(max_ships, self._source_send_cap(source, target, max_ships, mission))
         if max_ships <= 0:
             return None
 
@@ -1644,7 +1694,13 @@ class DecisionLogic:
             if next_send == current_send:
                 break
             current_send = next_send
-        candidates = [p for p in tested.values() if p is not None and p.ships >= p.required_ships]
+        candidates = [
+            p
+            for p in tested.values()
+            if p is not None
+            and p.ships >= p.required_ships
+            and self._plan_is_selective_enough(source, target, p, mission, original_cap)
+        ]
         if not candidates:
             return None
 
@@ -1800,37 +1856,15 @@ class DecisionLogic:
             and getattr(self.state, "step", 0) < SHUN_OPENING_TURN_LIMIT
         )
 
-    def _duel_rotating_opening_allowed(self, target: Planet, plan: CapturePlan) -> bool:
-        if (
-            self.state.num_players > 2
-            or not self.state.is_opening
-            or target.owner != -1
-            or not is_orbiting_planet(target)
-        ):
-            return True
-        _my_t, enemy_t = self.reaction_map.get(target.id, (10**9, 10**9))
-        reaction_gap = enemy_t - plan.eta
-        if (
-            target.production >= DUEL_SAFE_ROTATING_PROD_THRESHOLD
-            and plan.eta <= DUEL_SAFE_ROTATING_ETA_LIMIT
-            and reaction_gap >= SAFE_NEUTRAL_MARGIN
-        ):
-            return True
-        return (
-            target.production >= 3
-            and plan.eta <= DUEL_ROTATING_MAX_ETA
-            and reaction_gap >= 1
-        )
-
     def _duel_opening_neutrals(self) -> List[Planet]:
         if getattr(self.state, "num_players", 2) > 2:
             return []
         candidates: List[Planet] = []
-        for target in getattr(self.state, "neutral_planets", []):
+        for target in self.state.neutral_planets:
             if target.production < OPENING_MIN_PRODUCTION:
                 continue
             if (
-                getattr(self.state, "is_early", False)
+                self.state.is_early
                 and is_orbiting_planet(target)
                 and target.production < SHUN_OPENING_ORBITING_MIN_PRODUCTION
             ):
@@ -1848,16 +1882,88 @@ class DecisionLogic:
             return False
         viable_neutrals = self._duel_opening_neutrals()
         step = getattr(self.state, "step", 0)
-        if step < DUEL_OPENING_CAP_TURN:
+        if step < DUEL_HOSTILE_DELAY:
             return len(viable_neutrals) < 2
+        if step < DUEL_PIVOT_TURN:
+            return len(viable_neutrals) <= 1 or (
+                self.modes.get("is_ahead", False) and len(viable_neutrals) <= 2
+            )
         return True
 
     def _turn_launch_cap(self) -> int:
         if self._shun_opening_active():
             return min(MAX_TURN_LAUNCHES, SHUN_OPENING_LAUNCH_CAP)
-        if getattr(self.state, "num_players", 2) <= 2 and getattr(self.state, "step", 0) < DUEL_OPENING_CAP_TURN:
+        if getattr(self.state, "num_players", 2) <= 2 and getattr(self.state, "step", 0) < DUEL_HOSTILE_DELAY:
             return min(MAX_TURN_LAUNCHES, DUEL_OPENING_LAUNCH_CAP)
         return MAX_TURN_LAUNCHES
+
+    def _duel_rotating_opening_allowed(self, target: Planet, plan: CapturePlan) -> bool:
+        if (
+            getattr(self.state, "num_players", 2) > 2
+            or not getattr(self.state, "is_opening", False)
+            or target.owner != -1
+            or not is_orbiting_planet(target)
+        ):
+            return True
+        _my_t, enemy_t = self.reaction_map.get(target.id, (10**9, 10**9))
+        reaction_gap = enemy_t - plan.eta
+        if (
+            target.production >= DUEL_SAFE_ROTATING_PROD_THRESHOLD
+            and plan.eta <= DUEL_SAFE_ROTATING_ETA_LIMIT
+            and reaction_gap >= SAFE_NEUTRAL_MARGIN
+        ):
+            return True
+        return plan.eta <= DUEL_ROTATING_MAX_ETA and target.production > 2 and reaction_gap >= 1
+
+    def _source_send_cap(self, source: Planet, target: Planet, available: int, mission: str) -> int:
+        available = max(0, int(available))
+        if available <= 0:
+            return 0
+        if mission in {"reinforce", "defend", "evacuate", "crash_exploit"} or self.modes.get("is_cleanup"):
+            return available
+        if self.state.num_players > 2:
+            return available
+        ratio: Optional[float] = None
+        if self.state.is_opening:
+            if target.owner == -1:
+                if is_orbiting_planet(target):
+                    ratio = 0.82 if target.production >= DUEL_SAFE_ROTATING_PROD_THRESHOLD else 0.72
+                    ratio -= 0.04
+            elif mission in {"attack", "snipe"} and self.state.step < DUEL_PIVOT_TURN:
+                ratio = 0.82
+        if ratio is None:
+            return available
+        return min(available, max(1, int(math.ceil(available * max(0.5, ratio)))))
+
+    def _plan_is_selective_enough(
+        self,
+        source: Planet,
+        target: Planet,
+        plan: CapturePlan,
+        mission: str,
+        available: int,
+    ) -> bool:
+        if mission in {"reinforce", "defend", "evacuate", "crash_exploit"} or self.state.num_players > 2:
+            return True
+        available = max(1, int(available))
+        send_share = plan.ships / available
+        overpay = max(0, int(plan.ships) - int(plan.required_ships))
+        if self.state.is_opening:
+            if target.owner == -1 and is_orbiting_planet(target):
+                if not self._duel_rotating_opening_allowed(target, plan):
+                    return False
+                if send_share > 0.88 and target.production < DUEL_SAFE_ROTATING_PROD_THRESHOLD:
+                    return False
+                if overpay > 5 and target.production < DUEL_SAFE_ROTATING_PROD_THRESHOLD:
+                    return False
+            elif target.owner not in (-1, self.state.player) and self.state.step < DUEL_PIVOT_TURN:
+                if overpay > 4:
+                    return False
+                if send_share > 0.84 and not self.modes.get("is_ahead", False):
+                    return False
+                if plan.eta > 12 and target.production < 4:
+                    return False
+        return True
 
     def _opening_capture_confidence(self, target: Planet, plan: CapturePlan, mission: str) -> float:
         if not self.state.is_opening or mission in {"reinforce", "defend", "evacuate"}:
@@ -1895,8 +2001,9 @@ class DecisionLogic:
         eta_limit = OPENING_STATIC_ETA_LIMIT if not is_orbiting_planet(target) else OPENING_ORBITING_ETA_LIMIT
         if target.owner == -1 and plan.eta > eta_limit:
             return False
-        if target.owner == -1 and is_orbiting_planet(target) and not self._duel_rotating_opening_allowed(target, plan):
-            return False
+        if getattr(self.state, "num_players", 2) <= 2 and target.owner == -1 and is_orbiting_planet(target):
+            if not self._duel_rotating_opening_allowed(target, plan):
+                return False
         if (
             self.state.is_early
             and target.owner == -1
@@ -1909,14 +2016,16 @@ class DecisionLogic:
     def _opening_mission_allowed(self, target: Planet, plan: CapturePlan, mission: str) -> bool:
         if not self._opening_capture_allowed(target, plan, mission):
             return False
-        if (
-            mission in {"attack", "snipe"}
-            and target.owner not in (-1, self.state.player)
-            and getattr(self.state, "num_players", 2) <= 2
-            and getattr(self.state, "step", 0) < DUEL_OPENING_CAP_TURN
-            and not self._duel_opening_pivot_ready()
-        ):
-            return False
+        if mission in {"attack", "snipe"} and target.owner not in (-1, self.state.player) and self.state.num_players <= 2:
+            if not self._duel_opening_pivot_ready():
+                return False
+            if self.state.step < DUEL_PIVOT_TURN:
+                if is_orbiting_planet(target) and target.production < 3:
+                    return False
+                if plan.eta > 12 and not self.modes.get("is_ahead", False):
+                    return False
+                if self._opening_capture_confidence(target, plan, mission) < OPENING_MIN_CONFIDENCE + 0.06:
+                    return False
         if not self._shun_opening_active():
             return True
         if mission in {"attack", "snipe"} and target.owner not in (-1, self.state.player):
@@ -1943,6 +2052,7 @@ class DecisionLogic:
                 return -1.0
 
         value = float(target.production * turns_profit)
+        value += self.indirect_wealth_map.get(target.id, 0.0) * turns_profit * INDIRECT_VALUE_SCALE
 
         if not is_orbiting_planet(target):
             value *= STATIC_VALUE_MULT
@@ -1977,6 +2087,13 @@ class DecisionLogic:
                     value += ELIMINATION_BONUS
 
         modes = self.modes
+        if (
+            self.state.num_players <= 2
+            and self.state.is_opening
+            and target.owner not in (-1, self.state.player)
+            and self._duel_opening_pivot_ready()
+        ):
+            value *= 1.10
         if modes["is_finishing"] and target.owner not in (-1, self.state.player):
             value *= 1.15
         if modes.get("is_cleanup") and target.owner not in (-1, self.state.player):
@@ -2004,6 +2121,19 @@ class DecisionLogic:
             score *= SWARM_SCORE_MULT
         elif mission == "crash_exploit":
             score *= CRASH_EXPLOIT_SCORE_MULT
+        if (
+            self.state.num_players <= 2
+            and self.state.is_opening
+            and mission in {"attack", "snipe"}
+            and target.owner not in (-1, self.state.player)
+            and self._duel_opening_pivot_ready()
+        ):
+            score *= 1.08
+        if self.modes.get("is_cleanup") and mission in {"attack", "snipe", "swarm"} and target.owner not in (-1, self.state.player):
+            score *= CLEANUP_ATTACK_SCORE_MULT
+        static_neutrals = [p for p in self.state.neutral_planets if not is_orbiting_planet(p)]
+        if len(static_neutrals) >= DENSE_STATIC_NEUTRAL_COUNT and target.owner == -1 and is_orbiting_planet(target):
+            score *= DENSE_ROTATING_NEUTRAL_SCORE_MULT
         return score
 
     # ── Mission builders ──
@@ -2058,8 +2188,7 @@ class DecisionLogic:
         if self._shun_opening_active() and len(self.state.neutral_planets) >= 3:
             return
         if self.state.is_early and self.state.num_players <= 2:
-            good_neutrals = [p for p in self.state.neutral_planets if p.production >= OPENING_MIN_PRODUCTION]
-            if len(good_neutrals) >= 3:
+            if not self._duel_opening_pivot_ready() and len(self._duel_opening_neutrals()) >= 2:
                 return
         last_owners = AGENT_MEMORY.get("last_owners", {})
         targets = [p for p in self.state.enemy_planets if last_owners.get(p.id) == -1]
@@ -2195,12 +2324,23 @@ class DecisionLogic:
         if self._shun_opening_active():
             return
         if self.state.is_early:
-            good_neutrals = [p for p in self.state.neutral_planets if p.production >= OPENING_MIN_PRODUCTION]
-            if len(good_neutrals) >= 3:
-                return
-        elif self.state.is_opening and len(self.state.neutral_planets) > 6:
+            if self.state.num_players <= 2:
+                if not self._duel_opening_pivot_ready():
+                    return
+            else:
+                good_neutrals = [p for p in self.state.neutral_planets if p.production >= OPENING_MIN_PRODUCTION]
+                if len(good_neutrals) >= 3:
+                    return
+        elif self.state.is_opening and len(self.state.neutral_planets) > 6 and self.state.num_players > 2:
             return
-        targets = sorted(self.state.enemy_planets, key=lambda t: (t.ships / max(1, t.production), t.ships))
+        targets = sorted(
+            self.state.enemy_planets,
+            key=lambda t: (
+                self.modes.get("owner_planet_counts", {}).get(t.owner, 0) if self.modes.get("is_cleanup") else 99,
+                t.ships / max(1, t.production),
+                t.ships,
+            ),
+        )
         for target in targets:
             if self.expired():
                 return
@@ -2245,10 +2385,13 @@ class DecisionLogic:
                 surplus = self._planet_surplus(donor)
                 if surplus <= 0:
                     continue
-                shot = self._plan_shot(donor, target, surplus)
+                cap = self._source_send_cap(donor, target, surplus, "swarm")
+                if cap <= 0:
+                    continue
+                shot = self._plan_shot(donor, target, cap)
                 if shot is None:
                     continue
-                donor_plans.append((donor, surplus, shot[0], shot[1]))
+                donor_plans.append((donor, cap, shot[0], shot[1]))
             if len(donor_plans) < 2:
                 continue
             donor_plans.sort(key=lambda x: x[3])
@@ -2337,6 +2480,8 @@ class DecisionLogic:
             proximity = 30.0 / max(6.0, nearest_enemy)
             if proximity < 1.5 and hold["fall_turn"] is None:
                 continue
+            if self.modes.get("is_cleanup") and hold["fall_turn"] is None:
+                continue
             hold_until = hold["fall_turn"] if hold["fall_turn"] is not None else min(BASE_TIMELINE_HORIZON, 18)
             for donor in sorted(
                 self._available_my_planets(excluded_ids=[planet.id]),
@@ -2357,7 +2502,9 @@ class DecisionLogic:
                 )
                 if plan is None:
                     continue
-                value = planet.production * max(1, self.state.remaining_steps - plan.eta)
+                turns_profit = max(1, self.state.remaining_steps - plan.eta)
+                value = planet.production * turns_profit
+                value += self.indirect_wealth_map.get(planet.id, 0.0) * turns_profit * INDIRECT_VALUE_SCALE * 0.35
                 value *= REINFORCE_VALUE_MULT
                 value *= proximity * 0.5
                 score = self._score_mission(value, plan.ships, plan.eta, planet, "reinforce")

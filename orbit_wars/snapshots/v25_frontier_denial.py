@@ -112,6 +112,18 @@ MULTI_ENEMY_STACK_WINDOW = 3
 PROACTIVE_ENEMY_TOP_K = 3
 PROACTIVE_KEEP_RATIO = 0.18
 STACKED_PROACTIVE_KEEP_RATIO = 0.22
+FOUR_PLAYER_CAUTIOUS_LAUNCH_CAP = 4
+FOUR_PLAYER_PRESSURED_LAUNCH_CAP = 3
+FOUR_PLAYER_FRONTLINE_DISTANCE = 24.0
+FOUR_PLAYER_FRONTLINE_RESERVE_RATIO = 0.18
+FOUR_PLAYER_DOUBLE_FRONT_RESERVE_RATIO = 0.28
+FOUR_PLAYER_HOSTILE_VALUE_DAMP = 0.88
+FOUR_PLAYER_SAFE_NEUTRAL_BONUS = 1.06
+FOUR_PLAYER_FRONTIER_DISTANCE = 18.0
+FOUR_PLAYER_FRONTIER_MARGIN = 3.0
+FOUR_PLAYER_FRONTIER_VALUE_BONUS = 1.18
+FOUR_PLAYER_FRONTIER_LAUNCH_CAP = 5
+FOUR_PLAYER_FRONTIER_ATTACK_DELAY_TURN = 100
 
 AGENT_MEMORY: Dict[str, Any] = {
     "last_owners": {},
@@ -1509,6 +1521,47 @@ class DecisionLogic:
             best_stacked = max(best_stacked, running)
         return max(proactive, int(best_stacked * STACKED_PROACTIVE_KEEP_RATIO))
 
+    def _frontline_enemy_count(self, planet: Planet) -> int:
+        if self.state.num_players < 4:
+            return 0
+        return sum(
+            1
+            for enemy in self.state.enemy_planets
+            if distance_planets(planet, enemy) <= FOUR_PLAYER_FRONTLINE_DISTANCE
+        )
+
+    def _frontline_reserve(self, planet: Planet) -> int:
+        nearby = self._frontline_enemy_count(planet)
+        if nearby >= 2:
+            return int(planet.ships * FOUR_PLAYER_DOUBLE_FRONT_RESERVE_RATIO)
+        if nearby == 1 and not self.modes.get("is_ahead", False):
+            return int(planet.ships * FOUR_PLAYER_FRONTLINE_RESERVE_RATIO)
+        return 0
+
+    def _four_player_pressure_active(self) -> bool:
+        if self.state.num_players < 4:
+            return False
+        pressured = 0
+        for planet in self.state.my_planets:
+            if self._frontline_enemy_count(planet) >= 1:
+                pressured += 1
+                if pressured >= 2:
+                    return True
+        return False
+
+    def _is_frontier_neutral(self, target: Planet) -> bool:
+        enemy_planets = getattr(self.state, "enemy_planets", [])
+        my_planets = getattr(self.state, "my_planets", [])
+        if self.state.num_players < 4 or target.owner != -1 or not enemy_planets or not my_planets:
+            return False
+        my_dist = min(distance_planets(target, planet) for planet in my_planets)
+        enemy_dist = min(distance_planets(target, planet) for planet in enemy_planets)
+        return (
+            target.production >= OPENING_MIN_PRODUCTION
+            and enemy_dist <= FOUR_PLAYER_FRONTIER_DISTANCE
+            and my_dist <= enemy_dist + FOUR_PLAYER_FRONTIER_MARGIN
+        )
+
     def _planet_surplus(self, planet: Planet, turns_ahead: int = DEFENSE_HORIZON) -> int:
         cache_key = (planet.id, self.committed_ships.get(planet.id, 0))
         if cache_key in self.surplus_cache:
@@ -1521,7 +1574,11 @@ class DecisionLogic:
         if not hold["holds_full"]:
             self.surplus_cache[cache_key] = 0
             return 0
-        reserve = max(int(hold["keep_needed"]), self._proactive_keep(effective))
+        reserve = max(
+            int(hold["keep_needed"]),
+            self._proactive_keep(effective),
+            self._frontline_reserve(effective),
+        )
         surplus = max(0, int(effective.ships) - reserve)
         self.surplus_cache[cache_key] = surplus
         return surplus
@@ -1723,6 +1780,12 @@ class DecisionLogic:
                 and self.state.step > 120
             )
 
+        frontier_neutral_count = 0
+        if self.state.num_players >= 4:
+            frontier_neutral_count = sum(
+                1 for target in getattr(self.state, "neutral_planets", []) if self._is_frontier_neutral(target)
+            )
+
         is_cleanup = (
             enemy_total > 0
             and enemy_planet_count <= CLEANUP_MAX_ENEMY_PLANETS
@@ -1758,6 +1821,7 @@ class DecisionLogic:
             "owner_prod": dict(owner_prod),
             "owner_planet_counts": dict(owner_planet_counts),
             "enemy_planet_count": enemy_planet_count,
+            "frontier_neutral_count": frontier_neutral_count,
         }
 
     def _build_enemy_priority(self) -> Dict[int, float]:
@@ -1855,7 +1919,19 @@ class DecisionLogic:
     def _turn_launch_cap(self) -> int:
         if self._shun_opening_active():
             return min(MAX_TURN_LAUNCHES, SHUN_OPENING_LAUNCH_CAP)
-        if getattr(self.state, "num_players", 2) <= 2 and getattr(self.state, "step", 0) < DUEL_OPENING_CAP_TURN:
+        modes = getattr(self, "modes", {})
+        num_players = getattr(self.state, "num_players", 2)
+        if num_players >= 4 and not modes.get("is_cleanup"):
+            if (
+                modes.get("frontier_neutral_count", 0) >= 3
+                and getattr(self.state, "step", 0) < FOUR_PLAYER_FRONTIER_ATTACK_DELAY_TURN
+            ):
+                return min(MAX_TURN_LAUNCHES, FOUR_PLAYER_FRONTIER_LAUNCH_CAP)
+            if modes.get("is_behind") or self._four_player_pressure_active():
+                return min(MAX_TURN_LAUNCHES, FOUR_PLAYER_PRESSURED_LAUNCH_CAP)
+            if not modes.get("is_dominating") and getattr(self.state, "step", 0) < 140:
+                return min(MAX_TURN_LAUNCHES, FOUR_PLAYER_CAUTIOUS_LAUNCH_CAP)
+        if num_players <= 2 and getattr(self.state, "step", 0) < DUEL_OPENING_CAP_TURN:
             return min(MAX_TURN_LAUNCHES, DUEL_OPENING_LAUNCH_CAP)
         return MAX_TURN_LAUNCHES
 
@@ -1988,6 +2064,17 @@ class DecisionLogic:
             value *= 0.92
         if self.state.num_players >= 4 and target.owner not in (-1, self.state.player):
             value *= self.enemy_priority.get(target.owner, 1.0)
+            if not modes.get("is_dominating"):
+                value *= FOUR_PLAYER_HOSTILE_VALUE_DAMP
+        if (
+            self.state.num_players >= 4
+            and target.owner == -1
+            and self._is_safe_neutral(target)
+            and not modes.get("is_dominating")
+        ):
+            value *= FOUR_PLAYER_SAFE_NEUTRAL_BONUS
+        if self.state.num_players >= 4 and target.owner == -1 and self._is_frontier_neutral(target):
+            value *= FOUR_PLAYER_FRONTIER_VALUE_BONUS
 
         return value
 
@@ -2155,6 +2242,7 @@ class DecisionLogic:
                     ))
                 else:
                     candidates.sort(key=lambda t: (
+                        0 if self._is_frontier_neutral(t) else 1,
                         1 if is_orbiting_planet(t) else 0,
                         0 if self._is_safe_neutral(t) else 1,
                         -t.production,
@@ -2194,6 +2282,24 @@ class DecisionLogic:
             return
         if self._shun_opening_active():
             return
+        if (
+            self.state.num_players >= 4
+            and self.modes.get("frontier_neutral_count", 0) >= 2
+            and self.state.step < FOUR_PLAYER_FRONTIER_ATTACK_DELAY_TURN
+            and not self.modes.get("is_dominating")
+        ):
+            return
+        if (
+            self.state.num_players >= 4
+            and not self.modes.get("is_dominating")
+            and self.state.step < 120
+        ):
+            safe_neutrals = [
+                p for p in self.state.neutral_planets
+                if p.production >= OPENING_MIN_PRODUCTION and self._is_safe_neutral(p)
+            ]
+            if len(safe_neutrals) >= 2:
+                return
         if self.state.is_early:
             good_neutrals = [p for p in self.state.neutral_planets if p.production >= OPENING_MIN_PRODUCTION]
             if len(good_neutrals) >= 3:
