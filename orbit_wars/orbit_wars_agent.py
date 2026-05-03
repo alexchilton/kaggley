@@ -112,6 +112,13 @@ MULTI_ENEMY_STACK_WINDOW = 3
 PROACTIVE_ENEMY_TOP_K = 3
 PROACTIVE_KEEP_RATIO = 0.18
 STACKED_PROACTIVE_KEEP_RATIO = 0.22
+FRONTIER_DISTANCE = 30.0
+FRONTIER_KEEP_BASE = 6
+FRONTIER_KEEP_PRODUCTION_WEIGHT = 4
+FRONTIER_KEEP_SHIP_RATIO = 0.30
+HOSTILE_REINFORCE_HORIZON = 8
+HOSTILE_REINFORCE_RATIO = 0.25
+HOSTILE_REINFORCE_CAP = 15
 
 AGENT_MEMORY: Dict[str, Any] = {
     "last_owners": {},
@@ -682,6 +689,48 @@ class InterceptSolver:
         angle, eta, _distance = result
         return normalize_angle(angle), eta
 
+    def _validate_intercept(
+        self,
+        from_x: float,
+        from_y: float,
+        from_radius: float,
+        angle: float,
+        ships: int,
+        target_planet: Planet,
+        max_turns: int,
+    ) -> Optional[int]:
+        """Simulate a planned launch and return the actual hit turn if it reaches the target safely."""
+
+        speed = fleet_speed(ships, max_speed=self.max_speed)
+        if speed <= 0.0:
+            return None
+        planets = list(self.predictor.current_by_id.values())
+        prev_x, prev_y = launch_point(from_x, from_y, from_radius, angle)
+        dx = math.cos(angle) * speed
+        dy = math.sin(angle) * speed
+        for turn in range(1, max(1, int(max_turns)) + 1):
+            next_x = prev_x + dx
+            next_y = prev_y + dy
+            if not point_in_bounds(next_x, next_y):
+                return None
+            if segment_circle_intersects((prev_x, prev_y), (next_x, next_y), SUN_CENTER, SUN_RADIUS):
+                return None
+            for planet in planets:
+                planet_pos = self.predictor.predict_target_pos(planet, turn - 1)
+                if planet_pos is None:
+                    continue
+                if segment_circle_intersects((prev_x, prev_y), (next_x, next_y), planet_pos, planet.radius):
+                    return turn if planet.id == target_planet.id else None
+            for planet in planets:
+                old_pos = self.predictor.predict_target_pos(planet, turn - 1)
+                new_pos = self.predictor.predict_target_pos(planet, turn)
+                if old_pos is None or new_pos is None or old_pos == new_pos:
+                    continue
+                if point_to_segment_distance((next_x, next_y), old_pos, new_pos) < planet.radius:
+                    return turn if planet.id == target_planet.id else None
+            prev_x, prev_y = next_x, next_y
+        return None
+
     def _search_safe_intercept(
         self,
         from_x: float,
@@ -718,9 +767,20 @@ class InterceptSolver:
             delta = abs(eta - candidate_turn)
             if delta > 1:
                 continue
-            score = (delta, eta, candidate_turn)
+            hit_turn = self._validate_intercept(
+                from_x,
+                from_y,
+                from_radius,
+                angle,
+                ships,
+                target_planet,
+                max(candidate_turn, eta) + 1,
+            )
+            if hit_turn is None:
+                continue
+            score = (abs(hit_turn - candidate_turn), hit_turn, candidate_turn)
             if best is None or score < best:
-                best = (angle, eta, candidate_turn)
+                best = (angle, hit_turn, candidate_turn)
         return None if best is None else (best[0], best[1])
 
     def solve_intercept(
@@ -782,10 +842,31 @@ class InterceptSolver:
                     and abs(future_pos[1] - target_y) < 0.3
                     and abs(next_eta - eta) <= 1
                 ):
-                    return next_angle, next_eta
+                    hit_turn = self._validate_intercept(
+                        from_x,
+                        from_y,
+                        from_radius,
+                        next_angle,
+                        num_ships,
+                        target_planet,
+                        max(next_eta, eta) + 1,
+                    )
+                    if hit_turn is not None and abs(hit_turn - next_eta) <= 1:
+                        return next_angle, hit_turn
                 angle, eta = next_angle, next_eta
                 target_x, target_y = future_pos
-            return angle, eta
+            hit_turn = self._validate_intercept(
+                from_x,
+                from_y,
+                from_radius,
+                angle,
+                num_ships,
+                target_planet,
+                eta + 1,
+            )
+            if hit_turn is not None and abs(hit_turn - eta) <= 1:
+                return angle, hit_turn
+            return self._search_safe_intercept(from_x, from_y, from_radius, target_planet, num_ships)
         finally:
             self.predictor.current_step = original_step
 
@@ -1063,6 +1144,17 @@ class ProjectedWorld:
                 planned_commitments=planned_commitments,
                 upper_bound=upper_bound,
             )
+
+        baseline_timeline = self.projected_timeline(
+            target_id,
+            hold_until,
+            planned_commitments=planned_commitments,
+        )
+        if all(
+            baseline_timeline["owner_at"].get(turn) == self.player
+            for turn in range(arrival_turn, hold_until + 1)
+        ):
+            return 0
 
         def holds_with_reinforcement(ships: int) -> bool:
             timeline = self.projected_timeline(
@@ -1507,7 +1599,20 @@ class DecisionLogic:
                 running -= threats[left][1]
                 left += 1
             best_stacked = max(best_stacked, running)
-        return max(proactive, int(best_stacked * STACKED_PROACTIVE_KEEP_RATIO))
+        return max(proactive, int(best_stacked * STACKED_PROACTIVE_KEEP_RATIO), self._frontier_keep(planet))
+
+    def _frontier_keep(self, planet: Planet) -> int:
+        enemy_planets = getattr(self.state, "enemy_planets", [])
+        if not enemy_planets:
+            return 0
+        nearest_enemy = min(enemy_planets, key=lambda enemy: distance_planets(enemy, planet))
+        nearest_distance = distance_planets(nearest_enemy, planet)
+        if nearest_distance > FRONTIER_DISTANCE:
+            return 0
+        return max(
+            FRONTIER_KEEP_BASE + int(planet.production) * FRONTIER_KEEP_PRODUCTION_WEIGHT,
+            int(math.ceil(max(0, int(nearest_enemy.ships)) * FRONTIER_KEEP_SHIP_RATIO)),
+        )
 
     def _planet_surplus(self, planet: Planet, turns_ahead: int = DEFENSE_HORIZON) -> int:
         cache_key = (planet.id, self.committed_ships.get(planet.id, 0))
@@ -1526,7 +1631,20 @@ class DecisionLogic:
         self.surplus_cache[cache_key] = surplus
         return surplus
 
-    def _compute_margin(self, target: Planet, mission: str) -> int:
+    def _hostile_reinforcement_margin(self, target: Planet, arrival_turn: int) -> int:
+        if target.owner in (-1, self.state.player):
+            return 0
+        reinforce_est = 0
+        for enemy in self.state.enemy_planets:
+            if enemy.owner != target.owner or enemy.id == target.id:
+                continue
+            shot = self._plan_shot(enemy, target, max(1, int(enemy.ships)))
+            if shot is None or shot[1] > arrival_turn + HOSTILE_REINFORCE_HORIZON:
+                continue
+            reinforce_est += max(0, int(enemy.ships) - 3)
+        return min(HOSTILE_REINFORCE_CAP, int(math.ceil(reinforce_est * HOSTILE_REINFORCE_RATIO)))
+
+    def _compute_margin(self, target: Planet, mission: str, eta: int) -> int:
         if mission in {"snipe", "crash_exploit"}:
             return 0 if self.state.is_late else 1
         if mission == "reinforce":
@@ -1541,6 +1659,8 @@ class DecisionLogic:
             base += STATIC_MARGIN
         if self._is_contested_neutral(target):
             base += CONTESTED_MARGIN
+        if target.owner not in (-1, self.state.player):
+            base += self._hostile_reinforcement_margin(target, eta)
         if self.modes.get("is_finishing") and target.owner not in (-1, self.state.player):
             base += FINISHING_SEND_BONUS
         if self.state.is_very_late:
@@ -1551,7 +1671,7 @@ class DecisionLogic:
         return max(0, int(math.ceil(base * mult)))
 
     def _preferred_send(self, target: Planet, need: int, eta: int, available: int, mission: str) -> int:
-        margin = self._compute_margin(target, mission)
+        margin = self._compute_margin(target, mission, eta)
         return min(available, max(need, need + margin))
 
     def _settle_plan(
@@ -1762,14 +1882,47 @@ class DecisionLogic:
 
     def _build_enemy_priority(self) -> Dict[int, float]:
         totals: Dict[int, float] = defaultdict(float)
+        enemy_planets_by_owner: Dict[int, List[Planet]] = defaultdict(list)
         for planet in self.state.enemy_planets:
             totals[planet.owner] += planet.ships + 3.0 * planet.production
+            enemy_planets_by_owner[planet.owner].append(planet)
         for fleet in self.state.enemy_fleets:
             totals[fleet.owner] += fleet.ships
-        ranked = sorted(totals.items(), key=lambda item: item[1], reverse=True)
+        if not totals:
+            return {}
+
+        my_planets = list(getattr(self.state, "my_planets", []))
+        frontier_sources = [planet for planet in my_planets if self._frontier_keep(planet) > 0]
+        if not frontier_sources:
+            frontier_sources = my_planets
+        if not frontier_sources:
+            ranked = sorted(totals.items(), key=lambda item: item[1], reverse=True)
+            return {owner: max(0.82, 1.18 - 0.12 * idx) for idx, (owner, _score) in enumerate(ranked)}
+
+        opp_min_dist: Dict[int, float] = {}
+        for owner, planets in enemy_planets_by_owner.items():
+            opp_min_dist[owner] = min(
+                distance_planets(my_planet, enemy_planet)
+                for my_planet in frontier_sources
+                for enemy_planet in planets
+            )
+        if not opp_min_dist:
+            return {}
+
+        all_dists = list(opp_min_dist.values())
+        min_dist = min(all_dists)
+        max_dist = max(all_dists)
+        dist_range = max(1.0, max_dist - min_dist)
+        owner_strength = self.modes.get("owner_strength", {})
+        total_strength = sum(owner_strength.get(owner, 0) for owner in opp_min_dist) or 1
         priority: Dict[int, float] = {}
-        for idx, (owner, _score) in enumerate(ranked):
-            priority[owner] = max(0.82, 1.18 - 0.12 * idx)
+        for owner, my_dist in opp_min_dist.items():
+            norm = (my_dist - min_dist) / dist_range
+            proximity_score = 1.25 - 0.70 * norm
+            similar = sum(1 for dist_value in all_dists if abs(dist_value - my_dist) < 15.0)
+            strength_share = owner_strength.get(owner, 0) / total_strength
+            bonus = strength_share * (0.25 if similar > 1 else 0.05)
+            priority[owner] = max(0.55, proximity_score + bonus)
         return priority
 
     def _is_safe_neutral(self, target: Planet) -> bool:
@@ -2356,6 +2509,8 @@ class DecisionLogic:
                     max_turn=24,
                 )
                 if plan is None:
+                    continue
+                if plan.required_ships <= 0:
                     continue
                 value = planet.production * max(1, self.state.remaining_steps - plan.eta)
                 value *= REINFORCE_VALUE_MULT

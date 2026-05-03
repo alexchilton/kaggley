@@ -1,0 +1,128 @@
+{
+  "results": {
+    "baseline vs stage2_genome": {
+      "a": "baseline",
+      "b": "stage2_genome",
+      "wa": 4,
+      "wb": 2
+    },
+    "baseline vs variant_a": {
+      "a": "baseline",
+      "b": "variant_a",
+      "wa": 5,
+      "wb": 1
+    },
+    "baseline vs variant_b": {
+      "a": "baseline",
+      "b": "variant_b",
+      "wa": 1,
+      "wb": 5
+    },
+    "baseline vs variant_c": {
+      "a": "baseline",
+      "b": "variant_c",
+      "wa": 3,
+      "wb": 3
+    },
+    "baseline vs variant_d": {
+      "a": "baseline",
+      "b": "variant_d",
+      "wa": 2,
+      "wb": 4
+    },
+    "stage2_genome vs variant_a": {
+      "a": "stage2_genome",
+      "b": "variant_a",
+      "wa": 3,
+      "wb": 3
+    },
+    "stage2_genome vs variant_b": {
+      "a": "stage2_genome",
+      "b": "variant_b",
+      "wa": 1,
+      "wb": 5
+    },
+    "stage2_genome vs variant_c": {
+      "a": "stage2_genome",
+      "b": "variant_c",
+      "wa": 4,
+      "wb": 2
+    },
+    "stage2_genome vs variant_d": {
+      "a": "stage2_genome",
+      "b": "variant_d",
+      "wa": 4,
+      "wb": 2
+    },
+    "variant_a vs variant_b": {
+      "a": "variant_a",
+      "b": "variant_b",
+      "wa": 2,
+      "wb": 4
+    },
+    "variant_a vs variant_c": {
+      "a": "variant_a",
+      "b": "variant_c",
+      "wa": 2,
+      "wb": 4
+    },
+    "variant_a vs variant_d": {
+      "a": "variant_a",
+      "b": "variant_d",
+      "wa": 3,
+      "wb": 3
+    },
+    "variant_b vs variant_c": {
+      "a": "variant_b",
+      "b": "variant_c",
+      "wa": 4,
+      "wb": 2
+    },
+    "variant_b vs variant_d": {
+      "a": "variant_b",
+      "b": "variant_d",
+      "wa": 2,
+      "wb": 4
+    },
+    "variant_c vs variant_d": {
+      "a": "variant_c",
+      "b": "variant_d",
+      "wa": 3,
+      "wb": 3
+    }
+  },
+  "aggregate": {
+    "baseline": {
+      "w": 15,
+      "g": 30
+    },
+    "stage2_genome": {
+      "w": 14,
+      "g": 30
+    },
+    "variant_a": {
+      "w": 11,
+      "g": 30
+    },
+    "variant_b": {
+      "w": 20,
+      "g": 30
+    },
+    "variant_c": {
+      "w": 14,
+      "g": 30
+    },
+    "variant_d": {
+      "w": 16,
+      "g": 30
+    }
+  },
+  "ranking": [
+    "variant_b",
+    "variant_d",
+    "baseline",
+    "stage2_genome",
+    "variant_c",
+    "variant_a"
+  ]
+}

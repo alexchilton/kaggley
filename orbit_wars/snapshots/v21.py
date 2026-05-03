@@ -1064,6 +1064,17 @@ class ProjectedWorld:
                 upper_bound=upper_bound,
             )
 
+        baseline_timeline = self.projected_timeline(
+            target_id,
+            hold_until,
+            planned_commitments=planned_commitments,
+        )
+        if all(
+            baseline_timeline["owner_at"].get(turn) == self.player
+            for turn in range(arrival_turn, hold_until + 1)
+        ):
+            return 0
+
         def holds_with_reinforcement(ships: int) -> bool:
             timeline = self.projected_timeline(
                 target_id,
@@ -2356,6 +2367,8 @@ class DecisionLogic:
                     max_turn=24,
                 )
                 if plan is None:
+                    continue
+                if plan.required_ships <= 0:
                     continue
                 value = planet.production * max(1, self.state.remaining_steps - plan.eta)
                 value *= REINFORCE_VALUE_MULT

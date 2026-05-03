@@ -1,0 +1,425 @@
+{
+  "meta": {
+    "started_at": "2026-04-27T19:02:58.220672+00:00",
+    "deadline_at": "2026-04-28T05:02:58.220679+00:00",
+    "cycles_completed": 8,
+    "jsonl_log": "benchmark_logs/overnight-current.jsonl",
+    "summary_json": "benchmark_logs/overnight-current-summary.json",
+    "variants": [
+      "v6",
+      "v7",
+      "v8",
+      "v9",
+      "v10",
+      "v11",
+      "v12",
+      "v13",
+      "v14",
+      "v15"
+    ],
+    "benchmarks": [
+      "v5",
+      "baseline"
+    ],
+    "include_four_player": true,
+    "updated_at": "2026-04-28T05:03:50.133390+00:00",
+    "two_player_ranking": [
+      "v8",
+      "v6",
+      "v13",
+      "v12",
+      "v9",
+      "v11",
+      "v7",
+      "v14",
+      "v10",
+      "v15"
+    ],
+    "four_player_ranking": [
+      "v8",
+      "v12",
+      "v13",
+      "v11",
+      "v6",
+      "v7",
+      "v9",
+      "v10",
+      "v14",
+      "v15"
+    ]
+  },
+  "two_player": {
+    "v6": {
+      "v5": {
+        "games": 16,
+        "wins": 12,
+        "losses": 4,
+        "draws": 0,
+        "reward_diff_sum": 16.0,
+        "ship_diff_sum": 69369.0,
+        "win_rate": 0.75,
+        "score_rate": 0.75,
+        "avg_reward_diff": 1.0,
+        "avg_ship_diff": 4335.5625
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 4,
+        "losses": 12,
+        "draws": 0,
+        "reward_diff_sum": -16.0,
+        "ship_diff_sum": -17480.0,
+        "win_rate": 0.25,
+        "score_rate": 0.25,
+        "avg_reward_diff": -1.0,
+        "avg_ship_diff": -1092.5
+      }
+    },
+    "v7": {
+      "v5": {
+        "games": 16,
+        "wins": 5,
+        "losses": 11,
+        "draws": 0,
+        "reward_diff_sum": -12.0,
+        "ship_diff_sum": -37184.0,
+        "win_rate": 0.3125,
+        "score_rate": 0.3125,
+        "avg_reward_diff": -0.75,
+        "avg_ship_diff": -2324.0
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 2,
+        "losses": 14,
+        "draws": 0,
+        "reward_diff_sum": -24.0,
+        "ship_diff_sum": -50081.0,
+        "win_rate": 0.125,
+        "score_rate": 0.125,
+        "avg_reward_diff": -1.5,
+        "avg_ship_diff": -3130.0625
+      }
+    },
+    "v8": {
+      "v5": {
+        "games": 16,
+        "wins": 15,
+        "losses": 1,
+        "draws": 0,
+        "reward_diff_sum": 28.0,
+        "ship_diff_sum": 78446.0,
+        "win_rate": 0.9375,
+        "score_rate": 0.9375,
+        "avg_reward_diff": 1.75,
+        "avg_ship_diff": 4902.875
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 3,
+        "losses": 13,
+        "draws": 0,
+        "reward_diff_sum": -20.0,
+        "ship_diff_sum": -30304.0,
+        "win_rate": 0.1875,
+        "score_rate": 0.1875,
+        "avg_reward_diff": -1.25,
+        "avg_ship_diff": -1894.0
+      }
+    },
+    "v9": {
+      "v5": {
+        "games": 16,
+        "wins": 8,
+        "losses": 5,
+        "draws": 3,
+        "reward_diff_sum": 6.0,
+        "ship_diff_sum": -30743.0,
+        "win_rate": 0.5,
+        "score_rate": 0.59375,
+        "avg_reward_diff": 0.375,
+        "avg_ship_diff": -1921.4375
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 3,
+        "losses": 13,
+        "draws": 0,
+        "reward_diff_sum": -20.0,
+        "ship_diff_sum": -37900.0,
+        "win_rate": 0.1875,
+        "score_rate": 0.1875,
+        "avg_reward_diff": -1.25,
+        "avg_ship_diff": -2368.75
+      }
+    },
+    "v10": {
+      "v5": {
+        "games": 16,
+        "wins": 4,
+        "losses": 12,
+        "draws": 0,
+        "reward_diff_sum": -16.0,
+        "ship_diff_sum": -101124.0,
+        "win_rate": 0.25,
+        "score_rate": 0.25,
+        "avg_reward_diff": -1.0,
+        "avg_ship_diff": -6320.25
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 3,
+        "losses": 13,
+        "draws": 0,
+        "reward_diff_sum": -20.0,
+        "ship_diff_sum": -14542.0,
+        "win_rate": 0.1875,
+        "score_rate": 0.1875,
+        "avg_reward_diff": -1.25,
+        "avg_ship_diff": -908.875
+      }
+    },
+    "v11": {
+      "v5": {
+        "games": 16,
+        "wins": 6,
+        "losses": 6,
+        "draws": 4,
+        "reward_diff_sum": 0.0,
+        "ship_diff_sum": 15465.0,
+        "win_rate": 0.375,
+        "score_rate": 0.5,
+        "avg_reward_diff": 0.0,
+        "avg_ship_diff": 966.5625
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 2,
+        "losses": 14,
+        "draws": 0,
+        "reward_diff_sum": -24.0,
+        "ship_diff_sum": -42977.0,
+        "win_rate": 0.125,
+        "score_rate": 0.125,
+        "avg_reward_diff": -1.5,
+        "avg_ship_diff": -2686.0625
+      }
+    },
+    "v12": {
+      "v5": {
+        "games": 16,
+        "wins": 6,
+        "losses": 4,
+        "draws": 6,
+        "reward_diff_sum": 4.0,
+        "ship_diff_sum": 10095.0,
+        "win_rate": 0.375,
+        "score_rate": 0.5625,
+        "avg_reward_diff": 0.25,
+        "avg_ship_diff": 630.9375
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 6,
+        "losses": 10,
+        "draws": 0,
+        "reward_diff_sum": -8.0,
+        "ship_diff_sum": -18700.0,
+        "win_rate": 0.375,
+        "score_rate": 0.375,
+        "avg_reward_diff": -0.5,
+        "avg_ship_diff": -1168.75
+      }
+    },
+    "v13": {
+      "v5": {
+        "games": 16,
+        "wins": 9,
+        "losses": 5,
+        "draws": 2,
+        "reward_diff_sum": 8.0,
+        "ship_diff_sum": 25853.0,
+        "win_rate": 0.5625,
+        "score_rate": 0.625,
+        "avg_reward_diff": 0.5,
+        "avg_ship_diff": 1615.8125
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 6,
+        "losses": 10,
+        "draws": 0,
+        "reward_diff_sum": -8.0,
+        "ship_diff_sum": 34254.0,
+        "win_rate": 0.375,
+        "score_rate": 0.375,
+        "avg_reward_diff": -0.5,
+        "avg_ship_diff": 2140.875
+      }
+    },
+    "v14": {
+      "v5": {
+        "games": 16,
+        "wins": 5,
+        "losses": 11,
+        "draws": 0,
+        "reward_diff_sum": -12.0,
+        "ship_diff_sum": -76506.0,
+        "win_rate": 0.3125,
+        "score_rate": 0.3125,
+        "avg_reward_diff": -0.75,
+        "avg_ship_diff": -4781.625
+      },
+      "baseline": {
+        "games": 16,
+        "wins": 1,
+        "losses": 15,
+        "draws": 0,
+        "reward_diff_sum": -28.0,
+        "ship_diff_sum": -65381.0,
+        "win_rate": 0.0625,
+        "score_rate": 0.0625,
+        "avg_reward_diff": -1.75,
+        "avg_ship_diff": -4086.3125
+      }
+    },
+    "v15": {
+      "v5": {
+        "games": 14,
+        "wins": 3,
+        "losses": 11,
+        "draws": 0,
+        "reward_diff_sum": -16.0,
+        "ship_diff_sum": -71103.0,
+        "win_rate": 0.21428571428571427,
+        "score_rate": 0.21428571428571427,
+        "avg_reward_diff": -1.1428571428571428,
+        "avg_ship_diff": -5078.785714285715
+      },
+      "baseline": {
+        "games": 14,
+        "wins": 3,
+        "losses": 11,
+        "draws": 0,
+        "reward_diff_sum": -16.0,
+        "ship_diff_sum": -23506.0,
+        "win_rate": 0.21428571428571427,
+        "score_rate": 0.21428571428571427,
+        "avg_reward_diff": -1.1428571428571428,
+        "avg_ship_diff": -1679.0
+      }
+    }
+  },
+  "four_player": {
+    "v6": {
+      "games": 32,
+      "reward_sum": -6.0,
+      "rank_sum": 51.0,
+      "top2": 32,
+      "ship_sum": 143142.0,
+      "avg_reward": -0.1875,
+      "avg_rank": 1.59375,
+      "top2_rate": 1.0,
+      "avg_ships": 4473.1875
+    },
+    "v7": {
+      "games": 32,
+      "reward_sum": -16.0,
+      "rank_sum": 56.0,
+      "top2": 32,
+      "ship_sum": 82475.0,
+      "avg_reward": -0.5,
+      "avg_rank": 1.75,
+      "top2_rate": 1.0,
+      "avg_ships": 2577.34375
+    },
+    "v8": {
+      "games": 32,
+      "reward_sum": -2.0,
+      "rank_sum": 49.0,
+      "top2": 32,
+      "ship_sum": 170581.0,
+      "avg_reward": -0.0625,
+      "avg_rank": 1.53125,
+      "top2_rate": 1.0,
+      "avg_ships": 5330.65625
+    },
+    "v9": {
+      "games": 32,
+      "reward_sum": -18.0,
+      "rank_sum": 57.0,
+      "top2": 32,
+      "ship_sum": 112369.0,
+      "avg_reward": -0.5625,
+      "avg_rank": 1.78125,
+      "top2_rate": 1.0,
+      "avg_ships": 3511.53125
+    },
+    "v10": {
+      "games": 32,
+      "reward_sum": -20.0,
+      "rank_sum": 58.0,
+      "top2": 32,
+      "ship_sum": 83583.0,
+      "avg_reward": -0.625,
+      "avg_rank": 1.8125,
+      "top2_rate": 1.0,
+      "avg_ships": 2611.96875
+    },
+    "v11": {
+      "games": 32,
+      "reward_sum": -6.0,
+      "rank_sum": 51.0,
+      "top2": 32,
+      "ship_sum": 190226.0,
+      "avg_reward": -0.1875,
+      "avg_rank": 1.59375,
+      "top2_rate": 1.0,
+      "avg_ships": 5944.5625
+    },
+    "v12": {
+      "games": 32,
+      "reward_sum": -4.0,
+      "rank_sum": 50.0,
+      "top2": 32,
+      "ship_sum": 179391.0,
+      "avg_reward": -0.125,
+      "avg_rank": 1.5625,
+      "top2_rate": 1.0,
+      "avg_ships": 5605.96875
+    },
+    "v13": {
+      "games": 32,
+      "reward_sum": -4.0,
+      "rank_sum": 50.0,
+      "top2": 32,
+      "ship_sum": 224049.0,
+      "avg_reward": -0.125,
+      "avg_rank": 1.5625,
+      "top2_rate": 1.0,
+      "avg_ships": 7001.53125
+    },
+    "v14": {
+      "games": 32,
+      "reward_sum": -20.0,
+      "rank_sum": 58.0,
+      "top2": 32,
+      "ship_sum": 79789.0,
+      "avg_reward": -0.625,
+      "avg_rank": 1.8125,
+      "top2_rate": 1.0,
+      "avg_ships": 2493.40625
+    },
+    "v15": {
+      "games": 28,
+      "reward_sum": -18.0,
+      "rank_sum": 51.0,
+      "top2": 28,
+      "ship_sum": 54352.0,
+      "avg_reward": -0.6428571428571429,
+      "avg_rank": 1.8214285714285714,
+      "top2_rate": 1.0,
+      "avg_ships": 1941.142857142857
+    }
+  }
+}

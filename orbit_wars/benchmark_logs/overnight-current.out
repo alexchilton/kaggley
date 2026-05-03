@@ -1,0 +1,652 @@
+Loading environment cabt failed: dlopen(/Users/alexchilton/Library/Python/3.12/lib/python/site-packages/kaggle_environments/envs/cabt/cg/libcg.so, 0x0006): tried: '/Users/alexchilton/Library/Python/3.12/lib/python/site-packages/kaggle_environments/envs/cabt/cg/libcg.so' (slice is not valid mach-o file), '/System/Volumes/Preboot/Cryptexes/OS/Users/alexchilton/Library/Python/3.12/lib/python/site-packages/kaggle_environments/envs/cabt/cg/libcg.so' (no such file), '/Users/alexchilton/Library/Python/3.12/lib/python/site-packages/kaggle_environments/envs/cabt/cg/libcg.so' (slice is not valid mach-o file)
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO: Successfully loaded OpenSpiel environments: 16.
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_backgammon
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_checkers
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_chess
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_connect_four
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_gin_rummy
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_go
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_goofspiel
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_hearts
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_hex
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_matching_pennies_3p
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_othello
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_repeated_game
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_tic_tac_toe
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_universal_poker
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_repeated_poker
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    open_spiel_python_repeated_pokerkit
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO: OpenSpiel games skipped: 1.
+[kaggle_environments.envs.open_spiel_env.open_spiel_env] INFO:    snake
+[2p][cycle 1] v6 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+1785.0
+[2p][cycle 1] v6 vs v5 seat=1 winner=v6 reward_diff=+2.000 ship_diff=+5030.0
+[2p][cycle 1] v6 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3027.0
+[2p][cycle 1] v6 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5688.0
+[4p][cycle 1] v6 seat=0 rank=2 reward=-1.000 ships=6807.0
+[4p][cycle 1] v6 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v6 seat=2 rank=1 reward=+1.000 ships=10351.0
+[4p][cycle 1] v6 seat=3 rank=1 reward=+1.000 ships=4978.0
+[2p][cycle 1] v7 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-3067.0
+[2p][cycle 1] v7 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2298.0
+[2p][cycle 1] v7 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3456.0
+[2p][cycle 1] v7 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4446.0
+[4p][cycle 1] v7 seat=0 rank=2 reward=-1.000 ships=882.0
+[4p][cycle 1] v7 seat=1 rank=1 reward=+1.000 ships=7565.0
+[4p][cycle 1] v7 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v7 seat=3 rank=2 reward=-1.000 ships=1631.0
+[2p][cycle 1] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+1345.0
+[2p][cycle 1] v8 vs v5 seat=1 winner=v8 reward_diff=+2.000 ship_diff=+8137.0
+[2p][cycle 1] v8 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-154.0
+[2p][cycle 1] v8 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-1956.0
+[4p][cycle 1] v8 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v8 seat=1 rank=2 reward=-1.000 ships=1276.0
+[4p][cycle 1] v8 seat=2 rank=1 reward=+1.000 ships=19594.0
+[4p][cycle 1] v8 seat=3 rank=1 reward=+1.000 ships=5120.0
+[2p][cycle 1] v9 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-15358.0
+[2p][cycle 1] v9 vs v5 seat=1 winner=v9 reward_diff=+2.000 ship_diff=+2192.0
+[2p][cycle 1] v9 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-6352.0
+[2p][cycle 1] v9 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5684.0
+[4p][cycle 1] v9 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v9 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v9 seat=2 rank=1 reward=+1.000 ships=2354.0
+[4p][cycle 1] v9 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 1] v10 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-12373.0
+[2p][cycle 1] v10 vs v5 seat=1 winner=v10 reward_diff=+2.000 ship_diff=+1739.0
+[2p][cycle 1] v10 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2807.0
+[2p][cycle 1] v10 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-1439.0
+[4p][cycle 1] v10 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v10 seat=1 rank=2 reward=-1.000 ships=5771.0
+[4p][cycle 1] v10 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v10 seat=3 rank=1 reward=+1.000 ships=6518.0
+[2p][cycle 1] v11 vs v5 seat=0 winner=draw reward_diff=+0.000 ship_diff=+30.0
+[2p][cycle 1] v11 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-7081.0
+[2p][cycle 1] v11 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-9649.0
+[2p][cycle 1] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-7401.0
+[4p][cycle 1] v11 seat=0 rank=2 reward=-1.000 ships=6150.0
+[4p][cycle 1] v11 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v11 seat=2 rank=1 reward=+1.000 ships=6509.0
+[4p][cycle 1] v11 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 1] v12 vs v5 seat=0 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 1] v12 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 1] v12 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+1862.0
+[2p][cycle 1] v12 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5344.0
+[4p][cycle 1] v12 seat=0 rank=2 reward=-1.000 ships=7938.0
+[4p][cycle 1] v12 seat=1 rank=2 reward=-1.000 ships=4705.0
+[4p][cycle 1] v12 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v12 seat=3 rank=1 reward=+1.000 ships=6056.0
+[2p][cycle 1] v13 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+18550.0
+[2p][cycle 1] v13 vs v5 seat=1 winner=v13 reward_diff=+2.000 ship_diff=+25.0
+[2p][cycle 1] v13 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-370.0
+[2p][cycle 1] v13 vs baseline seat=1 winner=v13 reward_diff=+2.000 ship_diff=+18821.0
+[4p][cycle 1] v13 seat=0 rank=2 reward=-1.000 ships=10388.0
+[4p][cycle 1] v13 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v13 seat=2 rank=1 reward=+1.000 ships=2039.0
+[4p][cycle 1] v13 seat=3 rank=1 reward=+1.000 ships=17233.0
+[2p][cycle 1] v14 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2430.0
+[2p][cycle 1] v14 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-18783.0
+[2p][cycle 1] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3257.0
+[2p][cycle 1] v14 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6890.0
+[4p][cycle 1] v14 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v14 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v14 seat=2 rank=2 reward=-1.000 ships=1257.0
+[4p][cycle 1] v14 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 1] v15 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-16368.0
+[2p][cycle 1] v15 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-16423.0
+[2p][cycle 1] v15 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+1350.0
+[2p][cycle 1] v15 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-7576.0
+[4p][cycle 1] v15 seat=0 rank=1 reward=+1.000 ships=7184.0
+[4p][cycle 1] v15 seat=1 rank=2 reward=-1.000 ships=17.0
+[4p][cycle 1] v15 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 1] v15 seat=3 rank=2 reward=-1.000 ships=1304.0
+[2p][cycle 2] v6 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+22449.0
+[2p][cycle 2] v6 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=+799.0
+[2p][cycle 2] v6 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3539.0
+[2p][cycle 2] v6 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3325.0
+[4p][cycle 2] v6 seat=0 rank=1 reward=+1.000 ships=3063.0
+[4p][cycle 2] v6 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v6 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v6 seat=3 rank=1 reward=+1.000 ships=3819.0
+[2p][cycle 2] v7 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-2513.0
+[2p][cycle 2] v7 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-7302.0
+[2p][cycle 2] v7 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2192.0
+[2p][cycle 2] v7 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5299.0
+[4p][cycle 2] v7 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v7 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v7 seat=2 rank=2 reward=-1.000 ships=690.0
+[4p][cycle 2] v7 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 2] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2460.0
+[2p][cycle 2] v8 vs v5 seat=1 winner=v8 reward_diff=+2.000 ship_diff=+6147.0
+[2p][cycle 2] v8 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+3805.0
+[2p][cycle 2] v8 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4665.0
+[4p][cycle 2] v8 seat=0 rank=1 reward=+1.000 ships=8864.0
+[4p][cycle 2] v8 seat=1 rank=1 reward=+1.000 ships=11593.0
+[4p][cycle 2] v8 seat=2 rank=1 reward=+1.000 ships=8276.0
+[4p][cycle 2] v8 seat=3 rank=1 reward=+1.000 ships=10817.0
+[2p][cycle 2] v9 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-6359.0
+[2p][cycle 2] v9 vs v5 seat=1 winner=v9 reward_diff=+2.000 ship_diff=+5356.0
+[2p][cycle 2] v9 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-11640.0
+[2p][cycle 2] v9 vs baseline seat=1 winner=v9 reward_diff=+2.000 ship_diff=+16845.0
+[4p][cycle 2] v9 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v9 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v9 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v9 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 2] v10 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-5810.0
+[2p][cycle 2] v10 vs v5 seat=1 winner=v10 reward_diff=+2.000 ship_diff=+14227.0
+[2p][cycle 2] v10 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-6758.0
+[2p][cycle 2] v10 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5381.0
+[4p][cycle 2] v10 seat=0 rank=1 reward=+1.000 ships=4119.0
+[4p][cycle 2] v10 seat=1 rank=2 reward=-1.000 ships=3812.0
+[4p][cycle 2] v10 seat=2 rank=1 reward=+1.000 ships=9651.0
+[4p][cycle 2] v10 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 2] v11 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+7498.0
+[2p][cycle 2] v11 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-3244.0
+[2p][cycle 2] v11 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-1805.0
+[2p][cycle 2] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-1139.0
+[4p][cycle 2] v11 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v11 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v11 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v11 seat=3 rank=1 reward=+1.000 ships=3257.0
+[2p][cycle 2] v12 vs v5 seat=0 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 2] v12 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 2] v12 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-11645.0
+[2p][cycle 2] v12 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-215.0
+[4p][cycle 2] v12 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v12 seat=1 rank=1 reward=+1.000 ships=7931.0
+[4p][cycle 2] v12 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v12 seat=3 rank=1 reward=+1.000 ships=9970.0
+[2p][cycle 2] v13 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-9445.0
+[2p][cycle 2] v13 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-3314.0
+[2p][cycle 2] v13 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-5154.0
+[2p][cycle 2] v13 vs baseline seat=1 winner=v13 reward_diff=+2.000 ship_diff=+2937.0
+[4p][cycle 2] v13 seat=0 rank=2 reward=-1.000 ships=5985.0
+[4p][cycle 2] v13 seat=1 rank=2 reward=-1.000 ships=8002.0
+[4p][cycle 2] v13 seat=2 rank=1 reward=+1.000 ships=8393.0
+[4p][cycle 2] v13 seat=3 rank=1 reward=+1.000 ships=11863.0
+[2p][cycle 2] v14 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+6076.0
+[2p][cycle 2] v14 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-880.0
+[2p][cycle 2] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-7596.0
+[2p][cycle 2] v14 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6363.0
+[4p][cycle 2] v14 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v14 seat=1 rank=1 reward=+1.000 ships=8837.0
+[4p][cycle 2] v14 seat=2 rank=2 reward=-1.000 ships=608.0
+[4p][cycle 2] v14 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 2] v15 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2896.0
+[2p][cycle 2] v15 vs v5 seat=1 winner=v15 reward_diff=+2.000 ship_diff=+3730.0
+[2p][cycle 2] v15 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-4741.0
+[2p][cycle 2] v15 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3388.0
+[4p][cycle 2] v15 seat=0 rank=1 reward=+1.000 ships=14388.0
+[4p][cycle 2] v15 seat=1 rank=2 reward=-1.000 ships=5198.0
+[4p][cycle 2] v15 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 2] v15 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 3] v6 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+4404.0
+[2p][cycle 3] v6 vs v5 seat=1 winner=v6 reward_diff=+2.000 ship_diff=+1651.0
+[2p][cycle 3] v6 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3228.0
+[2p][cycle 3] v6 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5269.0
+[4p][cycle 3] v6 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v6 seat=1 rank=1 reward=+1.000 ships=8572.0
+[4p][cycle 3] v6 seat=2 rank=1 reward=+1.000 ships=6430.0
+[4p][cycle 3] v6 seat=3 rank=2 reward=-1.000 ships=5343.0
+[2p][cycle 3] v7 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+15092.0
+[2p][cycle 3] v7 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-5053.0
+[2p][cycle 3] v7 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+2922.0
+[2p][cycle 3] v7 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3703.0
+[4p][cycle 3] v7 seat=0 rank=2 reward=-1.000 ships=7793.0
+[4p][cycle 3] v7 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v7 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v7 seat=3 rank=2 reward=-1.000 ships=6082.0
+[2p][cycle 3] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+3108.0
+[2p][cycle 3] v8 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=+368.0
+[2p][cycle 3] v8 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3934.0
+[2p][cycle 3] v8 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-1714.0
+[4p][cycle 3] v8 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v8 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v8 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v8 seat=3 rank=1 reward=+1.000 ships=11678.0
+[2p][cycle 3] v9 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+3272.0
+[2p][cycle 3] v9 vs v5 seat=1 winner=v9 reward_diff=+2.000 ship_diff=+2264.0
+[2p][cycle 3] v9 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-1366.0
+[2p][cycle 3] v9 vs baseline seat=1 winner=v9 reward_diff=+2.000 ship_diff=+1794.0
+[4p][cycle 3] v9 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v9 seat=1 rank=2 reward=-1.000 ships=2409.0
+[4p][cycle 3] v9 seat=2 rank=2 reward=-1.000 ships=2294.0
+[4p][cycle 3] v9 seat=3 rank=1 reward=+1.000 ships=5360.0
+[2p][cycle 3] v10 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+5590.0
+[2p][cycle 3] v10 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-4468.0
+[2p][cycle 3] v10 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3569.0
+[2p][cycle 3] v10 vs baseline seat=1 winner=v10 reward_diff=+2.000 ship_diff=+1102.0
+[4p][cycle 3] v10 seat=0 rank=2 reward=-1.000 ships=2085.0
+[4p][cycle 3] v10 seat=1 rank=1 reward=+1.000 ships=1172.0
+[4p][cycle 3] v10 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v10 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 3] v11 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-4.0
+[2p][cycle 3] v11 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-121.0
+[2p][cycle 3] v11 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+4463.0
+[2p][cycle 3] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3664.0
+[4p][cycle 3] v11 seat=0 rank=1 reward=+1.000 ships=8637.0
+[4p][cycle 3] v11 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v11 seat=2 rank=2 reward=-1.000 ships=3073.0
+[4p][cycle 3] v11 seat=3 rank=1 reward=+1.000 ships=17428.0
+[2p][cycle 3] v12 vs v5 seat=0 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 3] v12 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 3] v12 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3589.0
+[2p][cycle 3] v12 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-945.0
+[4p][cycle 3] v12 seat=0 rank=1 reward=+1.000 ships=13831.0
+[4p][cycle 3] v12 seat=1 rank=1 reward=+1.000 ships=6346.0
+[4p][cycle 3] v12 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v12 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 3] v13 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=+965.0
+[2p][cycle 3] v13 vs v5 seat=1 winner=v13 reward_diff=+2.000 ship_diff=+12984.0
+[2p][cycle 3] v13 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-1026.0
+[2p][cycle 3] v13 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-2705.0
+[4p][cycle 3] v13 seat=0 rank=1 reward=+1.000 ships=9036.0
+[4p][cycle 3] v13 seat=1 rank=1 reward=+1.000 ships=17149.0
+[4p][cycle 3] v13 seat=2 rank=1 reward=+1.000 ships=12940.0
+[4p][cycle 3] v13 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 3] v14 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-15642.0
+[2p][cycle 3] v14 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-8992.0
+[2p][cycle 3] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-7816.0
+[2p][cycle 3] v14 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5592.0
+[4p][cycle 3] v14 seat=0 rank=2 reward=-1.000 ships=460.0
+[4p][cycle 3] v14 seat=1 rank=1 reward=+1.000 ships=12924.0
+[4p][cycle 3] v14 seat=2 rank=1 reward=+1.000 ships=9728.0
+[4p][cycle 3] v14 seat=3 rank=2 reward=-1.000 ships=2178.0
+[2p][cycle 3] v15 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-1524.0
+[2p][cycle 3] v15 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-1848.0
+[2p][cycle 3] v15 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-4336.0
+[2p][cycle 3] v15 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6360.0
+[4p][cycle 3] v15 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 3] v15 seat=1 rank=2 reward=-1.000 ships=239.0
+[4p][cycle 3] v15 seat=2 rank=2 reward=-1.000 ships=551.0
+[4p][cycle 3] v15 seat=3 rank=1 reward=+1.000 ships=3293.0
+[2p][cycle 4] v6 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-2081.0
+[2p][cycle 4] v6 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2825.0
+[2p][cycle 4] v6 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3319.0
+[2p][cycle 4] v6 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4891.0
+[4p][cycle 4] v6 seat=0 rank=2 reward=-1.000 ships=2028.0
+[4p][cycle 4] v6 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v6 seat=2 rank=1 reward=+1.000 ships=16852.0
+[4p][cycle 4] v6 seat=3 rank=2 reward=-1.000 ships=2897.0
+[2p][cycle 4] v7 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-18478.0
+[2p][cycle 4] v7 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2417.0
+[2p][cycle 4] v7 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-10299.0
+[2p][cycle 4] v7 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-7056.0
+[4p][cycle 4] v7 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v7 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v7 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v7 seat=3 rank=1 reward=+1.000 ships=13205.0
+[2p][cycle 4] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+1321.0
+[2p][cycle 4] v8 vs v5 seat=1 winner=v8 reward_diff=+2.000 ship_diff=+2340.0
+[2p][cycle 4] v8 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-4504.0
+[2p][cycle 4] v8 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5485.0
+[4p][cycle 4] v8 seat=0 rank=2 reward=-1.000 ships=3489.0
+[4p][cycle 4] v8 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v8 seat=2 rank=2 reward=-1.000 ships=3710.0
+[4p][cycle 4] v8 seat=3 rank=1 reward=+1.000 ships=7853.0
+[2p][cycle 4] v9 vs v5 seat=0 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 4] v9 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 4] v9 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2862.0
+[2p][cycle 4] v9 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-2939.0
+[4p][cycle 4] v9 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v9 seat=1 rank=2 reward=-1.000 ships=6790.0
+[4p][cycle 4] v9 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v9 seat=3 rank=1 reward=+1.000 ships=16686.0
+[2p][cycle 4] v10 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-25435.0
+[2p][cycle 4] v10 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-17540.0
+[2p][cycle 4] v10 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2191.0
+[2p][cycle 4] v10 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-7880.0
+[4p][cycle 4] v10 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v10 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v10 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v10 seat=3 rank=2 reward=-1.000 ships=151.0
+[2p][cycle 4] v11 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2904.0
+[2p][cycle 4] v11 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=-788.0
+[2p][cycle 4] v11 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2992.0
+[2p][cycle 4] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4285.0
+[4p][cycle 4] v11 seat=0 rank=2 reward=-1.000 ships=5192.0
+[4p][cycle 4] v11 seat=1 rank=2 reward=-1.000 ships=4352.0
+[4p][cycle 4] v11 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v11 seat=3 rank=1 reward=+1.000 ships=13353.0
+[2p][cycle 4] v12 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-1780.0
+[2p][cycle 4] v12 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2453.0
+[2p][cycle 4] v12 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+14547.0
+[2p][cycle 4] v12 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5538.0
+[4p][cycle 4] v12 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v12 seat=1 rank=2 reward=-1.000 ships=7897.0
+[4p][cycle 4] v12 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v12 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 4] v13 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+30.0
+[2p][cycle 4] v13 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-4474.0
+[2p][cycle 4] v13 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3538.0
+[2p][cycle 4] v13 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-2998.0
+[4p][cycle 4] v13 seat=0 rank=2 reward=-1.000 ships=1902.0
+[4p][cycle 4] v13 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v13 seat=2 rank=2 reward=-1.000 ships=1574.0
+[4p][cycle 4] v13 seat=3 rank=1 reward=+1.000 ships=10529.0
+[2p][cycle 4] v14 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+1710.0
+[2p][cycle 4] v14 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-1791.0
+[2p][cycle 4] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3576.0
+[2p][cycle 4] v14 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4803.0
+[4p][cycle 4] v14 seat=0 rank=1 reward=+1.000 ships=10865.0
+[4p][cycle 4] v14 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v14 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v14 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 4] v15 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-1033.0
+[2p][cycle 4] v15 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-18441.0
+[2p][cycle 4] v15 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2926.0
+[2p][cycle 4] v15 vs baseline seat=1 winner=v15 reward_diff=+2.000 ship_diff=+6209.0
+[4p][cycle 4] v15 seat=0 rank=1 reward=+1.000 ships=5961.0
+[4p][cycle 4] v15 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v15 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 4] v15 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 5] v6 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+1973.0
+[2p][cycle 5] v6 vs v5 seat=1 winner=v6 reward_diff=+2.000 ship_diff=+8545.0
+[2p][cycle 5] v6 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+12019.0
+[2p][cycle 5] v6 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-951.0
+[4p][cycle 5] v6 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v6 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v6 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v6 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 5] v7 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+5956.0
+[2p][cycle 5] v7 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-12464.0
+[2p][cycle 5] v7 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2088.0
+[2p][cycle 5] v7 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-7000.0
+[4p][cycle 5] v7 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v7 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v7 seat=2 rank=2 reward=-1.000 ships=328.0
+[4p][cycle 5] v7 seat=3 rank=1 reward=+1.000 ships=11388.0
+[2p][cycle 5] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+12289.0
+[2p][cycle 5] v8 vs v5 seat=1 winner=v8 reward_diff=+2.000 ship_diff=+19939.0
+[2p][cycle 5] v8 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2616.0
+[2p][cycle 5] v8 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6976.0
+[4p][cycle 5] v8 seat=0 rank=1 reward=+1.000 ships=10337.0
+[4p][cycle 5] v8 seat=1 rank=1 reward=+1.000 ships=5027.0
+[4p][cycle 5] v8 seat=2 rank=1 reward=+1.000 ships=16871.0
+[4p][cycle 5] v8 seat=3 rank=1 reward=+1.000 ships=2591.0
+[2p][cycle 5] v9 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-3474.0
+[2p][cycle 5] v9 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-21785.0
+[2p][cycle 5] v9 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-404.0
+[2p][cycle 5] v9 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3400.0
+[4p][cycle 5] v9 seat=0 rank=1 reward=+1.000 ships=13077.0
+[4p][cycle 5] v9 seat=1 rank=2 reward=-1.000 ships=5333.0
+[4p][cycle 5] v9 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v9 seat=3 rank=1 reward=+1.000 ships=11281.0
+[2p][cycle 5] v10 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-9950.0
+[2p][cycle 5] v10 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2574.0
+[2p][cycle 5] v10 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+21224.0
+[2p][cycle 5] v10 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-11152.0
+[4p][cycle 5] v10 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v10 seat=1 rank=2 reward=-1.000 ships=3795.0
+[4p][cycle 5] v10 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v10 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 5] v11 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-3117.0
+[2p][cycle 5] v11 vs v5 seat=1 winner=v11 reward_diff=+2.000 ship_diff=+9683.0
+[2p][cycle 5] v11 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+1892.0
+[2p][cycle 5] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-384.0
+[4p][cycle 5] v11 seat=0 rank=1 reward=+1.000 ships=7719.0
+[4p][cycle 5] v11 seat=1 rank=2 reward=-1.000 ships=7879.0
+[4p][cycle 5] v11 seat=2 rank=1 reward=+1.000 ships=9904.0
+[4p][cycle 5] v11 seat=3 rank=2 reward=-1.000 ships=6475.0
+[2p][cycle 5] v12 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=+74.0
+[2p][cycle 5] v12 vs v5 seat=1 winner=v12 reward_diff=+2.000 ship_diff=+6865.0
+[2p][cycle 5] v12 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2672.0
+[2p][cycle 5] v12 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3347.0
+[4p][cycle 5] v12 seat=0 rank=1 reward=+1.000 ships=5268.0
+[4p][cycle 5] v12 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v12 seat=2 rank=1 reward=+1.000 ships=6128.0
+[4p][cycle 5] v12 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 5] v13 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+8066.0
+[2p][cycle 5] v13 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2049.0
+[2p][cycle 5] v13 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-1861.0
+[2p][cycle 5] v13 vs baseline seat=1 winner=v13 reward_diff=+2.000 ship_diff=+6148.0
+[4p][cycle 5] v13 seat=0 rank=2 reward=-1.000 ships=1207.0
+[4p][cycle 5] v13 seat=1 rank=2 reward=-1.000 ships=8891.0
+[4p][cycle 5] v13 seat=2 rank=2 reward=-1.000 ships=3936.0
+[4p][cycle 5] v13 seat=3 rank=1 reward=+1.000 ships=9795.0
+[2p][cycle 5] v14 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+789.0
+[2p][cycle 5] v14 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-7865.0
+[2p][cycle 5] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2315.0
+[2p][cycle 5] v14 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3105.0
+[4p][cycle 5] v14 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v14 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v14 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v14 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 5] v15 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-2767.0
+[2p][cycle 5] v15 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-7761.0
+[2p][cycle 5] v15 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-6053.0
+[2p][cycle 5] v15 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-258.0
+[4p][cycle 5] v15 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v15 seat=1 rank=2 reward=-1.000 ships=4542.0
+[4p][cycle 5] v15 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 5] v15 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 6] v6 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+10956.0
+[2p][cycle 6] v6 vs v5 seat=1 winner=v6 reward_diff=+2.000 ship_diff=+2444.0
+[2p][cycle 6] v6 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+3384.0
+[2p][cycle 6] v6 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3117.0
+[4p][cycle 6] v6 seat=0 rank=2 reward=-1.000 ships=4473.0
+[4p][cycle 6] v6 seat=1 rank=2 reward=-1.000 ships=12190.0
+[4p][cycle 6] v6 seat=2 rank=1 reward=+1.000 ships=4507.0
+[4p][cycle 6] v6 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 6] v7 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+15537.0
+[2p][cycle 6] v7 vs v5 seat=1 winner=v7 reward_diff=+2.000 ship_diff=+2643.0
+[2p][cycle 6] v7 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-6602.0
+[2p][cycle 6] v7 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-2899.0
+[4p][cycle 6] v7 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v7 seat=1 rank=1 reward=+1.000 ships=5373.0
+[4p][cycle 6] v7 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v7 seat=3 rank=1 reward=+1.000 ships=11811.0
+[2p][cycle 6] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2298.0
+[2p][cycle 6] v8 vs v5 seat=1 winner=v8 reward_diff=+2.000 ship_diff=+9075.0
+[2p][cycle 6] v8 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2792.0
+[2p][cycle 6] v8 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4533.0
+[4p][cycle 6] v8 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v8 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v8 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v8 seat=3 rank=1 reward=+1.000 ships=9860.0
+[2p][cycle 6] v9 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+1762.0
+[2p][cycle 6] v9 vs v5 seat=1 winner=v9 reward_diff=+2.000 ship_diff=+3474.0
+[2p][cycle 6] v9 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-9707.0
+[2p][cycle 6] v9 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6987.0
+[4p][cycle 6] v9 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v9 seat=1 rank=2 reward=-1.000 ships=6597.0
+[4p][cycle 6] v9 seat=2 rank=2 reward=-1.000 ships=1556.0
+[4p][cycle 6] v9 seat=3 rank=1 reward=+1.000 ships=10107.0
+[2p][cycle 6] v10 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-3583.0
+[2p][cycle 6] v10 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-20193.0
+[2p][cycle 6] v10 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3565.0
+[2p][cycle 6] v10 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6982.0
+[4p][cycle 6] v10 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v10 seat=1 rank=2 reward=-1.000 ships=1039.0
+[4p][cycle 6] v10 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v10 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 6] v11 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+4597.0
+[2p][cycle 6] v11 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 6] v11 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2689.0
+[2p][cycle 6] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4145.0
+[4p][cycle 6] v11 seat=0 rank=2 reward=-1.000 ships=330.0
+[4p][cycle 6] v11 seat=1 rank=1 reward=+1.000 ships=2986.0
+[4p][cycle 6] v11 seat=2 rank=1 reward=+1.000 ships=13734.0
+[4p][cycle 6] v11 seat=3 rank=1 reward=+1.000 ships=17056.0
+[2p][cycle 6] v12 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=-1205.0
+[2p][cycle 6] v12 vs v5 seat=1 winner=v12 reward_diff=+2.000 ship_diff=+745.0
+[2p][cycle 6] v12 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-4400.0
+[2p][cycle 6] v12 vs baseline seat=1 winner=v12 reward_diff=+2.000 ship_diff=+2939.0
+[4p][cycle 6] v12 seat=0 rank=1 reward=+1.000 ships=9250.0
+[4p][cycle 6] v12 seat=1 rank=1 reward=+1.000 ships=17351.0
+[4p][cycle 6] v12 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v12 seat=3 rank=1 reward=+1.000 ships=8102.0
+[2p][cycle 6] v13 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+315.0
+[2p][cycle 6] v13 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 6] v13 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-10059.0
+[2p][cycle 6] v13 vs baseline seat=1 winner=v13 reward_diff=+2.000 ship_diff=+15544.0
+[4p][cycle 6] v13 seat=0 rank=2 reward=-1.000 ships=3281.0
+[4p][cycle 6] v13 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v13 seat=2 rank=1 reward=+1.000 ships=10016.0
+[4p][cycle 6] v13 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 6] v14 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-7986.0
+[2p][cycle 6] v14 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2197.0
+[2p][cycle 6] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2148.0
+[2p][cycle 6] v14 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-9242.0
+[4p][cycle 6] v14 seat=0 rank=2 reward=-1.000 ships=330.0
+[4p][cycle 6] v14 seat=1 rank=2 reward=-1.000 ships=377.0
+[4p][cycle 6] v14 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v14 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 6] v15 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-4721.0
+[2p][cycle 6] v15 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=+138.0
+[2p][cycle 6] v15 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-5420.0
+[2p][cycle 6] v15 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6952.0
+[4p][cycle 6] v15 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v15 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v15 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 6] v15 seat=3 rank=1 reward=+1.000 ships=9512.0
+[2p][cycle 7] v6 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+14701.0
+[2p][cycle 7] v6 vs v5 seat=1 winner=v6 reward_diff=+2.000 ship_diff=+2648.0
+[2p][cycle 7] v6 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+8879.0
+[2p][cycle 7] v6 vs baseline seat=1 winner=v6 reward_diff=+2.000 ship_diff=+5067.0
+[4p][cycle 7] v6 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v6 seat=1 rank=1 reward=+1.000 ships=7664.0
+[4p][cycle 7] v6 seat=2 rank=1 reward=+1.000 ships=11928.0
+[4p][cycle 7] v6 seat=3 rank=1 reward=+1.000 ships=11772.0
+[2p][cycle 7] v7 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+3548.0
+[2p][cycle 7] v7 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-2569.0
+[2p][cycle 7] v7 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-5886.0
+[2p][cycle 7] v7 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-836.0
+[4p][cycle 7] v7 seat=0 rank=1 reward=+1.000 ships=4006.0
+[4p][cycle 7] v7 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v7 seat=2 rank=1 reward=+1.000 ships=3176.0
+[4p][cycle 7] v7 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 7] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+5125.0
+[2p][cycle 7] v8 vs v5 seat=1 winner=v8 reward_diff=+2.000 ship_diff=+2755.0
+[2p][cycle 7] v8 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-1497.0
+[2p][cycle 7] v8 vs baseline seat=1 winner=v8 reward_diff=+2.000 ship_diff=+3102.0
+[4p][cycle 7] v8 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v8 seat=1 rank=2 reward=-1.000 ships=4693.0
+[4p][cycle 7] v8 seat=2 rank=1 reward=+1.000 ships=16771.0
+[4p][cycle 7] v8 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 7] v9 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-4302.0
+[2p][cycle 7] v9 vs v5 seat=1 winner=v9 reward_diff=+2.000 ship_diff=+1483.0
+[2p][cycle 7] v9 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-8037.0
+[2p][cycle 7] v9 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3079.0
+[4p][cycle 7] v9 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v9 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v9 seat=2 rank=2 reward=-1.000 ships=6946.0
+[4p][cycle 7] v9 seat=3 rank=1 reward=+1.000 ships=8996.0
+[2p][cycle 7] v10 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-9192.0
+[2p][cycle 7] v10 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-3537.0
+[2p][cycle 7] v10 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-5087.0
+[2p][cycle 7] v10 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-412.0
+[4p][cycle 7] v10 seat=0 rank=2 reward=-1.000 ships=3.0
+[4p][cycle 7] v10 seat=1 rank=2 reward=-1.000 ships=2613.0
+[4p][cycle 7] v10 seat=2 rank=1 reward=+1.000 ships=26955.0
+[4p][cycle 7] v10 seat=3 rank=2 reward=-1.000 ships=2376.0
+[2p][cycle 7] v11 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-2428.0
+[2p][cycle 7] v11 vs v5 seat=1 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 7] v11 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-5758.0
+[2p][cycle 7] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-1138.0
+[4p][cycle 7] v11 seat=0 rank=1 reward=+1.000 ships=18007.0
+[4p][cycle 7] v11 seat=1 rank=1 reward=+1.000 ships=15458.0
+[4p][cycle 7] v11 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v11 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 7] v12 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2164.0
+[2p][cycle 7] v12 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-3994.0
+[2p][cycle 7] v12 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+2831.0
+[2p][cycle 7] v12 vs baseline seat=1 winner=v12 reward_diff=+2.000 ship_diff=+267.0
+[4p][cycle 7] v12 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v12 seat=1 rank=1 reward=+1.000 ships=24016.0
+[4p][cycle 7] v12 seat=2 rank=1 reward=+1.000 ships=10866.0
+[4p][cycle 7] v12 seat=3 rank=1 reward=+1.000 ships=3973.0
+[2p][cycle 7] v13 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2961.0
+[2p][cycle 7] v13 vs v5 seat=1 winner=v13 reward_diff=+2.000 ship_diff=+8.0
+[2p][cycle 7] v13 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+12626.0
+[2p][cycle 7] v13 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4527.0
+[4p][cycle 7] v13 seat=0 rank=2 reward=-1.000 ships=10907.0
+[4p][cycle 7] v13 seat=1 rank=2 reward=-1.000 ships=7808.0
+[4p][cycle 7] v13 seat=2 rank=1 reward=+1.000 ships=13891.0
+[4p][cycle 7] v13 seat=3 rank=2 reward=-1.000 ships=7389.0
+[2p][cycle 7] v14 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-2191.0
+[2p][cycle 7] v14 vs v5 seat=1 winner=v14 reward_diff=+2.000 ship_diff=+6954.0
+[2p][cycle 7] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-8878.0
+[2p][cycle 7] v14 vs baseline seat=1 winner=v14 reward_diff=+2.000 ship_diff=+10423.0
+[4p][cycle 7] v14 seat=0 rank=2 reward=-1.000 ships=5198.0
+[4p][cycle 7] v14 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v14 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v14 seat=3 rank=1 reward=+1.000 ships=4209.0
+[2p][cycle 7] v15 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+4580.0
+[2p][cycle 7] v15 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-11561.0
+[2p][cycle 7] v15 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+23324.0
+[2p][cycle 7] v15 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-6379.0
+[4p][cycle 7] v15 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 7] v15 seat=1 rank=2 reward=-1.000 ships=84.0
+[4p][cycle 7] v15 seat=2 rank=2 reward=-1.000 ships=2079.0
+[4p][cycle 7] v15 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 8] v6 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-4253.0
+[2p][cycle 8] v6 vs v5 seat=1 winner=v6 reward_diff=+2.000 ship_diff=+1143.0
+[2p][cycle 8] v6 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-6082.0
+[2p][cycle 8] v6 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-4393.0
+[4p][cycle 8] v6 seat=0 rank=1 reward=+1.000 ships=2326.0
+[4p][cycle 8] v6 seat=1 rank=2 reward=-1.000 ships=7543.0
+[4p][cycle 8] v6 seat=2 rank=1 reward=+1.000 ships=9599.0
+[4p][cycle 8] v6 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 8] v7 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-7093.0
+[2p][cycle 8] v7 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-16706.0
+[2p][cycle 8] v7 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-1986.0
+[2p][cycle 8] v7 vs baseline seat=1 winner=v7 reward_diff=+2.000 ship_diff=+10745.0
+[4p][cycle 8] v7 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v7 seat=1 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v7 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v7 seat=3 rank=1 reward=+1.000 ships=8545.0
+[2p][cycle 8] v8 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2384.0
+[2p][cycle 8] v8 vs v5 seat=1 winner=v8 reward_diff=+2.000 ship_diff=-645.0
+[2p][cycle 8] v8 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+7356.0
+[2p][cycle 8] v8 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-3741.0
+[4p][cycle 8] v8 seat=0 rank=2 reward=-1.000 ships=1552.0
+[4p][cycle 8] v8 seat=1 rank=1 reward=+1.000 ships=8856.0
+[4p][cycle 8] v8 seat=2 rank=2 reward=-1.000 ships=535.0
+[4p][cycle 8] v8 seat=3 rank=2 reward=-1.000 ships=1218.0
+[2p][cycle 8] v9 vs v5 seat=0 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 8] v9 vs v5 seat=1 winner=v9 reward_diff=+2.000 ship_diff=+732.0
+[2p][cycle 8] v9 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+6663.0
+[2p][cycle 8] v9 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-745.0
+[4p][cycle 8] v9 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v9 seat=1 rank=2 reward=-1.000 ships=6071.0
+[4p][cycle 8] v9 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v9 seat=3 rank=2 reward=-1.000 ships=6512.0
+[2p][cycle 8] v10 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-12425.0
+[2p][cycle 8] v10 vs v5 seat=1 winner=v10 reward_diff=+2.000 ship_diff=+4400.0
+[2p][cycle 8] v10 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+23179.0
+[2p][cycle 8] v10 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-2824.0
+[4p][cycle 8] v10 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v10 seat=1 rank=1 reward=+1.000 ships=12121.0
+[4p][cycle 8] v10 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v10 seat=3 rank=2 reward=-1.000 ships=1402.0
+[2p][cycle 8] v11 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+1545.0
+[2p][cycle 8] v11 vs v5 seat=1 winner=v11 reward_diff=+2.000 ship_diff=+5991.0
+[2p][cycle 8] v11 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=+1008.0
+[2p][cycle 8] v11 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5291.0
+[4p][cycle 8] v11 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v11 seat=1 rank=1 reward=+1.000 ships=12360.0
+[4p][cycle 8] v11 seat=2 rank=2 reward=-1.000 ships=2671.0
+[4p][cycle 8] v11 seat=3 rank=2 reward=-1.000 ships=7696.0
+[2p][cycle 8] v12 vs v5 seat=0 winner=A reward_diff=+2.000 ship_diff=+2373.0
+[2p][cycle 8] v12 vs v5 seat=1 winner=v12 reward_diff=+2.000 ship_diff=+7306.0
+[2p][cycle 8] v12 vs baseline seat=0 winner=A reward_diff=+2.000 ship_diff=+2029.0
+[2p][cycle 8] v12 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-5480.0
+[4p][cycle 8] v12 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v12 seat=1 rank=1 reward=+1.000 ships=22726.0
+[4p][cycle 8] v12 seat=2 rank=2 reward=-1.000 ships=7037.0
+[4p][cycle 8] v12 seat=3 rank=2 reward=-1.000 ships=0.0
+[2p][cycle 8] v13 vs v5 seat=0 winner=draw reward_diff=+0.000 ship_diff=+0.0
+[2p][cycle 8] v13 vs v5 seat=1 winner=v13 reward_diff=+2.000 ship_diff=+1231.0
+[2p][cycle 8] v13 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-3217.0
+[2p][cycle 8] v13 vs baseline seat=1 winner=v13 reward_diff=+2.000 ship_diff=+13633.0
+[4p][cycle 8] v13 seat=0 rank=1 reward=+1.000 ships=11140.0
+[4p][cycle 8] v13 seat=1 rank=1 reward=+1.000 ships=8359.0
+[4p][cycle 8] v13 seat=2 rank=1 reward=+1.000 ships=8753.0
+[4p][cycle 8] v13 seat=3 rank=2 reward=-1.000 ships=1643.0
+[2p][cycle 8] v14 vs v5 seat=0 winner=B reward_diff=-2.000 ship_diff=-4708.0
+[2p][cycle 8] v14 vs v5 seat=1 winner=v5 reward_diff=-2.000 ship_diff=-23430.0
+[2p][cycle 8] v14 vs baseline seat=0 winner=B reward_diff=-2.000 ship_diff=-2318.0
+[2p][cycle 8] v14 vs baseline seat=1 winner=baseline reward_diff=-2.000 ship_diff=-1905.0
+[4p][cycle 8] v14 seat=0 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v14 seat=1 rank=1 reward=+1.000 ships=16846.0
+[4p][cycle 8] v14 seat=2 rank=2 reward=-1.000 ships=0.0
+[4p][cycle 8] v14 seat=3 rank=2 reward=-1.000 ships=5972.0
