@@ -162,11 +162,11 @@ def _build_node_features(
         nf[i, 2] = is_mine
         nf[i, 3] = is_enemy
         nf[i, 4] = is_neutral
-        nf[i, 5] = math.log1p(p_ships)
-        nf[i, 6] = p_prod
+        nf[i, 5] = math.log1p(p_ships) / 6.5  # normalized: log1p(500)~6.2
+        nf[i, 6] = math.log1p(p_prod) / 4.5    # normalized: log1p(60)~4.1
         nf[i, 7] = 1.0 if is_mine and p_ships > 0 else 0.0  # ship_ratio (simplified)
-        nf[i, 8] = math.log1p(inbound_friendly[i])
-        nf[i, 9] = math.log1p(inbound_enemy[i])
+        nf[i, 8] = math.log1p(inbound_friendly[i]) / 6.5
+        nf[i, 9] = math.log1p(inbound_enemy[i]) / 6.5
 
         if is_mine > 0 and p_ships > 0:
             owned[i] = 1.0
@@ -401,3 +401,101 @@ def save_dataset(transitions: List[Transition], path: str) -> None:
 def load_dataset(path: str) -> List[Transition]:
     """Load transitions from a .pt file."""
     return torch.load(path, weights_only=False)
+
+
+def prebatch_and_save(
+    transitions: List[Transition],
+    path: str,
+    max_planets: int = 40,
+    winners_only: bool = False,
+) -> None:
+    """Convert transitions to pre-padded tensors and save as a single dict.
+
+    Much faster to load than a list of Transition objects.
+    """
+    if winners_only:
+        transitions = [t for t in transitions if t.player_rank == 1]
+
+    N = len(transitions)
+    M = max_planets
+
+    nf = torch.zeros(N, M, NODE_DIM)
+    pos = torch.zeros(N, M, 2)
+    owned = torch.zeros(N, M)
+    sources = torch.zeros(N, dtype=torch.long)
+    targets = torch.zeros(N, dtype=torch.long)
+    fractions = torch.zeros(N, dtype=torch.long)
+    is_noops = torch.zeros(N)
+    returns = torch.zeros(N)
+    ranks = torch.zeros(N, dtype=torch.long)
+    num_planets = torch.zeros(N, dtype=torch.long)
+
+    # Filter out samples where action references invalid planets
+    valid_transitions = []
+    skipped_oob = 0
+    skipped_unowned = 0
+    for t in transitions:
+        if not t.is_noop:
+            if t.source_idx >= M or t.target_idx >= M:
+                skipped_oob += 1
+                continue  # action references a planet we'd truncate
+            # Skip if source planet isn't owned by this player in the observation
+            if t.owned_mask[t.source_idx].item() == 0:
+                skipped_unowned += 1
+                continue
+        valid_transitions.append(t)
+
+    if skipped_oob > 0:
+        print(f"  Skipped {skipped_oob} transitions with actions beyond max_planets={M}")
+    if skipped_unowned > 0:
+        print(f"  Skipped {skipped_unowned} transitions with unowned source planet")
+    transitions = valid_transitions
+    N = len(transitions)
+
+    # Re-allocate with correct size
+    nf = torch.zeros(N, M, NODE_DIM)
+    pos = torch.zeros(N, M, 2)
+    owned = torch.zeros(N, M)
+    sources = torch.zeros(N, dtype=torch.long)
+    targets = torch.zeros(N, dtype=torch.long)
+    fractions = torch.zeros(N, dtype=torch.long)
+    is_noops = torch.zeros(N)
+    returns = torch.zeros(N)
+    ranks = torch.zeros(N, dtype=torch.long)
+    num_planets = torch.zeros(N, dtype=torch.long)
+
+    for i, t in enumerate(transitions):
+        n = min(t.node_features.shape[0], M)
+        nf[i, :n] = t.node_features[:n]
+        pos[i, :n] = t.positions[:n]
+        owned[i, :n] = t.owned_mask[:n]
+        sources[i] = t.source_idx if not t.is_noop else M
+        targets[i] = t.target_idx if not t.is_noop else 0
+        fractions[i] = t.fraction_idx if not t.is_noop else 0
+        is_noops[i] = 1.0 if t.is_noop else 0.0
+        returns[i] = t.discounted_return
+        ranks[i] = t.player_rank
+        num_planets[i] = n
+
+    data = {
+        "node_features": nf, "positions": pos, "owned_mask": owned,
+        "source": sources, "target": targets, "fraction": fractions,
+        "is_noop": is_noops, "discounted_return": returns,
+        "player_rank": ranks, "num_planets": num_planets,
+    }
+    torch.save(data, path)
+    print(f"Saved {N} pre-batched transitions to {path}")
+
+
+class PreBatchedDataset(Dataset):
+    """Fast dataset from pre-tensorized data."""
+
+    def __init__(self, path: str):
+        self.data = torch.load(path, weights_only=True)
+        self._len = self.data["source"].shape[0]
+
+    def __len__(self) -> int:
+        return self._len
+
+    def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
+        return {k: v[idx] for k, v in self.data.items()}

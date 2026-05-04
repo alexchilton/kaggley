@@ -22,7 +22,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 
 from .gnn_policy import OrbitWarsGNNPolicy
-from .replay_parser import ReplayDataset, load_dataset
+from .replay_parser import PreBatchedDataset, ReplayDataset, load_dataset
 
 
 def awr_loss(
@@ -30,6 +30,7 @@ def awr_loss(
     batch: dict[str, torch.Tensor],
     temperature: float,
     device: torch.device,
+    reward_scale: float = 1.0,
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Compute AWR loss: advantage-weighted policy loss + value loss.
 
@@ -43,7 +44,7 @@ def awr_loss(
     target = batch["target"].to(device)
     fraction = batch["fraction"].to(device)
     is_noop = batch["is_noop"].to(device)
-    returns = batch["discounted_return"].to(device)
+    returns = batch["discounted_return"].to(device) * reward_scale
 
     B = nf.shape[0]
     M = nf.shape[1]
@@ -57,8 +58,11 @@ def awr_loss(
         advantage = returns - value.detach()
         weights = torch.exp(advantage / temperature).clamp(0.0, 20.0)
 
-    # Policy log-probs (same structure as BC loss but weighted)
-    source_logits, all_target_logits, all_fraction_logits = model(nf, pos, owned)
+    # Policy log-probs using efficient bc_forward
+    num_planets = batch["num_planets"].to(device) if "num_planets" in batch else None
+    source_logits, tgt_logits, frac_logits = model.bc_forward(
+        nf, pos, owned, source, target, num_planets=num_planets,
+    )
 
     # Source
     source_target = torch.where(is_noop.bool(), torch.full_like(source, M), source)
@@ -66,12 +70,7 @@ def awr_loss(
 
     # Target and fraction (for non-noop)
     launch_mask = (1.0 - is_noop)
-    src_clamped = source.clamp(0, M - 1)
-    tgt_logits = all_target_logits[torch.arange(B, device=device), src_clamped]
     log_p_target = -F.cross_entropy(tgt_logits, target.clamp(0, M - 1), reduction="none")
-
-    tgt_clamped = target.clamp(0, M - 1)
-    frac_logits = all_fraction_logits[torch.arange(B, device=device), src_clamped, tgt_clamped]
     log_p_fraction = -F.cross_entropy(frac_logits, fraction.clamp(0, 3), reduction="none")
 
     # Joint log-prob
@@ -93,6 +92,7 @@ def train_awr(
     value_coef: float = 0.5,
     device: torch.device = torch.device("cpu"),
     checkpoint_path: str = "checkpoint_awr.pt",
+    reward_scale: float = 1.0,
 ) -> OrbitWarsGNNPolicy:
     """Train with advantage-weighted regression."""
     model = model.to(device)
@@ -109,7 +109,7 @@ def train_awr(
         num_batches = 0
 
         for batch in train_loader:
-            policy_loss, value_loss = awr_loss(model, batch, temperature, device)
+            policy_loss, value_loss = awr_loss(model, batch, temperature, device, reward_scale)
             loss = policy_loss + value_coef * value_loss
 
             optimizer.zero_grad()
@@ -147,22 +147,23 @@ def main() -> None:
     parser.add_argument("--hidden-dim", type=int, default=64)
     parser.add_argument("--use-sage", action="store_true")
     parser.add_argument("--mask-sun", action="store_true")
-    parser.add_argument("--max-planets", type=int, default=48)
+    parser.add_argument("--max-planets", type=int, default=40)
+    parser.add_argument("--reward-scale", type=float, default=1.0,
+                        help="Scale discounted returns to match PPO terminal rewards (use 10.0)")
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
 
     device = torch.device(args.device)
     cache_dir = Path(args.cache_dir)
 
-    # Load transitions (ALL players, not just winners)
-    cache_file = cache_dir / f"transitions_{args.mode}.pt"
-    if not cache_file.exists():
-        print(f"No cached transitions at {cache_file}. Run train_bc.py first to parse replays.")
+    # Load pre-batched all-player dataset (created by train_bc.py)
+    fast_file = cache_dir / f"fast_all_{args.mode}.pt"
+    if not fast_file.exists():
+        print(f"No pre-batched dataset at {fast_file}. Run train_bc.py first.")
         return
-    transitions = load_dataset(str(cache_file))
-    print(f"Loaded {len(transitions)} transitions (all players)")
+    dataset = PreBatchedDataset(str(fast_file))
+    print(f"Loaded {len(dataset)} transitions (all players)")
 
-    dataset = ReplayDataset(transitions, max_planets=args.max_planets, winners_only=False)
     loader = DataLoader(dataset, batch_size=args.batch_size, shuffle=True, num_workers=0)
 
     # Load BC-pretrained model
@@ -175,11 +176,15 @@ def main() -> None:
     print(f"Loaded BC checkpoint from {args.bc_checkpoint}")
 
     checkpoint_path = str(cache_dir / f"checkpoint_awr_{args.mode}.pt")
+    if args.reward_scale != 1.0:
+        print(f"Reward scale: {args.reward_scale}x (returns will be in [{-args.reward_scale:.0f}, {args.reward_scale:.0f}])")
+
     model = train_awr(
         model, loader,
         epochs=args.epochs, lr=args.lr,
         temp_start=args.temp_start, temp_end=args.temp_end,
         device=device, checkpoint_path=checkpoint_path,
+        reward_scale=args.reward_scale,
     )
     print(f"AWR training complete. Checkpoint: {checkpoint_path}")
 

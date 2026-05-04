@@ -287,7 +287,7 @@ class OrbitWarsGNNPolicy(nn.Module):
         src_logits = self.source_head(h).squeeze(-1)  # (B, N)
         noop_logit = self.noop_head(g)  # (B, 1)
         # Mask: only owned planets are valid sources
-        src_logits = src_logits.masked_fill(owned_mask == 0, -1e9)
+        src_logits = src_logits.masked_fill(owned_mask == 0, -1e4)
         source_logits = torch.cat([src_logits, noop_logit], dim=-1)  # (B, N+1)
 
         # --- Target logits for all sources ---
@@ -300,20 +300,90 @@ class OrbitWarsGNNPolicy(nn.Module):
 
         # Mask self-loops (can't send to yourself)
         self_mask = torch.eye(N, device=h.device, dtype=torch.bool).unsqueeze(0)
-        all_target_logits = all_target_logits.masked_fill(self_mask, -1e9)
+        all_target_logits = all_target_logits.masked_fill(self_mask, -1e4)
 
         # Optional: mask sun-blocked paths
         if self.mask_sun_targets:
             sun_inter, _ = compute_sun_edge_features_batch(
                 positions, safety_margin=self.sun_safety_margin,
             )
-            all_target_logits = all_target_logits.masked_fill(sun_inter.bool(), -1e9)
+            all_target_logits = all_target_logits.masked_fill(sun_inter.bool(), -1e4)
 
         # --- Fraction logits for all (source, target) pairs ---
         frac_input = torch.cat([h_s, h_t, g_exp], dim=-1)  # (B, N, N, 3*D)
         all_fraction_logits = self.fraction_head(frac_input)  # (B, N, N, 4)
 
         return source_logits, all_target_logits, all_fraction_logits
+
+    def bc_forward(
+        self,
+        node_features: torch.Tensor,
+        positions: torch.Tensor,
+        owned_mask: torch.Tensor,
+        source_idx: torch.Tensor,
+        target_idx: torch.Tensor,
+        num_planets: Optional[torch.Tensor] = None,
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Efficient forward for BC/AWR training — avoids computing all N^2 target logits.
+
+        Only computes target logits for the specific source row, and fraction logits
+        for the specific (source, target) pair. Much faster than full forward().
+
+        Args:
+            source_idx: (B,) — source planet index (clamped for noop)
+            target_idx: (B,) — target planet index (clamped for noop)
+            num_planets: (B,) — actual planet count per sample (for masking padding)
+
+        Returns:
+            source_logits: (B, N+1)
+            target_logits_for_src: (B, N) — target logits for the given source only
+            fraction_logits: (B, 4) — fraction logits for the given (source, target) only
+        """
+        B, N, _ = node_features.shape
+        h, edge_enc, g = self._encode(node_features, positions)
+
+        # Build valid mask (planets that actually exist, not zero-padding)
+        if num_planets is not None:
+            idx = torch.arange(N, device=node_features.device).unsqueeze(0)  # (1, N)
+            valid_mask = (idx < num_planets.unsqueeze(1)).float()  # (B, N)
+        else:
+            valid_mask = torch.ones(B, N, device=node_features.device)
+
+        # Source logits: mask both unowned and padded planets
+        src_logits = self.source_head(h).squeeze(-1)
+        noop_logit = self.noop_head(g)
+        source_mask = (owned_mask == 0) | (valid_mask == 0)
+        src_logits = src_logits.masked_fill(source_mask, -1e4)
+        source_logits = torch.cat([src_logits, noop_logit], dim=-1)  # (B, N+1)
+
+        # Target logits for the specific source only
+        src_clamped = source_idx.clamp(0, N - 1).long()
+        batch_idx = torch.arange(B, device=h.device)
+        h_s = h[batch_idx, src_clamped]  # (B, D)
+        h_s_exp = h_s.unsqueeze(1).expand(-1, N, -1)  # (B, N, D)
+        edge_for_src = edge_enc[batch_idx, src_clamped]  # (B, N, edge_dim)
+        g_exp = g.unsqueeze(1).expand(-1, N, -1)  # (B, N, D)
+        target_input = torch.cat([h_s_exp, h, edge_for_src, g_exp], dim=-1)  # (B, N, D_target)
+        target_logits = self.target_head(target_input).squeeze(-1)  # (B, N)
+
+        # Mask self-loop and padded planets
+        target_logits[batch_idx, src_clamped] = -1e4
+        target_logits = target_logits.masked_fill(valid_mask == 0, -1e4)
+
+        if self.mask_sun_targets:
+            sun_inter, _ = compute_sun_edge_features_batch(
+                positions, safety_margin=self.sun_safety_margin,
+            )
+            sun_mask = sun_inter[batch_idx, src_clamped]  # (B, N)
+            target_logits = target_logits.masked_fill(sun_mask.bool(), -1e4)
+
+        # Fraction logits for specific (source, target) pair
+        tgt_clamped = target_idx.clamp(0, N - 1).long()
+        h_t = h[batch_idx, tgt_clamped]  # (B, D)
+        frac_input = torch.cat([h_s, h_t, g], dim=-1)  # (B, 3*D)
+        fraction_logits = self.fraction_head(frac_input)  # (B, 4)
+
+        return source_logits, target_logits, fraction_logits
 
     def get_value(self, node_features: torch.Tensor, positions: torch.Tensor) -> torch.Tensor:
         """Compute state value only (for critic updates).

@@ -130,11 +130,11 @@ class TestGNNPolicy:
         src_logits, _, _ = model_gat(nf, pos, owned)
         # Planets 0,1,3,4,5,6 should be masked
         for i in [0, 1, 3, 4, 5, 6]:
-            assert src_logits[0, i].item() < -1e8
+            assert src_logits[0, i].item() < -1e3
         # Planet 2 should not be masked
-        assert src_logits[0, 2].item() > -1e8
+        assert src_logits[0, 2].item() > -1e3
         # Noop should not be masked
-        assert src_logits[0, N].item() > -1e8
+        assert src_logits[0, N].item() > -1e3
 
     def test_self_loop_masked(self, model_gat):
         """Target logits: can't send to yourself (diagonal masked)."""
@@ -145,7 +145,7 @@ class TestGNNPolicy:
 
         _, tgt_logits, _ = model_gat(nf, pos, owned)
         for i in range(N):
-            assert tgt_logits[0, i, i].item() < -1e8
+            assert tgt_logits[0, i, i].item() < -1e3
 
     def test_value_head(self, model_gat):
         B, N = 3, 10

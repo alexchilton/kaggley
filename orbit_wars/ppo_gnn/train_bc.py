@@ -20,9 +20,11 @@ from torch.utils.data import DataLoader, random_split
 
 from .gnn_policy import OrbitWarsGNNPolicy
 from .replay_parser import (
+    PreBatchedDataset,
     ReplayDataset,
     load_dataset,
     parse_all_replays,
+    prebatch_and_save,
     save_dataset,
 )
 
@@ -32,10 +34,13 @@ def bc_loss(
     batch: dict[str, torch.Tensor],
     device: torch.device,
 ) -> torch.Tensor:
-    """Compute factored BC loss for a batch.
+    """Compute factored BC loss using the efficient bc_forward path.
 
     Loss = CE(source) + CE(target|source) + CE(fraction|source,target)
     For noop actions, only the source CE applies.
+
+    Uses bc_forward() which only computes target logits for the given source
+    (O(N) instead of O(N^2)), making training ~N times faster.
     """
     nf = batch["node_features"].to(device)
     pos = batch["positions"].to(device)
@@ -44,33 +49,27 @@ def bc_loss(
     target = batch["target"].to(device)
     fraction = batch["fraction"].to(device)
     is_noop = batch["is_noop"].to(device)
-    num_planets = batch["num_planets"].to(device)
 
     B = nf.shape[0]
     M = nf.shape[1]  # max_planets (padded)
 
-    source_logits, all_target_logits, all_fraction_logits = model(nf, pos, owned)
+    num_planets = batch["num_planets"].to(device)
 
-    # Source CE: noop maps to index M (the noop slot = last in source_logits)
-    # source_logits is (B, M+1) — M planet slots + 1 noop slot
-    # For noop: source target is M. For launch: source target is the planet index.
+    # Efficient forward: only computes logits for the specific source/target
+    source_logits, tgt_logits, frac_logits = model.bc_forward(
+        nf, pos, owned, source, target, num_planets=num_planets,
+    )
+
+    # Source CE
     source_target = torch.where(is_noop.bool(), torch.full_like(source, M), source)
     loss_source = F.cross_entropy(source_logits, source_target, reduction="mean")
 
     # Target CE and Fraction CE: only for non-noop
     launch_mask = (1.0 - is_noop)
     if launch_mask.sum() > 0:
-        launch_idx = launch_mask.bool()
-
-        # Target logits for the selected source
-        src_clamped = source.clamp(0, M - 1)
-        tgt_logits = all_target_logits[torch.arange(B, device=device), src_clamped]  # (B, M)
         loss_target_all = F.cross_entropy(tgt_logits, target.clamp(0, M - 1), reduction="none")
         loss_target = (loss_target_all * launch_mask).sum() / launch_mask.sum()
 
-        # Fraction logits
-        tgt_clamped = target.clamp(0, M - 1)
-        frac_logits = all_fraction_logits[torch.arange(B, device=device), src_clamped, tgt_clamped]
         loss_frac_all = F.cross_entropy(frac_logits, fraction.clamp(0, 3), reduction="none")
         loss_frac = (loss_frac_all * launch_mask).sum() / launch_mask.sum()
     else:
@@ -153,7 +152,7 @@ def main() -> None:
     parser.add_argument("--hidden-dim", type=int, default=64)
     parser.add_argument("--use-sage", action="store_true", help="Use GraphSAGE instead of GAT")
     parser.add_argument("--mask-sun", action="store_true", help="Hard-mask sun-blocked targets")
-    parser.add_argument("--max-planets", type=int, default=48)
+    parser.add_argument("--max-planets", type=int, default=40)
     parser.add_argument("--patience", type=int, default=5)
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
@@ -162,23 +161,32 @@ def main() -> None:
     cache_dir = Path(args.cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load or parse replay data
-    cache_file = cache_dir / f"transitions_{args.mode}.pt"
-    if cache_file.exists():
-        print(f"Loading cached transitions from {cache_file}")
-        transitions = load_dataset(str(cache_file))
-    else:
-        print(f"Parsing replays from {args.replay_dir}...")
-        trans_2p, trans_4p = parse_all_replays(args.replay_dir)
-        save_dataset(trans_2p, str(cache_dir / "transitions_2p.pt"))
-        save_dataset(trans_4p, str(cache_dir / "transitions_4p.pt"))
-        transitions = trans_2p if args.mode == "2p" else trans_4p
+    # Fast path: pre-batched tensor file
+    fast_file = cache_dir / f"fast_bc_{args.mode}.pt"
+    fast_all_file = cache_dir / f"fast_all_{args.mode}.pt"
 
-    print(f"Total {args.mode} transitions: {len(transitions)}")
+    if not fast_file.exists():
+        # Need raw transitions first
+        cache_file = cache_dir / f"transitions_{args.mode}.pt"
+        if cache_file.exists():
+            print(f"Loading cached transitions from {cache_file}")
+            transitions = load_dataset(str(cache_file))
+        else:
+            print(f"Parsing replays from {args.replay_dir}...")
+            trans_2p, trans_4p = parse_all_replays(args.replay_dir)
+            save_dataset(trans_2p, str(cache_dir / "transitions_2p.pt"))
+            save_dataset(trans_4p, str(cache_dir / "transitions_4p.pt"))
+            transitions = trans_2p if args.mode == "2p" else trans_4p
 
-    # Build dataset (winners only for BC)
-    dataset = ReplayDataset(transitions, max_planets=args.max_planets, winners_only=True)
-    print(f"Winners-only dataset: {len(dataset)} samples")
+        print(f"Total {args.mode} transitions: {len(transitions)}")
+        print("Pre-batching winners for BC...")
+        prebatch_and_save(transitions, str(fast_file), max_planets=args.max_planets, winners_only=True)
+        print("Pre-batching all players for AWR...")
+        prebatch_and_save(transitions, str(fast_all_file), max_planets=args.max_planets, winners_only=False)
+
+    print(f"Loading pre-batched dataset from {fast_file}")
+    dataset = PreBatchedDataset(str(fast_file))
+    print(f"Dataset: {len(dataset)} samples")
 
     # Split 90/10
     val_size = max(1, len(dataset) // 10)
