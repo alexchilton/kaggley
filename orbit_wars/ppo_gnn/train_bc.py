@@ -110,6 +110,8 @@ def train_bc(
             optimizer.step()
             train_loss_sum += loss.item()
             train_batches += 1
+            if train_batches % 500 == 0:
+                print(f"  batch {train_batches}, loss={train_loss_sum/train_batches:.4f}", flush=True)
 
         # Validate
         model.eval()
@@ -154,6 +156,8 @@ def main() -> None:
     parser.add_argument("--mask-sun", action="store_true", help="Hard-mask sun-blocked targets")
     parser.add_argument("--max-planets", type=int, default=40)
     parser.add_argument("--patience", type=int, default=5)
+    parser.add_argument("--max-samples", type=int, default=0,
+                        help="Max training samples (0=all). Use to limit memory.")
     parser.add_argument("--device", default="cpu")
     args = parser.parse_args()
 
@@ -163,9 +167,10 @@ def main() -> None:
 
     # Fast path: pre-batched tensor file
     fast_file = cache_dir / f"fast_bc_{args.mode}.pt"
+    fast_file_f16 = cache_dir / f"fast_bc_{args.mode}_f16.pt"
     fast_all_file = cache_dir / f"fast_all_{args.mode}.pt"
 
-    if not fast_file.exists():
+    if not fast_file.exists() and not fast_file_f16.exists():
         # Need raw transitions first
         cache_file = cache_dir / f"transitions_{args.mode}.pt"
         if cache_file.exists():
@@ -184,8 +189,10 @@ def main() -> None:
         print("Pre-batching all players for AWR...")
         prebatch_and_save(transitions, str(fast_all_file), max_planets=args.max_planets, winners_only=False)
 
-    print(f"Loading pre-batched dataset from {fast_file}")
-    dataset = PreBatchedDataset(str(fast_file))
+    # Prefer f16 file (smaller memory footprint)
+    load_file = fast_file_f16 if fast_file_f16.exists() else fast_file
+    print(f"Loading pre-batched dataset from {load_file}")
+    dataset = PreBatchedDataset(str(load_file), max_samples=args.max_samples)
     print(f"Dataset: {len(dataset)} samples")
 
     # Split 90/10

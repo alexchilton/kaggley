@@ -350,6 +350,14 @@ def estimate_arrival(
         tangent = _sun_safe_angle(start_x, start_y, end_x, end_y)
         if tangent is None:
             return None
+        # Only attempt sun-routed shots where the deflection is small.
+        # Large deflections mean the target is on the far side of the sun —
+        # the fleet travels in a straight line and will miss entirely.
+        deflection = abs(tangent - angle)
+        if deflection > math.pi:
+            deflection = 2.0 * math.pi - deflection
+        if deflection > 0.45:  # ~26 degrees — beyond this, fleet misses
+            return None
         eta = max(1, int(math.ceil(hit_distance / fleet_speed(max(1, ships), max_speed=max_speed))))
         return tangent, eta, hit_distance
     eta = max(1, int(math.ceil(hit_distance / fleet_speed(max(1, ships), max_speed=max_speed))))
@@ -1810,7 +1818,7 @@ class DecisionLogic:
                     if (p.x - e_x) ** 2 + (p.y - e_y) ** 2 < 2500
                 )
                 if nearby_my > target.ships * 0.95 and nearby_my > 0:
-                    return min(available, max(need, int(available * 0.85)))
+                    return min(available, max(need, int(available * 0.60)))
         margin = self._compute_margin(target, mission)
         return min(available, max(need, need + margin))
 
@@ -2510,7 +2518,7 @@ class DecisionLogic:
                     if (p.x - e_x) ** 2 + (p.y - e_y) ** 2 < 2500
                 )
                 if nearby_my_ships > target.ships * 0.95 and nearby_my_ships > 0:
-                    value = max(value * 10.0, 200.0)
+                    value *= 4.0
 
         # GENOME: conditional inner orbit bonus
         if GENOME_INNER_ORBIT and mission in {'expand', 'attack', 'snipe'}:

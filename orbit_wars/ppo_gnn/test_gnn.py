@@ -10,7 +10,7 @@ import tempfile
 import pytest
 import torch
 
-from .gnn_policy import FRACTION_BUCKETS, OrbitWarsGNNPolicy
+from .gnn_policy import FRACTION_BUCKETS, NODE_DIM, OrbitWarsGNNPolicy
 from .sun_geometry import (
     closest_approach_to_sun,
     compute_sun_edge_features_batch,
@@ -82,7 +82,7 @@ class TestGNNPolicy:
     def test_forward_shapes_small(self, model_gat):
         """Test with 7 planets (2P game)."""
         B, N = 2, 7
-        nf = torch.randn(B, N, 10)
+        nf = torch.randn(B, N, NODE_DIM)
         pos = torch.rand(B, N, 2) * 100
         owned = torch.zeros(B, N)
         owned[:, 0] = 1.0  # own planet 0
@@ -96,7 +96,7 @@ class TestGNNPolicy:
     def test_forward_shapes_large(self, model_gat):
         """Test with 28 planets (4P game)."""
         B, N = 2, 28
-        nf = torch.randn(B, N, 10)
+        nf = torch.randn(B, N, NODE_DIM)
         pos = torch.rand(B, N, 2) * 100
         owned = torch.zeros(B, N)
         owned[:, :5] = 1.0
@@ -109,7 +109,7 @@ class TestGNNPolicy:
     def test_sage_same_shapes(self, model_sage):
         """GraphSAGE variant produces same shapes as GAT."""
         B, N = 2, 12
-        nf = torch.randn(B, N, 10)
+        nf = torch.randn(B, N, NODE_DIM)
         pos = torch.rand(B, N, 2) * 100
         owned = torch.zeros(B, N)
         owned[:, 0] = 1.0
@@ -122,7 +122,7 @@ class TestGNNPolicy:
     def test_source_masking(self, model_gat):
         """Unowned planets should have -inf source logits."""
         B, N = 1, 7
-        nf = torch.randn(B, N, 10)
+        nf = torch.randn(B, N, NODE_DIM)
         pos = torch.rand(B, N, 2) * 100
         owned = torch.zeros(B, N)
         owned[0, 2] = 1.0  # only planet 2 is owned
@@ -139,7 +139,7 @@ class TestGNNPolicy:
     def test_self_loop_masked(self, model_gat):
         """Target logits: can't send to yourself (diagonal masked)."""
         B, N = 1, 7
-        nf = torch.randn(B, N, 10)
+        nf = torch.randn(B, N, NODE_DIM)
         pos = torch.rand(B, N, 2) * 100
         owned = torch.ones(B, N)
 
@@ -149,14 +149,14 @@ class TestGNNPolicy:
 
     def test_value_head(self, model_gat):
         B, N = 3, 10
-        nf = torch.randn(B, N, 10)
+        nf = torch.randn(B, N, NODE_DIM)
         pos = torch.rand(B, N, 2) * 100
         v = model_gat.get_value(nf, pos)
         assert v.shape == (B,)
 
     def test_sample_action(self, model_gat):
         N = 7
-        nf = torch.randn(N, 10)
+        nf = torch.randn(N, NODE_DIM)
         pos = torch.rand(N, 2) * 100
         owned = torch.zeros(N)
         owned[0] = 1.0
@@ -175,7 +175,7 @@ class TestGNNPolicy:
 
     def test_evaluate_action(self, model_gat):
         B, N = 4, 10
-        nf = torch.randn(B, N, 10)
+        nf = torch.randn(B, N, NODE_DIM)
         pos = torch.rand(B, N, 2) * 100
         owned = torch.ones(B, N)
         source = torch.tensor([0, 1, 2, 3])
@@ -197,7 +197,7 @@ class TestGNNPolicy:
     def test_factored_logprob_decomposition(self, model_gat):
         """Joint log-prob should equal sum of components."""
         N = 10
-        nf = torch.randn(1, N, 10)
+        nf = torch.randn(1, N, NODE_DIM)
         pos = torch.rand(1, N, 2) * 100
         owned = torch.ones(1, N)
 

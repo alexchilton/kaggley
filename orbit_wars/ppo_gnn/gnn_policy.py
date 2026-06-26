@@ -33,7 +33,7 @@ import torch.nn.functional as F
 
 from .sun_geometry import compute_sun_edge_features_batch
 
-NODE_DIM = 10
+NODE_DIM = 28
 EDGE_DIM = 6  # distance, travel_time, angle_sin, angle_cos, sun_intersects, sun_clearance
 FRACTION_BUCKETS = [0.25, 0.5, 0.75, 1.0]
 
@@ -43,15 +43,29 @@ FRACTION_BUCKETS = [0.25, 0.5, 0.75, 1.0]
 # ---------------------------------------------------------------------------
 
 class GATLayer(nn.Module):
-    def __init__(self, in_dim: int, out_dim: int, edge_dim: int, num_heads: int = 4):
+    """GAT layer with edge features in both attention AND messages.
+
+    Standard GAT only uses edges for attention weights. This version also
+    incorporates edge features into the value/message, allowing the model
+    to learn spatial reasoning like "planet j is close AND has lots of ships".
+    """
+    def __init__(self, in_dim: int, out_dim: int, edge_dim: int, num_heads: int = 4,
+                 dropout: float = 0.0):
         super().__init__()
         assert out_dim % num_heads == 0
         self.num_heads = num_heads
         self.head_dim = out_dim // num_heads
+        self.dropout = dropout
+
+        # Query/Key projections for attention
         self.W = nn.Linear(in_dim, out_dim, bias=False)
         self.a_src = nn.Parameter(torch.zeros(num_heads, self.head_dim))
         self.a_tgt = nn.Parameter(torch.zeros(num_heads, self.head_dim))
         self.a_edge = nn.Linear(edge_dim, num_heads, bias=False)
+
+        # Edge-to-message projection: edge features become part of the value
+        self.edge_val = nn.Linear(edge_dim, out_dim, bias=False)
+
         self.norm = nn.LayerNorm(out_dim)
         self.residual = nn.Linear(in_dim, out_dim) if in_dim != out_dim else nn.Identity()
         nn.init.xavier_uniform_(self.W.weight)
@@ -74,14 +88,18 @@ class GATLayer(nn.Module):
         score_tgt = (Wh * self.a_tgt).sum(-1)  # (B, N, H)
         score_edge = self.a_edge(edge_feats)    # (B, N, N, H)
 
-        # (B, i, j, H) = src_i + tgt_j + edge_ij
         attn = score_src.unsqueeze(2) + score_tgt.unsqueeze(1) + score_edge
         attn = F.leaky_relu(attn, 0.2)
         attn = F.softmax(attn, dim=2)  # normalize over j (neighbors)
+        if self.dropout > 0 and self.training:
+            attn = F.dropout(attn, p=self.dropout)
 
-        # Aggregate: for each node i, weighted sum of Wh_j
-        # attn: (B, N, N, H) -> (B, N_i, N_j, H, 1) * Wh_j: (B, 1, N_j, H, D)
-        out = (attn.unsqueeze(-1) * Wh.unsqueeze(1)).sum(dim=2)  # (B, N, H, D)
+        # Value = neighbor node embedding + edge embedding
+        edge_v = self.edge_val(edge_feats).view(B, N, N, self.num_heads, self.head_dim)
+        Wh_msg = Wh.unsqueeze(1) + edge_v  # (B, N_i, N_j, H, D) — message from j to i
+
+        # Aggregate: weighted sum of messages
+        out = (attn.unsqueeze(-1) * Wh_msg).sum(dim=2)  # (B, N, H, D)
         out = out.reshape(B, N, -1)  # (B, N, out_dim)
 
         return self.norm(out + self.residual(h))
@@ -126,6 +144,8 @@ class OrbitWarsGNNPolicy(nn.Module):
         mask_sun_targets: If True, hard-mask targets where path crosses sun.
         sun_safety_margin: Extra radius around sun for danger zone.
         ship_speed: Default ship speed for travel time computation.
+        separate_critic: If True, use a separate GNN backbone for the value
+            function so policy and value gradients don't interfere.
     """
 
     def __init__(
@@ -136,6 +156,7 @@ class OrbitWarsGNNPolicy(nn.Module):
         mask_sun_targets: bool = False,
         sun_safety_margin: float = 2.0,
         ship_speed: float = 6.0,
+        separate_critic: bool = False,
     ):
         super().__init__()
         self.hidden_dim = hidden_dim
@@ -143,6 +164,7 @@ class OrbitWarsGNNPolicy(nn.Module):
         self.mask_sun_targets = mask_sun_targets
         self.sun_safety_margin = sun_safety_margin
         self.ship_speed = ship_speed
+        self.separate_critic = separate_critic
 
         # Encoders
         self.node_encoder = nn.Sequential(
@@ -168,6 +190,27 @@ class OrbitWarsGNNPolicy(nn.Module):
 
         # Global context (mean pool -> project)
         self.global_proj = nn.Linear(hidden_dim, hidden_dim)
+
+        # --- Separate critic backbone (own GNN, not shared with policy) ---
+        if separate_critic:
+            self.critic_node_encoder = nn.Sequential(
+                nn.Linear(NODE_DIM, hidden_dim),
+                nn.ReLU(),
+                nn.Linear(hidden_dim, hidden_dim),
+                nn.ReLU(),
+            )
+            self.critic_edge_encoder = nn.Sequential(
+                nn.Linear(EDGE_DIM, hidden_dim // 2),
+                nn.ReLU(),
+                nn.Linear(hidden_dim // 2, hidden_dim // 2),
+            )
+            if use_gat:
+                self.critic_gnn1 = GATLayer(hidden_dim, hidden_dim, edge_enc_dim, num_gat_heads)
+                self.critic_gnn2 = GATLayer(hidden_dim, hidden_dim, edge_enc_dim, num_gat_heads)
+            else:
+                self.critic_gnn1 = GraphSAGELayer(hidden_dim, hidden_dim, edge_enc_dim)
+                self.critic_gnn2 = GraphSAGELayer(hidden_dim, hidden_dim, edge_enc_dim)
+            self.critic_global_proj = nn.Linear(hidden_dim, hidden_dim)
 
         # Source head: per-node logit + noop logit
         self.source_head = nn.Linear(hidden_dim, 1)
@@ -243,7 +286,7 @@ class OrbitWarsGNNPolicy(nn.Module):
     def _encode(
         self, node_features: torch.Tensor, positions: torch.Tensor,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """Run node encoder + GNN layers + global pooling.
+        """Run node encoder + GNN layers + global pooling (policy backbone).
 
         Returns:
             h: (B, N, hidden_dim) — node embeddings after message passing
@@ -261,6 +304,28 @@ class OrbitWarsGNNPolicy(nn.Module):
         g = F.relu(self.global_proj(g))
 
         return h, edge_enc, g
+
+    def _critic_encode(
+        self, node_features: torch.Tensor, positions: torch.Tensor,
+    ) -> torch.Tensor:
+        """Run critic backbone (separate GNN) and return global context.
+
+        Falls back to shared backbone if separate_critic is False.
+        """
+        if not self.separate_critic:
+            _, _, g = self._encode(node_features, positions)
+            return g
+
+        h = self.critic_node_encoder(node_features)
+        raw_edges = self.compute_edge_features(positions)
+        edge_enc = self.critic_edge_encoder(raw_edges)
+
+        h = self.critic_gnn1(h, edge_enc)
+        h = self.critic_gnn2(h, edge_enc)
+
+        g = h.mean(dim=1)
+        g = F.relu(self.critic_global_proj(g))
+        return g
 
     def forward(
         self,
@@ -391,7 +456,7 @@ class OrbitWarsGNNPolicy(nn.Module):
         Returns:
             (B,) value estimates
         """
-        h, _, g = self._encode(node_features, positions)
+        g = self._critic_encode(node_features, positions)
         return self.value_head(g).squeeze(-1)
 
     def evaluate_action(
@@ -403,6 +468,7 @@ class OrbitWarsGNNPolicy(nn.Module):
         action_target: torch.Tensor,
         action_fraction: torch.Tensor,
         action_is_noop: torch.Tensor,
+        noop_penalty: float = 0.0,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """Compute log-prob, entropy, and value for a batch of known actions.
 
@@ -413,6 +479,8 @@ class OrbitWarsGNNPolicy(nn.Module):
             action_target: (B,) — target planet index (ignored if noop)
             action_fraction: (B,) — fraction bucket index (ignored if noop)
             action_is_noop: (B,) — 1.0 if noop
+            noop_penalty: logit penalty subtracted from noop — MUST match
+                the value used during rollout so PPO ratios are consistent.
 
         Returns:
             log_prob: (B,)
@@ -423,8 +491,14 @@ class OrbitWarsGNNPolicy(nn.Module):
         source_logits, all_target_logits, all_fraction_logits = self.forward(
             node_features, positions, owned_mask,
         )
-        h, _, g = self._encode(node_features, positions)
-        value = self.value_head(g).squeeze(-1)
+        # Use critic backbone for value (separate from policy if configured)
+        g_critic = self._critic_encode(node_features, positions)
+        value = self.value_head(g_critic).squeeze(-1)
+
+        # Apply same noop penalty as rollout so log-probs match
+        if noop_penalty != 0.0:
+            source_logits = source_logits.clone()
+            source_logits[:, N] -= noop_penalty
 
         # Source log-prob
         source_dist = torch.distributions.Categorical(logits=source_logits)
@@ -477,8 +551,8 @@ class OrbitWarsGNNPolicy(nn.Module):
             N = nf.shape[1]
 
             source_logits, all_target_logits, all_fraction_logits = self.forward(nf, pos, om)
-            h, _, g = self._encode(nf, pos)
-            value = self.value_head(g).squeeze(-1).item()
+            g_critic = self._critic_encode(nf, pos)
+            value = self.value_head(g_critic).squeeze(-1).item()
 
             # Sample source (or noop)
             source_dist = torch.distributions.Categorical(logits=source_logits.squeeze(0))
