@@ -1,5 +1,5 @@
 
-# Orbit Wars — Lessons Learned
+https://www.kaggle.com/competitions/orbit-wars/writeups/2nd-place-solution-for-orbit-wars# Orbit Wars — Lessons Learned
 
 A retrospective written after the competition closed, comparing our effort against the
 "Distributed Orbit Wars" solution by Cleway (final rank **110 / ~5000** — a strong silver,
