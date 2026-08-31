@@ -1,0 +1,18 @@
+{
+  "id": "alexchilton/s6e4-pairwise-combos-3-model-blend-bias-tune",
+  "title": "s6e4-pairwise-combos-3-model-blend-bias-tune",
+  "code_file": "s6e4-pairwise-combos-3-model-blend-bias-tune.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "dataset_sources": [
+    "miadul/irrigation-water-requirement-prediction-dataset"
+  ],
+  "competition_sources": [
+    "playground-series-s6e4"
+  ],
+  "kernel_sources": []
+}
