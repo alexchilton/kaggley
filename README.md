@@ -43,6 +43,23 @@ Binary classification predicting customer churn. Metric: AUC-ROC.
 
 ---
 
+### Playground Series S6E4 — Predict Irrigation Need
+Three-class classification of irrigation need (Low / Medium / High). Metric: balanced accuracy.
+The target is heavily imbalanced — `High` is roughly 3% of the training rows.
+
+| Notebook | Approach | OOF Balanced Accuracy | LB Score |
+|----------|----------|-----------------------|----------|
+| [3-Model Blend + Bias Tune](s6e4-irrigation/s6e4-pairwise-combos-3-model-blend-bias-tune.ipynb) | XGBoost + CatBoost + LightGBM weighted blend, then per-class bias tuning | 0.97896 | TBD |
+| [LightGBM Baseline](s6e4-irrigation/irrigation_need.ipynb) | LightGBM 5-fold CV + EDA and feature engineering | 0.96520 | TBD |
+
+Individual OOF before blending: CatBoost 0.97746, XGBoost 0.97736, LightGBM 0.97649.
+Blend weights XGB 0.15 / CB 0.60 / LGB 0.25 gave 0.97745; per-class bias tuning took it to 0.97896.
+
+**Key techniques:** Pairwise interaction features, stratified K-fold, weighted 3-model blending, per-class bias tuning for a balanced-accuracy metric on an imbalanced target
+**Competition:** [playground-series-s6e4](https://www.kaggle.com/competitions/playground-series-s6e4)
+
+---
+
 ### House Prices — Advanced Regression
 Predicting residential property sale prices.
 
