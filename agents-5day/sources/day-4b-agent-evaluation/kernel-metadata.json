@@ -1,0 +1,19 @@
+{
+  "id": "kaggle5daysofai/day-4b-agent-evaluation",
+  "id_no": 98027910,
+  "title": "Day 4b - Agent Evaluation",
+  "code_file": "day-4b-agent-evaluation.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "keywords": [],
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-images/python@sha256:bf0b407a5ed73626191ae2259063a0090ae36666c8f00ffdfae3fb543eae750d",
+  "machine_shape": "None"
+}
