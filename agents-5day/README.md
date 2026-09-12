@@ -18,6 +18,16 @@ is nothing to answer and nothing that can be graded -- unlike the ten courses in
 `../learn/`, which are exercise sets with a grader behind them. The value here
 is reading and running the code.
 
+## The Vibecoding cohort reuses these notebooks
+
+Kaggle has run this course twice: `agents-intensive-capstone-project` (closed
+2025-12-03) and `5-day-ai-agents-intensive-vibecoding-course-with-google` with
+`vibecoding-agents-capstone-project` (closed 2026-07-07). I could not find a
+separate set of official codelabs for the second one, and `kaggle5daysofai`
+last published on 2026-07-30 -- after the Vibecoding cohort ran -- so these
+notebooks appear to be the current set, serving both. Treating it as a third
+distinct set of notebooks would be a guess; this is what the evidence supports.
+
 ## What running them needs
 
 Every notebook does

@@ -1,0 +1,19 @@
+{
+  "id": "markishere/bonus-day-extra-api-features-to-try",
+  "id_no": 70751585,
+  "title": "Bonus Day - Extra API features to try",
+  "code_file": "bonus-day-extra-api-features-to-try.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [],
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-images/python@sha256:a16cda2c5d52fa988d413876f3ffad7a46cca58678514601feb175990dc187c0",
+  "machine_shape": "None"
+}

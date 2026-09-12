@@ -1,0 +1,19 @@
+{
+  "id": "markishere/day-1-evaluation-and-structured-output",
+  "id_no": 78499497,
+  "title": "Day 1 - Evaluation and structured output",
+  "code_file": "day-1-evaluation-and-structured-output.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": false,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [],
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-images/python@sha256:f4b6dd72d4ac48c76fbb02bce0798b80b284102886ad37e6041e9ab721dc8873",
+  "machine_shape": "None"
+}
