@@ -1,0 +1,27 @@
+{
+  "id": "alexchilton/exercise-the-convolutional-classifier",
+  "title": "Exercise: The Convolutional Classifier",
+  "code_file": "exercise-the-convolutional-classifier.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "tensorflow"
+  ],
+  "dataset_sources": [
+    "ryanholbrook/car-or-truck",
+    "ryanholbrook/computer-vision-resources",
+    "ryanholbrook/cv-course-models"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-private-byod/python@sha256:54edb36433adec1db1cadce7bc9d87bf55b6b0cd1c15244a1a75e5e1d282db6c",
+  "machine_shape": "Gpu"
+}

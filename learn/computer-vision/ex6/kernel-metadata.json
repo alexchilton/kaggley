@@ -1,0 +1,30 @@
+{
+  "id": "alexchilton/exercise-data-augmentation",
+  "title": "Exercise: Data Augmentation",
+  "code_file": "exercise-data-augmentation.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "matplotlib",
+    "numpy",
+    "pandas",
+    "tensorflow",
+    "gpu"
+  ],
+  "dataset_sources": [
+    "ryanholbrook/car-or-truck",
+    "ryanholbrook/computer-vision-resources",
+    "ryanholbrook/cv-course-models",
+    "ryanholbrook/eurosat",
+    "ryanholbrook/tensorflow-flowers"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-private-byod/python@sha256:29091414ae3b30c84c4374fdc879954e4f3ed7226b7753baae5fcd511d762d5f",
+  "machine_shape": "Gpu"
+}

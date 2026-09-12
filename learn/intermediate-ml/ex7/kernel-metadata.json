@@ -1,0 +1,23 @@
+{
+  "id": "alexchilton/exercise-data-leakage",
+  "title": "Exercise: Data Leakage",
+  "code_file": "exercise-data-leakage.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "currencies and foreign exchange",
+    "retail and shopping"
+  ],
+  "dataset_sources": [],
+  "kernel_sources": [],
+  "competition_sources": [
+    "home-data-for-ml-course"
+  ],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-images/python@sha256:a014d28e475b203f79b1e3f473603c8e1672ecb22f82a2c327781bad6e137b09",
+  "machine_shape": "None"
+}

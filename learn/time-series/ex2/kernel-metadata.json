@@ -1,0 +1,24 @@
+{
+  "id": "alexchilton/exercise-trend",
+  "title": "Exercise: Trend",
+  "code_file": "exercise-trend.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "pandas"
+  ],
+  "dataset_sources": [
+    "ryanholbrook/ts-course-data"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [
+    "store-sales-time-series-forecasting"
+  ],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-images/python@sha256:a014d28e475b203f79b1e3f473603c8e1672ecb22f82a2c327781bad6e137b09",
+  "machine_shape": "None"
+}

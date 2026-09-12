@@ -1,0 +1,24 @@
+{
+  "id": "alexchilton/exercise-ai-fairness",
+  "title": "Exercise: AI Fairness",
+  "code_file": "exercise-ai-fairness.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": false,
+  "enable_tpu": false,
+  "enable_internet": false,
+  "keywords": [
+    "matplotlib",
+    "pandas",
+    "sklearn"
+  ],
+  "dataset_sources": [
+    "alexisbcook/synthetic-credit-card-approval"
+  ],
+  "kernel_sources": [],
+  "competition_sources": [],
+  "model_sources": [],
+  "docker_image": "gcr.io/kaggle-images/python@sha256:7c6089a3e5114937da4c0f12a428ae8f01e5f2066b1d39a02d6acf29964f75c8",
+  "machine_shape": "None"
+}
