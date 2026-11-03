@@ -10,9 +10,9 @@ import nbformat as nbf
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "kernels/s6e11-first-look"
-TITLE = "Credit Card Fraud | LB 0.9509 | Shallow-Tree Stack"
-SLUG = "credit-card-fraud-lb-0-9509-shallow-tree-stack"
-VERSION = "v14"                                       # bump with every push: members trained in this version are recorded under it
+TITLE = "Credit Card Fraud | LB 0.9515 | Shallow-Tree Stack"
+SLUG = "credit-card-fraud-lb-0-9515-shallow-tree-stack"
+VERSION = "v15"                                       # bump with every push: members trained in this version are recorded under it
 assert len(TITLE) <= 50
 
 md = nbf.v4.new_markdown_cell
@@ -915,6 +915,142 @@ def xgbm_p3_d2(Xa, ya, Xb, yb, Xt):
     return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
 run('XGBoost depth 2, Part 3 recipe', xgbm_p3_d2, 'raw')
 """),
+md("""### v15: test predictions from one fit on all rows, a joint GLM, and trees that start from it
+
+From v10 to v14 the stacker's held-out AUC rose 0.95019 -> 0.95091, and the board moved only 0.95095 -> 0.95101.
+The OOF side is getting better; the test side is not following.
+Every member so far predicts the test set as **the mean of its 5 fold models**, each trained on 80% of the rows,
+with target encodings computed from those 80%.
+Four public notebooks replaced that with **one more fit on all 700k rows** (encodings from all rows too, 1.25 x the folds' mean number of trees,
+since there are 25% more rows), and each measured a leaderboard gain with the OOF unchanged:
+
+| who | change | public LB |
+|---|---|---|
+| [goodpjw2008, Part 4](https://www.kaggle.com/code/goodpjw2008/s6e11-part-4-refit-bag-joint-glm-lb-0-95154) | same blend, refit test predictions | 0.95113 -> 0.95132 |
+| [areebbb, Pooled Stack](https://www.kaggle.com/code/areebbb/s6e11-pooled-stack-fusion-lb-0-95196) | same blend, refit test predictions | 0.95135 -> 0.95142 |
+| [megayak](https://www.kaggle.com/code/megayak/s6e11-per-value-digit-te-shallow-tree-stack) | refit of every member, plus joint keys | 0.95104 -> 0.95145 |
+
+Why it can help here more than usual: the median `account_balance_usd` value occurs in 3 rows, so an encoding computed from 80% of the rows
+is noticeably noisier than one from 100%. The OOF cannot show this gain, by construction: only the test predictions change.
+The leaderboard is the only judge, which is why it is worth a version of its own.
+
+The three new members, all refitted this way (`run_refit` below):
+
+- **XGBoost depth 2, Part 3 recipe, 5 encoder seeds, full refit**: v13's depth-2 member, bagged over five encoder seeds like v14's LightGBM
+  (which moved that member 0.95052 -> 0.95066). XGBoost runs on the GPU, so the bag costs minutes, not the 72 of the LightGBM bag.
+- **Joint GLM, full refit**: one L2 logistic regression on the numbers, flags, categories and splines, **a one-hot of every exact value and every digit key
+  seen at least 5 times**, and the logits of every encoding. The one-hots let the GLM correct each encoding for the others,
+  and a rare value falls back to its coarser digit keys. Our v12 GLM had only the encodings.
+  Design: goodpjw2008 (Part 4, `glm_joint`, CV 0.94991, two of nine blend weights) and lazyyeou (`glm_joint_96key`, 0.9501, second-largest blend weight).
+- **XGBoost depth 2 boosted from the joint GLM, full refit**: the trees start from the GLM's logit (`base_margin`) instead of from the base rate,
+  so they fit only what the additive model misses. Idea and measurement: megayak, v5, best single model of that notebook (0.95104 OOF), blend +0.00016 CV, LB 0.95145 -> 0.95162.
+"""),
+code("""
+REFIT_MULT = 1.25                                        # trees in the full refit: 1.25 x the folds' mean best iteration (25% more rows)
+def run_refit(name, fit_predict, mode='raw'):
+    \"\"\"run() with one change: the test prediction comes from one more fit on all training rows (encodings fitted on all of them too),
+    not from the mean of the 5 fold models. fit_predict(Xa, ya, Xb, yb, Xt, n_iter=None) returns (valid prediction, test prediction, best
+    iteration); called with Xb=None it fits n_iter rounds on Xa without early stopping and returns only the test prediction.\"\"\"
+    assert mode == 'raw'
+    if (time.time() - T_START) / 3600 > BUDGET_H:
+        print(f'{name}: skipped, {BUDGET_H} h budget used'); return
+    fp = fingerprint(name, fit_predict, mode)
+    if fp in MANIFEST and (PRED_CACHE / f'oof_{fp}.npy').exists():
+        oof[name], pred[name] = np.load(PRED_CACHE / f'oof_{fp}.npy'), np.load(PRED_CACHE / f'test_{fp}.npy'); secs[name] = MANIFEST[fp]['minutes'] * 60
+        _publish(fp, name, mode)
+        print(f'{name}: OOF AUC {roc_auc_score(y, oof[name]):.5f}  (loaded from the dataset, trained in {MANIFEST[fp]["version"]})'); return
+    t0 = time.time(); o, its = np.zeros(len(X)), []
+    for k, (tr_i, va_i) in enumerate(FOLDS):
+        Xa, Xb, Xt = frames(k, mode)
+        vo, _, it = fit_predict(Xa, y.iloc[tr_i].values, Xb, y.iloc[va_i].values, Xt)
+        o[va_i] = vo; its.append(it)
+        print(f'  {name} fold {k}: AUC {roc_auc_score(y.iloc[va_i], vo):.5f}  ({it:.0f} rounds)', flush=True)
+    n = int(round(np.mean(its) * REFIT_MULT))
+    _, p, _ = fit_predict(X.reset_index(drop=True), y.values, None, None, XT.reset_index(drop=True), n_iter=n)
+    oof[name], pred[name], secs[name] = o, p, time.time() - t0
+    _publish(fp, name, mode, trained=True)
+    print(f'{name}: OOF AUC {roc_auc_score(y, o):.5f}  ({secs[name] / 60:.1f} min; test from one fit on all {len(X):,} rows, {n} rounds)')
+
+def xgbm_p3_d2_bag_refit(Xa, ya, Xb, yb, Xt, n_iter=None):
+    \"\"\"xgbm_p3_d2 averaged over five encoder seeds (and five model seeds); with Xb None, the five fits on all rows.\"\"\"
+    vo, tp, its = 0, 0, []
+    for s in range(5):
+        a, b, t = p3_frames(Xa, ya, Xb if Xb is not None else Xt, Xt, seed=s)
+        prm = dict(learning_rate=0.03, max_depth=2, subsample=0.8, colsample_bytree=0.5, min_child_weight=5, reg_lambda=1.0, max_bin=256,
+                   tree_method='hist', device='cuda' if GPU else 'cpu', eval_metric='auc', enable_categorical=True, max_cat_to_onehot=1,
+                   random_state=42 + s, n_jobs=THREADS)
+        if Xb is None:
+            m = xgb.XGBClassifier(n_estimators=n_iter, **prm).fit(a, ya, verbose=False)
+            tp = tp + m.predict_proba(t)[:, 1] / 5
+        else:
+            m = xgb.XGBClassifier(n_estimators=20000, early_stopping_rounds=300, **prm).fit(a, ya, eval_set=[(b, yb)], verbose=False)
+            vo = vo + m.predict_proba(b)[:, 1] / 5; its.append(m.best_iteration + 1)
+    return (None, tp, n_iter) if Xb is None else (vo, None, float(np.mean(its)))
+run_refit('XGBoost depth 2, Part 3 recipe, 5 encoder seeds, full refit', xgbm_p3_d2_bag_refit)
+
+def v15_keys(d):
+    \"\"\"The digit keys p3_frames encodes (cents, int, int/10, int(10x), leading one and two digits with the length), as numbers.\"\"\"
+    k = {}
+    for c in FLOATS6:
+        x = d[c].astype(float).values; i = np.floor(x).astype(np.int64); s = pd.Series(i.astype(str))
+        k[f'cents_{c}'] = np.round(x * 100).astype(np.int64) % 100
+        k[f'int_{c}'], k[f'ten_{c}'], k[f'dec_{c}'] = i, np.floor(x / 10).astype(np.int64), np.floor(x * 10 + 1e-6).astype(np.int64)
+        k[f'l1_{c}'] = (s.str.len() * 10 + s.str[0].astype(int)).values
+        k[f'l2_{c}'] = (s.str.len() * 100 + s.str[:2].astype(int)).values
+    return pd.DataFrame(k)
+_JOINT = {}                                              # the boosted member reuses the GLM member's fits: same rows, same logits
+def joint_glm_logits(Xa, ya, Xb, Xt, C=0.01):
+    \"\"\"The joint GLM fitted on Xa: standardised (log) numbers, flags, one-hot categories, splines, a one-hot of every exact numeric value
+    and every digit key seen >= 5 times in Xa, and the standardised logits of the Part 3 encodings. Returns its logit on Xa, Xb, Xt.\"\"\"
+    key = (len(Xa), len(Xb), int(ya.sum()), float(Xa['amount_usd'].sum()), float(Xb['amount_usd'].sum()))
+    if key in _JOINT:
+        return _JOINT[key]
+    a, b, t = p3_frames(Xa, ya, Xb, Xt)
+    tecols = [c for c in a.columns if c.startswith('te_')]
+    lg = lambda e: (lambda q: np.log(q / (1 - q)))(np.clip(e[tecols].values, 1e-6, 1 - 1e-6))
+    def dense(d):
+        z = d[nums].astype(float).reset_index(drop=True)
+        for c in ('amount_usd', 'account_balance_usd', 'hours_since_last_txn'):
+            z[c] = np.log1p(z[c].clip(lower=0))
+        return z.values
+    vals = lambda d: pd.concat([d[nums].astype(float).reset_index(drop=True), v15_keys(d).astype(float)], axis=1)
+    sc_n, sc_e = StandardScaler().fit(dense(Xa)), StandardScaler().fit(lg(a))
+    spl = SplineTransformer(n_knots=8, degree=3, knots='quantile').fit(sc_n.transform(dense(Xa)))
+    oh_c = OneHotEncoder(handle_unknown='ignore').fit(Xa[cat].astype(str))
+    oh_v = OneHotEncoder(handle_unknown='ignore', min_frequency=5, dtype=np.float32).fit(vals(Xa))
+    def design(d, e):
+        zn = sc_n.transform(dense(d))
+        return sparse.hstack([sparse.csr_matrix(zn), sparse.csr_matrix(d[boo].values.astype(float)), oh_c.transform(d[cat].astype(str)),
+                              sparse.csr_matrix(spl.transform(zn)), oh_v.transform(vals(d)), sparse.csr_matrix(sc_e.transform(lg(e)))]).tocsr()
+    Da = design(Xa, a)
+    m = LogisticRegression(C=C, max_iter=3000, tol=1e-6).fit(Da, ya)
+    print(f'    joint GLM: {Da.shape[1]:,} design columns, {m.n_iter_[0]} iterations', flush=True)
+    _JOINT[key] = [m.decision_function(Da), m.decision_function(design(Xb, b)), m.decision_function(design(Xt, t))]
+    return _JOINT[key]
+def glm_joint(Xa, ya, Xb, yb, Xt, n_iter=None):
+    za, zb, zt = joint_glm_logits(Xa, ya, Xb if Xb is not None else Xt, Xt)
+    return (None, zt, 0) if Xb is None else (zb, None, 0)
+run_refit('Joint GLM, full refit', glm_joint)
+
+def xgbm_glm_boost(Xa, ya, Xb, yb, Xt, n_iter=None):
+    \"\"\"megayak's booster: depth-2 XGBoost on the Part 3 inputs whose starting score (base_margin) is the joint GLM's logit,
+    so its trees fit only what the GLM misses. Predictions are margins (logits); AUC and the rank blend only see their order.\"\"\"
+    Xv = Xb if Xb is not None else Xt
+    za, zb, zt = joint_glm_logits(Xa, ya, Xv, Xt)
+    a, b, t = p3_frames(Xa, ya, Xv, Xt)
+    prm = dict(learning_rate=0.02, max_depth=2, subsample=0.8, colsample_bytree=0.5, min_child_weight=5, reg_lambda=1.0, max_bin=256,
+               tree_method='hist', device='cuda' if GPU else 'cpu', eval_metric='auc', enable_categorical=True, max_cat_to_onehot=1,
+               random_state=42, n_jobs=THREADS)
+    if Xb is None:
+        m = xgb.XGBClassifier(n_estimators=n_iter, **prm).fit(a, ya, base_margin=za, verbose=False)
+        return None, m.predict(t, base_margin=zt, output_margin=True), n_iter
+    m = xgb.XGBClassifier(n_estimators=20000, early_stopping_rounds=300, **prm)
+    m.fit(a, ya, base_margin=za, eval_set=[(b, yb)], base_margin_eval_set=[zb], verbose=False)
+    it = m.best_iteration + 1
+    print(f'    fold GLM alone {roc_auc_score(yb, zb):.5f}', flush=True)
+    return m.predict(b, base_margin=zb, output_margin=True, iteration_range=(0, it)), None, it
+run_refit('XGBoost depth 2 boosted from the joint GLM, full refit', xgbm_glm_boost)
+"""),
 md("""### Blend
 
 Each model's out-of-fold predictions are turned into ranks (AUC only sees order). Two ways to combine them, compared on rows they did not fit:
@@ -1026,6 +1162,7 @@ Every version was submitted from this notebook. The public LB scores only part o
 | v12 | digit members without the 45 pair encodings, GLM on the encodings | no-pair members 0.94936 vs 0.94951 (the pairs are not the gap); the GLM took the largest stack weight (0.39) and stacker held-out rose to 0.95053, but the board did not move | 0.95093 |
 | v13 | goodpjw2008's Part 3 / 5 recipe reproduced exactly (m-estimate encoder on every column and key, raw inputs, 3 and 4 leaves) | find out why our digit members trail the public ones by 0.0009 | members 0.95036 to 0.95052 alone (ours 0.9495); stacker held-out 0.95019 -> 0.95086, board only +0.00005: **0.95100** |
 | v14 | the Part 5 member refitted with five encoder seeds, averaged | areebbb: seed-bagging the encoder lifted one member 0.95037 -> 0.95077 | member 0.95052 -> 0.95066, stacker held-out 0.95086 -> 0.95091: **0.95101** |
+| v15 | three members whose test predictions come from one fit on all rows: a 5-seed depth-2 XGBoost bag, a joint GLM (one-hots of every value and digit key), a depth-2 XGBoost boosted from that GLM | v10-v14 raised the stacker 0.95019 -> 0.95091 and the board only 0.95095 -> 0.95101; four public notebooks gained on the board from a full-data refit | members 0.95054 / 0.95011 / 0.95042 alone, stacker held-out 0.95091 -> 0.95099 (largest weight: the GLM booster, 0.293): **0.95146** |
 
 **What did not work, or did not help enough to keep**
 
@@ -1039,12 +1176,14 @@ Every version was submitted from this notebook. The public LB scores only part o
 - **kNN fraud rate** (v9): the fraud rate of each row's 100 nearest neighbours, on GPU. OOF 0.89930 alone and stacker weight -0.018: trees on encoded columns already know what a neighbourhood knows.
 - **Tuning XGBoost and CatBoost with Optuna** (v9): both searches picked the shallowest option (XGBoost depth 1, CatBoost depth 3) and the tuned members took stacker weights 0.001 and 0.082. Tuning confirmed lesson 2 and added almost nothing.
 - **Seed bags of the depth-1/2 XGBoost** (v9): OOF 0.94855 / 0.94844 against 0.94837 / 0.94831 single, weights 0.097 / 0.031. A small gain, not worth three times the training.
+- **A better stacker that the board does not see** (v12-v14): the stacker's held-out AUC rose 0.95019 -> 0.95091 over three versions (the GLM on the encodings, the Part 3 recipe, the encoder-seed bag), and the public LB moved 0.95095 -> 0.95101.
+  The v14 bag alone: member +0.00014 OOF, board +0.00001. More OOF accuracy from the same 80%-of-rows test predictions stopped paying; v15 changes the test side instead.
 - **A bug worth knowing about.** The first nested hill climb summed fold weights without normalising them, so each fold's predictions
   were on a different scale and the pooled AUC read 0.895. When an honest re-score is far below the in-sample one, suspect the code before the model.
 """),
 code("""
-hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101],
-                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds']})
+hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146],
+                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM']})
 fig, ax = plt.subplots(figsize=(8, 3.2)); ax.plot(hist['version'], hist['LB'], 'o-', color='#4a6fa5')
 for _, r in hist.iterrows(): ax.annotate(r['change'], (r['version'], r['LB']), textcoords='offset points', xytext=(0, 8), ha='center', fontsize=8)
 ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9515); plt.show()

@@ -6,7 +6,7 @@ Alex or an interactive session may work in parallel. Read the newest `docs/cron/
 
 ## The goal
 
-A **silver medal on our public notebook** `alexchilton/credit-card-fraud-lb-0-9509-shallow-tree-stack` (folder `kernels/s6e11-first-look/`, built by `tools/make_nb.py`).
+A **silver medal on our public notebook** `alexchilton/credit-card-fraud-lb-0-9515-shallow-tree-stack` (folder `kernels/s6e11-first-look/`, built by `tools/make_nb.py`).
 Notebook medals count only upvotes from Kaggle Experts and above; silver needs 20 such votes.
 The total vote count overstates progress (other notebooks: 97 votes, 28 counted), so never judge progress or decide to stop from it.
 Only Alex can read the counted number; it lives in `~/PycharmProjects/kaggle-board/counted.json`. The launcher stops the cron once that file says silver.
@@ -48,7 +48,7 @@ If a previous version is still running or not yet scored, do not push over it.
 4. Push: `python tools/make_nb.py` then `kaggle kernels push -p kernels/s6e11-first-look`. GPU is approved for this notebook. Write the expected GPU minutes in the report before pushing, and the measured run time after.
 5. Wait in the FOREGROUND (`kaggle kernels status` every 5 minutes; never a background job: ending your turn kills it). If it errors, read the log with `kaggle kernels output ... --page-size 200 --file-pattern '.*\.log$'`, write the traceback in the report, and stop. One fix attempt at most.
 6. When COMPLETE: `python tools/publish_oof.py v<N>` (puts the new members' predictions in the dataset), then submit from the public notebook:
-   `kaggle competitions submit -c playground-series-s6e11 -k alexchilton/credit-card-fraud-lb-0-9509-shallow-tree-stack -v <N> -f submission.csv -m "<what changed>"`.
+   `kaggle competitions submit -c playground-series-s6e11 -k alexchilton/credit-card-fraud-lb-0-9515-shallow-tree-stack -v <N> -f submission.csv -m "<what changed>"`.
    Count today's submissions first; use at most 4 of the 5 daily slots, one stays free for Alex.
 7. Commit `tools/make_nb.py` and `kernels/s6e11-first-look/` with a message saying what changed and the OOF numbers. No mention of Claude, no Co-Authored-By line. Do not push to a remote (the repo has none).
 

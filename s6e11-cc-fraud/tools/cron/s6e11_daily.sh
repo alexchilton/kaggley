@@ -4,7 +4,7 @@
 # worth adding, build, push and submit a new notebook version the same day.
 # Stops for good once the notebook has silver: counted.json (Expert votes, read by Alex) says tier silver or counted >= 20.
 END=2026-11-30           # competition closes 2026-11-30
-SLUG=credit-card-fraud-lb-0-9509-shallow-tree-stack
+SLUG=credit-card-fraud-lb-0-9515-shallow-tree-stack
 COUNTED=/Users/alexchilton/PycharmProjects/kaggle-board/counted.json
 REPO=/Users/alexchilton/PycharmProjects/playground-s6e11
 MAX_SECONDS=10800        # 3 hours per run, hard stop (an update run waits for the Kaggle commit)
@@ -38,4 +38,8 @@ Today is $TODAY. Your report path is docs/cron/$TODAY.md." \
     --output-format text >> "$LOG" 2>&1
 echo "[$(date +%T)] exit $?" >> "$LOG"
 git add -A docs/cron && ! git diff --cached --quiet && git commit -q -m "cron $TODAY: report" -- docs/cron >> "$LOG" 2>&1
+# copy the tracked files to the public kaggley repo (github.com/alexchilton/kaggley/s6e11-cc-fraud), where the playgrounds live
+KY=/Users/alexchilton/PycharmProjects/kaggley
+git ls-files | grep -v '^.gitignore$' | rsync -a --files-from=- . "$KY/s6e11-cc-fraud/" >> "$LOG" 2>&1
+(cd "$KY" && git add s6e11-cc-fraud && ! git diff --cached --quiet && git commit -q -m "s6e11-cc-fraud: sync $TODAY" && git push -q) >> "$LOG" 2>&1
 rm -f "$LOCK"
