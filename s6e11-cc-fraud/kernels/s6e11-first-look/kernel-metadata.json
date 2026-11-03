@@ -1,6 +1,6 @@
 {
-  "id": "alexchilton/credit-card-fraud-lb-0-9518-shallow-tree-stack",
-  "title": "Credit Card Fraud | LB 0.9518 | Shallow-Tree Stack",
+  "id": "alexchilton/credit-card-fraud-lb-0-9521-shallow-tree-stack",
+  "title": "Credit Card Fraud | LB 0.9521 | Shallow-Tree Stack",
   "code_file": "s6e11-first-look.ipynb",
   "language": "python",
   "kernel_type": "notebook",
@@ -21,7 +21,11 @@
   "kernel_sources": [
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
     "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid",
-    "yekenot/ps-s6-e11-realmlp-pytabkit"
+    "yekenot/ps-s6-e11-realmlp-pytabkit",
+    "goodpjw2008/s6e11-part-6-glm-boost-stack-lb-0-95215",
+    "megayak/s6e11-per-value-digit-te-shallow-tree-stack",
+    "masayakawamata/s6e11-logreg-stacking-same-split-oofs",
+    "ektarr/lb-0-95121-realmlp-stacking"
   ],
   "competition_sources": [
     "playground-series-s6e11"

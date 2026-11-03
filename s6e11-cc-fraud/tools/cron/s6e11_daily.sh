@@ -4,7 +4,7 @@
 # worth adding, build, push and submit a new notebook version the same day.
 # Stops for good once the notebook has silver: counted.json (Expert votes, read by Alex) says tier silver or counted >= 20.
 END=2026-11-30           # competition closes 2026-11-30
-SLUG=credit-card-fraud-lb-0-9518-shallow-tree-stack
+SLUG=credit-card-fraud-lb-0-9521-shallow-tree-stack
 COUNTED=/Users/alexchilton/PycharmProjects/kaggle-board/counted.json
 REPO=/Users/alexchilton/PycharmProjects/playground-s6e11
 MAX_SECONDS=10800        # 3 hours per run, hard stop (an update run waits for the Kaggle commit)
