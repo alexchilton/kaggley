@@ -10,9 +10,9 @@ import nbformat as nbf
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "kernels/s6e11-first-look"
-TITLE = "Credit Card Fraud | LB 0.9515 | Shallow-Tree Stack"
-SLUG = "credit-card-fraud-lb-0-9515-shallow-tree-stack"
-VERSION = "v15"                                       # bump with every push: members trained in this version are recorded under it
+TITLE = "Credit Card Fraud | LB 0.9518 | Shallow-Tree Stack"
+SLUG = "credit-card-fraud-lb-0-9518-shallow-tree-stack"
+VERSION = "v16"                                       # bump with every push: members trained in this version are recorded under it
 assert len(TITLE) <= 50
 
 md = nbf.v4.new_markdown_cell
@@ -1051,6 +1051,50 @@ def xgbm_glm_boost(Xa, ya, Xb, yb, Xt, n_iter=None):
     return m.predict(b, base_margin=zb, output_margin=True, iteration_range=(0, it)), None, it
 run_refit('XGBoost depth 2 boosted from the joint GLM, full refit', xgbm_glm_boost)
 """),
+md("""### Public prediction banks
+
+Three public notebooks publish their out-of-fold and test predictions, so they can join the stack as members without
+retraining: **lazyyeou** (Digit-Trie TE, Joint GLM and nested stack), **nilanjansaha123** (96-key digit trie, full refit)
+and **yekenot** (RealMLP via pytabkit). Credit to them for the models; the stacker below decides how much each is worth.
+Measured offline before adding them: our 35 v14 members stack to CV 0.95092, and the 12 banks together add +0.00020
+(the two joint GLMs +0.00012 each, the XGBoost bags +0.00011; mikhailnaumov's XGBoost added nothing and is left out).
+"""),
+code("""BANKS = {   # member name -> (OOF file, test file); the test side is each author's full-data refit
+    'bank lazyyeou joint GLM 96 keys': ('glm_joint_96key_oof.npy', 'glm_joint_96key_full.npy'),
+    'bank lazyyeou XGBoost d2 bag': ('xgb_d2_bag_oof.npy', 'xgb_d2_bag_full.npy'),
+    'bank lazyyeou XGBoost l4 bag': ('xgb_l4_bag_oof.npy', 'xgb_l4_bag_full.npy'),
+    'bank lazyyeou LightGBM l4 bag': ('lgb_l4_bag_oof.npy', 'lgb_l4_bag_full.npy'),
+    'bank lazyyeou LightGBM s100 bag': ('lgb_s100_bag_oof.npy', 'lgb_s100_bag_full.npy'),
+    'bank lazyyeou LightGBM raw view': ('lgb_rawview_oof.npy', 'lgb_rawview_full.npy'),
+    'bank nilanjan joint GLM 96 keys': ('glm_unified_96key_oof.npy', 'glm_unified_96key_full.npy'),
+    'bank nilanjan XGBoost 96 keys bag': ('xgb_unified_96key_bag_oof.npy', 'xgb_unified_96key_bag_full.npy'),
+    'bank nilanjan LightGBM 96 keys bag': ('lgb_unified_96key_bag_oof.npy', 'lgb_unified_96key_bag_full.npy'),
+    'bank nilanjan LightGBM s100 bag': ('lgb_unified_s100_bag_oof.npy', 'lgb_unified_s100_bag_full.npy'),
+    'bank nilanjan LightGBM l7': ('lgb_unified_l7_oof.npy', 'lgb_unified_l7_full.npy'),
+}
+import glob as _glob
+def _find(name, owner):
+    hits = [h for h in _glob.glob(f'/kaggle/input/**/{name}', recursive=True) if owner in h.lower()]
+    return min(hits, key=len) if hits else None
+for name, (fo, ft) in BANKS.items():
+    owner = 'digit-trie-te' if 'lazyyeou' in name else '96-key'
+    po, pt = _find(fo, owner), _find(ft, owner)
+    if po is None or pt is None:
+        print(f'{name}: not mounted, skipped'); continue
+    o, t = np.load(po).ravel(), np.load(pt).ravel()
+    assert len(o) == len(X) and len(t) == len(XT), (name, len(o), len(t))
+    oof[name], pred[name], secs[name] = o, t, 0.0          # trained elsewhere: no minutes here
+    print(f'{name}: OOF AUC {roc_auc_score(y, o):.5f}')
+_rm = [h for h in _glob.glob('/kaggle/input/**/oof_preds.csv', recursive=True) if 'realmlp' in h.lower()]
+if _rm:
+    _o = pd.read_csv(_rm[0]).sort_values('id'); _t = pd.read_csv(_rm[0].replace('oof_preds.csv', 'submission.csv')).sort_values('id')
+    assert len(_o) == len(X) and len(_t) == len(XT)
+    oof['bank yekenot RealMLP'], pred['bank yekenot RealMLP'] = _o.iloc[:, -1].values, _t.iloc[:, -1].values
+    secs['bank yekenot RealMLP'] = 0.0
+    print(f"bank yekenot RealMLP: OOF AUC {roc_auc_score(y, oof['bank yekenot RealMLP']):.5f}")
+else:
+    print('bank yekenot RealMLP: not mounted, skipped')
+"""),
 md("""### Blend
 
 Each model's out-of-fold predictions are turned into ranks (AUC only sees order). Two ways to combine them, compared on rows they did not fit:
@@ -1163,6 +1207,7 @@ Every version was submitted from this notebook. The public LB scores only part o
 | v13 | goodpjw2008's Part 3 / 5 recipe reproduced exactly (m-estimate encoder on every column and key, raw inputs, 3 and 4 leaves) | find out why our digit members trail the public ones by 0.0009 | members 0.95036 to 0.95052 alone (ours 0.9495); stacker held-out 0.95019 -> 0.95086, board only +0.00005: **0.95100** |
 | v14 | the Part 5 member refitted with five encoder seeds, averaged | areebbb: seed-bagging the encoder lifted one member 0.95037 -> 0.95077 | member 0.95052 -> 0.95066, stacker held-out 0.95086 -> 0.95091: **0.95101** |
 | v15 | three members whose test predictions come from one fit on all rows: a 5-seed depth-2 XGBoost bag, a joint GLM (one-hots of every value and digit key), a depth-2 XGBoost boosted from that GLM | v10-v14 raised the stacker 0.95019 -> 0.95091 and the board only 0.95095 -> 0.95101; four public notebooks gained on the board from a full-data refit | members 0.95054 / 0.95011 / 0.95042 alone, stacker held-out 0.95091 -> 0.95099 (largest weight: the GLM booster, 0.293): **0.95146** |
+| v16 | 12 public prediction banks as stack members (lazyyeou, nilanjansaha123, yekenot; OOF + full-refit test) | offline: our 35 members CV 0.95092, + all banks +0.00020; areebbb's pooled stack and nina2025's h-blend lead the public board this way | stacker held-out 0.95099 -> 0.95113: **0.95176** |
 
 **What did not work, or did not help enough to keep**
 
@@ -1182,11 +1227,11 @@ Every version was submitted from this notebook. The public LB scores only part o
   were on a different scale and the pooled AUC read 0.895. When an honest re-score is far below the in-sample one, suspect the code before the model.
 """),
 code("""
-hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146],
-                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM']})
+hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176],
+                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks']})
 fig, ax = plt.subplots(figsize=(8, 3.2)); ax.plot(hist['version'], hist['LB'], 'o-', color='#4a6fa5')
 for _, r in hist.iterrows(): ax.annotate(r['change'], (r['version'], r['LB']), textcoords='offset points', xytext=(0, 8), ha='center', fontsize=8)
-ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9515); plt.show()
+ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9525); plt.show()
 """),
 md("""## 5. What next
 
@@ -1231,7 +1276,7 @@ def build(cat_iters=3000, mlp_epochs=16, version=VERSION):
     nbf.write(nb, OUT / "s6e11-first-look.ipynb")
     meta = {"id": f"alexchilton/{SLUG}", "title": TITLE, "code_file": "s6e11-first-look.ipynb", "language": "python",
             "kernel_type": "notebook", "is_private": False, "enable_gpu": True, "enable_tpu": False, "enable_internet": True,
-            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions"], "kernel_sources": [],
+            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions"], "kernel_sources": ["lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack", "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid", "yekenot/ps-s6-e11-realmlp-pytabkit"],
             "competition_sources": ["playground-series-s6e11"], "model_sources": []}
     (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
     print("wrote", OUT / "s6e11-first-look.ipynb")
