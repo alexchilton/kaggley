@@ -1,0 +1,1103 @@
+"""Build the first public notebook for Playground S6E11 (credit card fraud, ROC AUC).
+
+    python tools/make_nb.py            # writes kernels/s6e11-first-look/s6e11-first-look.ipynb
+The notebook runs on Kaggle (/kaggle/input/...) and locally (data/), CPU only.
+"""
+import json
+from pathlib import Path
+
+import nbformat as nbf
+
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "kernels/s6e11-first-look"
+TITLE = "Credit Card Fraud | LB 0.9509 | Shallow-Tree Stack"
+SLUG = "credit-card-fraud-lb-0-9509-shallow-tree-stack"
+VERSION = "v14"                                       # bump with every push: members trained in this version are recorded under it
+assert len(TITLE) <= 50
+
+md = nbf.v4.new_markdown_cell
+code = nbf.v4.new_code_cell
+
+cells = [
+md(f"""# {TITLE}
+
+Playground Series S6E11: predict the probability that a card transaction is fraud.
+A tutorial that builds a strong tabular ensemble step by step and shows, with a measurement each time, *why* each step is there:
+
+0. **The problem and the data**: what one row is, every column, printed rows.
+1. **The metric**: ROC AUC, and what it does and does not reward (by counterexample, not by definition).
+2. **EDA**: class balance, which features separate fraud, train vs test.
+3. **The ensemble**: in-fold target encoding (with a leak you can measure), shallow trees (with the curve that justifies them),
+   a GLM and two neural nets, a small honest tuning run, and a blend that is scored on rows it did not fit.
+4. **How this notebook got here**: every version's leaderboard score, and the ideas that did not work, with their numbers.
+
+Every number below is computed in this notebook, except the per-version history in section 4.
+All model predictions are published as a dataset ([s6e11-oof-predictions](https://www.kaggle.com/datasets/alexchilton/s6e11-oof-predictions)),
+so you can blend them in your own notebook without training. If it helps you, an upvote is appreciated.
+"""),
+code("%pip install -q pytabkit"),
+code("""
+import os, time, warnings
+from pathlib import Path
+import numpy as np, pandas as pd
+import matplotlib.pyplot as plt, seaborn as sns
+from sklearn.model_selection import StratifiedKFold
+from sklearn.metrics import roc_auc_score, roc_curve
+warnings.filterwarnings('ignore')
+sns.set_theme(style='whitegrid', font_scale=0.9)
+
+KAGGLE = Path('/kaggle/input').exists()
+DATA = next(Path('/kaggle/input').rglob('train.csv')).parent if KAGGLE else Path('../../data')   # the mount path differs between images
+OUT = Path('/kaggle/working') if KAGGLE else Path('../../out')
+OUT.mkdir(exist_ok=True)
+THREADS = os.cpu_count()
+import torch
+GPU = torch.cuda.is_available()
+train = pd.read_csv(DATA / 'train.csv'); test = pd.read_csv(DATA / 'test.csv')
+TARGET = 'is_fraud'
+print(f'train {train.shape}, test {test.shape}, cores {THREADS}')
+"""),
+md("""## 0. The problem and the data
+
+One row is one card transaction. `is_fraud` is 1 when it was fraudulent.
+The data is synthetic, generated from the [Credit Card Fraud Detection 2026](https://www.kaggle.com/datasets/uditjain13/credit-card-fraud-detection-2026) dataset;
+distributions are close to, but not the same as, the original.
+"""),
+code("""
+desc = {
+ 'amount_usd': 'transaction amount, USD', 'hours_since_last_txn': 'hours since the card was last used',
+ 'txn_count_last_24h': 'transactions on the card in the last 24 h', 'distance_from_home_km': 'distance from the cardholder\\'s home',
+ 'card_age_months': 'age of the card', 'customer_age': 'age of the cardholder', 'account_balance_usd': 'account balance, USD',
+ 'cvv_retry_count': 'failed CVV attempts', 'velocity_score': 'spending-velocity score', 'time_of_day_hour': 'hour, 0-23',
+ 'day_of_week': 'day, 0-6', 'merchant_risk_score': 'merchant risk score, 0-100', 'prior_disputes': 'earlier disputes on the account',
+ 'merchant_category': 'merchant type', 'card_type': 'card network', 'auth_method': 'how the payment was authenticated',
+ 'channel': 'POS, online, in-app, contactless, ATM', 'device_type': 'device used', 'is_foreign_transaction': 'foreign transaction',
+ 'is_new_merchant': 'first time at this merchant', 'used_vpn': 'VPN detected', 'ip_country_mismatch': 'IP country differs from card country',
+ 'billing_shipping_mismatch': 'billing and shipping address differ', 'is_ai_generated_scam_attempt': 'flagged as an AI-generated scam',
+}
+cols = pd.DataFrame([dict(column=c, dtype=str(train[c].dtype), unique=train[c].nunique(), example=train[c].iloc[0], meaning=desc[c])
+                     for c in train.columns if c in desc])
+display(cols)
+display(train.head(5))
+"""),
+md("""## 1. The metric: ROC AUC
+
+The score is the area under the ROC curve between your probabilities and the true labels.
+The useful way to read it: **AUC is the chance that a random fraud gets a higher score than a random legitimate transaction.**
+Only the *order* of your predictions matters. Three consequences, each shown below with a computed example:
+"""),
+code("""
+rng = np.random.default_rng(0)
+y_toy = (rng.random(10_000) < 0.0167).astype(int)                 # same fraud rate as train
+good = y_toy * 1.0 + rng.normal(0, 0.6, y_toy.size)             # a decent ranking
+print(f"1. all-zero predictions: accuracy {np.mean(y_toy == 0):.3f}, AUC {roc_auc_score(y_toy, np.zeros(y_toy.size)):.3f}  (98% accurate, worthless)")
+print(f"2. any monotone transform keeps AUC: raw {roc_auc_score(y_toy, good):.4f}, exp() {roc_auc_score(y_toy, np.exp(good)):.4f}, "
+      f"rank {roc_auc_score(y_toy, pd.Series(good).rank()):.4f}, 0.8 + x/1e6 {roc_auc_score(y_toy, 0.8 + good / 1e6):.4f}")
+print(f"3. calibration is free: scores squeezed into [0.80, 0.81] (useless as probabilities) score the same AUC")
+fig, ax = plt.subplots(1, 2, figsize=(11, 3.6))
+for s, lab in [(good, 'decent model'), (rng.normal(size=y_toy.size), 'random')]:
+    f, t, _ = roc_curve(y_toy, s); ax[0].plot(f, t, label=f'{lab} (AUC {roc_auc_score(y_toy, s):.3f})')
+ax[0].plot([0, 1], [0, 1], 'k:', lw=1); ax[0].set_xlabel('false positive rate'); ax[0].set_ylabel('true positive rate'); ax[0].legend(); ax[0].set_title('ROC curve')
+ax[1].hist(good[y_toy == 0], bins=60, alpha=.6, density=True, label='legit'); ax[1].hist(good[y_toy == 1], bins=60, alpha=.6, density=True, label='fraud')
+ax[1].set_title('AUC = P(fraud score > legit score)'); ax[1].legend(); plt.tight_layout(); plt.show()
+"""),
+md("""What this means for the competition:
+
+- Class imbalance (1.7% fraud) does not need resampling or class weights for AUC; a model that ranks well is enough.
+- Blending is easy: average **ranks** (or probabilities) of several models; scale differences between models do not matter.
+- Small AUC gains are real gains here: with 300k test rows, a difference of 0.0005 is many correctly re-ordered pairs, but check it in CV, not on the public board alone.
+"""),
+md("## 2. EDA\n\n### Class balance and the numeric features by class"),
+code("""
+y = train[TARGET].astype(int)
+print(f"fraud rate {y.mean():.4f} ({y.sum():,} of {len(y):,}); missing values: {int(train.isna().sum().sum())} in train, {int(test.isna().sum().sum())} in test")
+num = [c for c in train.columns if train[c].dtype.kind in 'if' and c not in ('id', TARGET)]
+cat = train.select_dtypes('object').columns.tolist()
+boo = train.select_dtypes('bool').columns.tolist()
+auc1 = {c: roc_auc_score(y, train[c]) for c in num}
+auc1 = pd.Series({c: max(a, 1 - a) for c, a in auc1.items()}).sort_values(ascending=False)
+print('single-feature AUC (how well each column alone orders fraud):'); print(auc1.round(3).to_string())
+fig, axs = plt.subplots(3, 5, figsize=(16, 8)); axs = axs.ravel()
+for ax, c in zip(axs, auc1.index):
+    lo, hi = train[c].quantile([0.005, 0.995])
+    for lab, g in train.groupby(TARGET):
+        ax.hist(g[c].clip(lo, hi), bins=40, density=True, alpha=.55, label='fraud' if lab else 'legit')
+    ax.set_title(f'{c}  (AUC {auc1[c]:.3f})', fontsize=8)
+for ax in axs[len(auc1):]: ax.axis('off')
+axs[0].legend(); plt.tight_layout(); plt.show()
+"""),
+md("### Fraud rate by category and by flag"),
+code("""
+fig, axs = plt.subplots(2, 3, figsize=(16, 7)); axs = axs.ravel()
+for ax, c in zip(axs, cat):
+    r = train.groupby(c)[TARGET].agg(['mean', 'size']).sort_values('mean')
+    ax.barh(r.index.astype(str), r['mean']); ax.axvline(y.mean(), color='k', ls=':', lw=1); ax.set_title(f'fraud rate by {c}', fontsize=9)
+r = pd.DataFrame({c: [train.loc[train[c], TARGET].mean(), train.loc[~train[c], TARGET].mean(), train[c].mean()] for c in boo},
+                 index=['rate if True', 'rate if False', 'share True']).T.sort_values('rate if True')
+axs[-1].barh(r.index, r['rate if True'], label='flag True'); axs[-1].barh(r.index, r['rate if False'], label='flag False', alpha=.6)
+axs[-1].axvline(y.mean(), color='k', ls=':', lw=1); axs[-1].set_title('fraud rate by flag', fontsize=9); axs[-1].legend(fontsize=7)
+plt.tight_layout(); plt.show()
+display(r.round(4))
+"""),
+md("""### Train vs test: are they the same distribution?
+
+An adversarial check: train a quick model to tell train rows from test rows.
+AUC near 0.5 means the two sets look alike, so CV on train should predict the leaderboard.
+"""),
+code("""
+import lightgbm as lgb
+feats = [c for c in train.columns if c not in ('id', TARGET)]
+def prep(df):
+    d = df[feats].copy()
+    d[boo] = d[boo].astype(int)
+    for c in cat: d[c] = pd.Categorical(d[c], categories=sorted(train[c].unique()))
+    return d
+X, XT = prep(train), prep(test)
+adv = pd.concat([X, XT]); adv_y = np.r_[np.zeros(len(X)), np.ones(len(XT))]
+a_oof = np.zeros(len(adv))
+for tr_i, va_i in StratifiedKFold(3, shuffle=True, random_state=0).split(adv, adv_y):
+    m = lgb.LGBMClassifier(n_estimators=200, learning_rate=0.1, num_leaves=31, n_jobs=THREADS, verbose=-1).fit(adv.iloc[tr_i], adv_y[tr_i])
+    a_oof[va_i] = m.predict_proba(adv.iloc[va_i])[:, 1]
+print(f'adversarial AUC train vs test: {roc_auc_score(adv_y, a_oof):.4f}')
+"""),
+md("""## 3. The ensemble
+
+Gradient-boosted trees (LightGBM, XGBoost, CatBoost), a spline GLM and two neural nets (RealMLP, TabM), all trained on the same 5 stratified folds,
+so every model's out-of-fold predictions line up row for row and can be blended.
+
+- **LightGBM / XGBoost / CatBoost**: gradient-boosted trees, native categorical handling, early stopping on the fold's validation AUC.
+- **RealMLP** ([pytabkit](https://github.com/dholzmueller/pytabkit), Holzmüller et al., NeurIPS 2024): an MLP with tuned defaults for tables
+  (robust scaling, periodic numeric embeddings, a learned per-feature scale). It makes different errors from trees, which is what a blend needs.
+- **Target encoding inside each fold** (sklearn `TargetEncoder`, cross-fitted, so a row never sees its own label): every column with >= 100 rows per value
+  (numeric ones per exact value), integer-rounded keys for the four continuous columns, and pairs among the ten columns with the strongest per-value signal.
+  Not all 276 pairs: on three earlier playgrounds all-pair crosses measured -0.0036, -0.0004 and +0.0002.
+- **Shallow trees** (4-leaf LightGBM twice, depth-1 and depth-2 XGBoost, depth-3 CatBoost, on the encoded and the raw inputs): the signal is close to additive; the top public notebooks measured +0.0019 over 31 leaves, and in v5 the blend kept only the shallow members.
+- **TabM** (a batch ensemble of 32 MLPs, GPU) next to RealMLP.
+- **A spline GLM** (logistic regression on splines and one-hots; design from sidhaarthshree and goodpjw2008).
+- **RealMLP with tuned settings** (yekenot's S6E10 parameters, used by ravi20076 here), on the encoded inputs.
+- **Decimal digits**: the first decimal digit of five numeric columns; the synthesiser leaves a pattern there that range splits cannot express.
+- **The original 20k rows as a lookup**: per-value fraud rates in the original data and a small model trained only on it, as features (not as extra rows).
+- LightGBM runs twice (raw / engineered); the other models use the engineered set only if it gains at least 0.0002 OOF AUC, so the notebook decides.
+"""),
+md("""### The pipeline in one picture
+
+Red marks the one place a label can leak: anything fitted on labels (the target encoder) must be fitted inside the fold's training rows.
+"""),
+code("""
+fig, ax = plt.subplots(figsize=(13, 4.2)); ax.axis('off'); ax.set_xlim(0, 13); ax.set_ylim(0, 4.2)
+def box(x, y, w, h, text, fc='#eef3fb', ec='#4a6fa5'):
+    ax.add_patch(plt.Rectangle((x, y), w, h, fc=fc, ec=ec, lw=1.5)); ax.text(x + w / 2, y + h / 2, text.replace('|', chr(10)), ha='center', va='center', fontsize=9)
+def arrow(x0, y0, x1, y1): ax.annotate('', (x1, y1), (x0, y0), arrowprops=dict(arrowstyle='->', lw=1.3, color='#555'))
+box(0.1, 1.6, 1.7, 1.0, 'train 700k|+ test 300k')
+box(2.3, 2.7, 2.0, 1.0, 'fold k: training|rows (4/5)')
+box(2.3, 0.5, 2.0, 1.0, 'fold k: validation|rows (1/5)')
+box(4.9, 2.7, 2.2, 1.0, 'target encoder|FITTED HERE ONLY', fc='#fdecea', ec='#c0392b')
+box(4.9, 0.5, 2.2, 1.0, 'encoder applied|(no labels used)')
+box(7.7, 1.6, 2.0, 1.0, 'every model|(trees, GLM, MLPs)')
+box(10.2, 2.7, 2.6, 1.0, 'out-of-fold predictions|-> blend weights')
+box(10.2, 0.5, 2.6, 1.0, 'test predictions|(mean of 5 folds)')
+for a in [(1.8, 2.3, 2.3, 3.2), (1.8, 1.9, 2.3, 1.0), (4.3, 3.2, 4.9, 3.2), (4.3, 1.0, 4.9, 1.0), (6.0, 2.7, 6.0, 1.5),
+          (7.1, 3.2, 7.7, 2.4), (7.1, 1.0, 7.7, 1.8), (9.7, 2.3, 10.2, 3.2), (9.7, 1.9, 10.2, 1.0)]:
+    arrow(*a)
+ax.set_title('Every model sees the same 5 folds; the encoder never sees a validation label', fontsize=11); plt.show()
+"""),
+md("### Features: targeted encodings, decimal digits, the original data as a lookup"),
+code("""
+from itertools import combinations
+from sklearn.preprocessing import TargetEncoder
+T_START = time.time()
+both = pd.concat([train[feats], test[feats]], ignore_index=True)
+cont = ['amount_usd', 'hours_since_last_txn', 'distance_from_home_km', 'account_balance_usd']
+P = {}
+for c in feats:                                      # every column, each exact value a category; the encoder's smoothing handles rare values
+    codes, uniq = pd.factorize(both[c].astype(str))
+    if len(uniq) <= len(both) // 2:
+        P[c] = codes.astype('int32')
+for c in cont:                                       # the continuous ones pooled on rounded keys instead, two levels
+    P[f'{c}_int'] = pd.factorize(np.round(both[c]).astype(int))[0].astype('int32')
+    P[f'{c}_r10'] = pd.factorize(np.round(both[c] / 10).astype(int))[0].astype('int32')
+for c in ['merchant_risk_score', 'velocity_score']:  # exact value is a single key above; the integer level pools neighbours
+    P[f'{c}_int'] = pd.factorize(np.round(both[c]).astype(int))[0].astype('int32')
+SINGLES = list(P)
+# pairs only among the ten columns with the strongest per-level signal (the cron EDA notebook's signal ratios)
+TOP = ['cvv_retry_count', 'ip_country_mismatch', 'is_foreign_transaction', 'is_new_merchant', 'billing_shipping_mismatch',
+       'auth_method', 'used_vpn', 'is_ai_generated_scam_attempt', 'merchant_category', 'txn_count_last_24h']
+for a, b in combinations(TOP, 2):
+    P[f'{a}__{b}'] = pd.factorize(both[a].astype(str) + '_' + both[b].astype(str))[0].astype('int32')
+P = pd.DataFrame(P); ENC = list(P.columns)
+PT, P = P.iloc[len(train):].reset_index(drop=True), P.iloc[:len(train)].reset_index(drop=True)
+print(f'target-encoded: {len(SINGLES)} single keys + {len(ENC) - len(SINGLES)} pairs among the top 10')
+
+# first decimal digit: the synthesiser leaves a pattern there that no range split can express (a modulo condition)
+DIGIT_COLS = ['merchant_risk_score', 'velocity_score', 'hours_since_last_txn', 'amount_usd', 'distance_from_home_km']
+digit = lambda d: pd.DataFrame({f'd1_{c}': (np.floor(d[c].values * 10 + 1e-6) % 10).astype('int8') for c in DIGIT_COLS})
+D, DT = digit(train), digit(test)
+display(pd.DataFrame({c: train.groupby(D[f'd1_{c}'].values)[TARGET].mean() for c in DIGIT_COLS}).round(4).T)
+
+# the original 20k rows as a lookup, not as extra training rows: per-value fraud rates there, and a model trained only on them
+orig_path = next(iter(Path('/kaggle/input').rglob('credit_card_fraud_2026.csv')), None) if KAGGLE else Path('../../data/orig/credit_card_fraud_2026.csv')
+G, GT = pd.DataFrame(index=train.index), pd.DataFrame(index=test.index)
+if orig_path is not None and Path(orig_path).exists():
+    orig = pd.read_csv(orig_path); oy = orig[TARGET].astype(int); prior = oy.mean()
+    print(f'original data: {len(orig):,} rows, fraud rate {prior:.4f}')
+    for c in ['merchant_risk_score', 'velocity_score', 'customer_age'] + cat + boo:
+        m = orig.groupby(orig[c].astype(str))[TARGET].agg(['sum', 'size'])
+        rate = (m['sum'] + 20 * prior) / (m['size'] + 20)            # smoothed toward the overall rate
+        G[f'orig_{c}'] = train[c].astype(str).map(rate).fillna(prior).astype('float32').values
+        GT[f'orig_{c}'] = test[c].astype(str).map(rate).fillna(prior).astype('float32').values
+    om = lgb.LGBMClassifier(n_estimators=300, learning_rate=0.05, num_leaves=31, n_jobs=THREADS, verbose=-1).fit(prep(orig), oy)
+    G['orig_model'] = om.predict_proba(X)[:, 1].astype('float32'); GT['orig_model'] = om.predict_proba(XT)[:, 1].astype('float32')
+else:
+    print('original data not attached: no lookup features')
+print(f'lookup features from the original data: {G.shape[1]}')
+
+FOLDS = list(StratifiedKFold(5, shuffle=True, random_state=42).split(X, y))
+CACHE = {}
+def frames(k, mode):
+    \"\"\"(train, valid, test) inputs for fold k. The encodings are fitted on the fold's training rows only (cross-fitted 5 ways
+    inside them), so no row sees its own label; computed once per fold and reused by every model.\"\"\"
+    tr_i, va_i = FOLDS[k]
+    Xa, Xb, Xt = X.iloc[tr_i].reset_index(drop=True), X.iloc[va_i].reset_index(drop=True), XT.reset_index(drop=True)
+    if mode == 'raw':
+        return Xa, Xb, Xt
+    if k not in CACHE:
+        enc = TargetEncoder(target_type='binary', cv=5, random_state=0)
+        te = lambda arr: pd.DataFrame(arr, columns=['te_' + c for c in ENC]).astype('float32')
+        a = te(enc.fit_transform(P.iloc[tr_i], y.iloc[tr_i])); b = te(enc.transform(P.iloc[va_i])); t = te(enc.transform(PT))
+        g = lambda df, idx: df.iloc[idx].reset_index(drop=True) if idx is not None else df.reset_index(drop=True)
+        CACHE[k] = (pd.concat([g(D, tr_i), g(G, tr_i), a], axis=1), pd.concat([g(D, va_i), g(G, va_i), b], axis=1),
+                    pd.concat([g(DT, None), g(GT, None), t], axis=1))
+    a, b, t = CACHE[k]
+    return pd.concat([Xa, a], axis=1), pd.concat([Xb, b], axis=1), pd.concat([Xt, t], axis=1)
+"""),
+md("""### Why the encoder must be fitted inside the fold: a leak you can measure
+
+Target encoding replaces a value by the fraud rate of the rows that share it. If those rates are computed on **all** rows before the CV split,
+a validation row's own label is inside its feature. The CV score then measures memory, not prediction.
+
+Below, 40k rows are put aside as a stand-in for the test set and never used to fit anything. On the other 200k rows the same encodings
+are built two ways, and each is scored twice: by 3-fold CV, and on the untouched 40k.
+If CV and hold-out disagree, the CV is lying.
+"""),
+code("""
+rs = np.random.RandomState(0); idx = rs.permutation(len(X))[:240_000]
+hold, dev = idx[:len(idx) // 6], idx[len(idx) // 6:]          # 40k / 200k
+cols = SINGLES
+lgb4 = lambda: lgb.LGBMClassifier(n_estimators=600, learning_rate=0.1, num_leaves=4, n_jobs=THREADS, verbose=-1)
+leak = {}
+for how in ['fitted on all rows first (leaky)', 'fitted inside each fold (honest)']:
+    leaky = how.endswith('(leaky)'); cv = []
+    for tr_i, va_i in StratifiedKFold(3, shuffle=True, random_state=0).split(dev, y.iloc[dev]):
+        a_i, b_i = dev[tr_i], dev[va_i]
+        enc = TargetEncoder(target_type='binary', random_state=0)
+        if leaky:                                          # fit + transform on the same rows: no cross-fitting, validation labels included
+            enc.fit(P.iloc[dev][cols], y.iloc[dev]); A, B = enc.transform(P.iloc[a_i][cols]), enc.transform(P.iloc[b_i][cols])
+        else:                                              # fit_transform cross-fits inside the training rows; validation only transformed
+            A = enc.fit_transform(P.iloc[a_i][cols], y.iloc[a_i]); B = enc.transform(P.iloc[b_i][cols])
+        cv.append(roc_auc_score(y.iloc[b_i], lgb4().fit(A, y.iloc[a_i]).predict_proba(B)[:, 1]))
+    enc = TargetEncoder(target_type='binary', random_state=0)
+    A = (enc.fit(P.iloc[dev][cols], y.iloc[dev]).transform(P.iloc[dev][cols]) if leaky else enc.fit_transform(P.iloc[dev][cols], y.iloc[dev]))
+    hold_auc = roc_auc_score(y.iloc[hold], lgb4().fit(A, y.iloc[dev]).predict_proba(enc.transform(P.iloc[hold][cols]))[:, 1])
+    leak[how] = (np.mean(cv), hold_auc)
+L = pd.DataFrame(leak, index=['3-fold CV AUC', 'hold-out AUC']).T; display(L.round(5))
+ax = L.plot.bar(figsize=(8, 3.5), rot=0, color=['#9bb7d4', '#4a6fa5'], ylim=(L.values.min() - 0.01, min(1.0, L.values.max() + 0.01)))
+ax.set_title('Leaky encoding: CV promises more than the hold-out delivers'); ax.set_ylabel('AUC'); plt.show()
+"""),
+code("""
+oof, pred, secs = {}, {}, {}
+BUDGET_H = 9.0                                         # a model that would start after this is skipped (Kaggle stops at 12 h)
+
+# Every member's out-of-fold and test predictions are published as the dataset alexchilton/s6e11-oof-predictions, keyed by a
+# fingerprint of (member name, input set, the fitting code and the settings it reads, a checksum of fold 0's exact inputs, the folds).
+# A member whose fingerprint is already there is loaded instead of trained; change its code, its settings or the features
+# and the fingerprint changes, so it retrains. Attach the dataset to your own notebook to blend these members without training them.
+import hashlib, json, types
+PRED_CACHE = next((f.parent for f in Path('/kaggle/input').rglob('oof_manifest.json')), None) if KAGGLE else None
+MANIFEST = json.loads((PRED_CACHE / 'oof_manifest.json').read_text()) if PRED_CACHE else {}
+print('prediction cache:', f'{PRED_CACHE} ({len(MANIFEST)} members)' if PRED_CACHE else 'none attached, every member trains')
+__FP_CORE__
+import inspect
+def fingerprint(name, fit_predict, mode):
+    g = globals()
+    funcs = {k: inspect.getsource(v) for k, v in g.items()
+             if isinstance(v, types.FunctionType) and v.__module__ == '__main__' and v.__name__ != '<lambda>' and not k.startswith('_')}
+    settings = {k: v for k, v in g.items() if type(v) in (int, float, str, bool, dict) and not k.startswith('_')}
+    try:
+        feature_src = fp_feature_cell(get_ipython().user_ns['In'])          # the cell as it was run
+    except Exception:                                                     # outside IPython: no cache, a name-based key
+        return 'nofp_' + ''.join(ch if ch.isalnum() else '_' for ch in f'{name}_{mode}')
+    return fp_compute(name, mode, fit_predict.__name__, funcs, settings, feature_src)
+
+def run(name, fit_predict, mode=None):
+    mode = mode or MODE
+    if (time.time() - T_START) / 3600 > BUDGET_H:
+        print(f'{name}: skipped, {BUDGET_H} h budget used'); return
+    fp = fingerprint(name, fit_predict, mode)
+    if fp in MANIFEST and (PRED_CACHE / f'oof_{fp}.npy').exists():
+        oof[name], pred[name] = np.load(PRED_CACHE / f'oof_{fp}.npy'), np.load(PRED_CACHE / f'test_{fp}.npy'); secs[name] = MANIFEST[fp]['minutes'] * 60
+        _publish(fp, name, mode)
+        print(f'{name}: OOF AUC {roc_auc_score(y, oof[name]):.5f}  (loaded from the dataset, trained in {MANIFEST[fp]["version"]})'); return
+    t0 = time.time(); o = np.zeros(len(X)); p = np.zeros(len(XT))
+    for k, (tr_i, va_i) in enumerate(FOLDS):
+        Xa, Xb, Xt = frames(k, mode)
+        vo, tp = fit_predict(Xa, y.iloc[tr_i].values, Xb, y.iloc[va_i].values, Xt)
+        o[va_i] = vo; p += tp / len(FOLDS)
+        print(f'  {name} fold {k}: AUC {roc_auc_score(y.iloc[va_i], vo):.5f}  ({Xa.shape[1]} inputs)', flush=True)
+    oof[name], pred[name], secs[name] = o, p, time.time() - t0
+    _publish(fp, name, mode, trained=True)
+    print(f'{name}: OOF AUC {roc_auc_score(y, o):.5f}  ({secs[name] / 60:.1f} min)')
+
+OUT_MANIFEST = {}
+def _publish(fp, name, mode, trained=False):         # this run's output holds every member, trained or loaded, for the next dataset version
+    np.save(OUT / f'oof_{fp}.npy', oof[name]); np.save(OUT / f'test_{fp}.npy', pred[name])
+    OUT_MANIFEST[fp] = dict(name=name, inputs=mode, oof_auc=round(float(roc_auc_score(y, oof[name])), 5), minutes=round(secs[name] / 60, 1),
+                            version=VERSION if trained else MANIFEST[fp]['version'])
+    (OUT / 'oof_manifest.json').write_text(json.dumps(OUT_MANIFEST, indent=1))
+"""),
+code("""
+def lgbm(Xa, ya, Xb, yb, Xt):
+    m = lgb.LGBMClassifier(n_estimators=4000, learning_rate=0.03, num_leaves=63, min_child_samples=50, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, reg_lambda=1.0, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(200, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM raw', lgbm, 'raw')
+run('LightGBM +features', lgbm, 'fe')
+# the other three models use the engineered set only if it beat raw by more than run-to-run noise
+gain = roc_auc_score(y, oof['LightGBM +features']) - roc_auc_score(y, oof['LightGBM raw'])
+MODE = 'fe' if gain >= 0.0002 else 'raw'
+print(f'engineered features: {gain:+.5f} OOF AUC for LightGBM -> the other models use {MODE!r}')
+
+def lgbm_shallow(Xa, ya, Xb, yb, Xt):                 # 4 leaves: the signal is close to additive, so tiny trees generalise better
+    m = lgb.LGBMClassifier(n_estimators=20000, learning_rate=0.05, num_leaves=4, min_child_samples=100, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, reg_lambda=1.0, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 4 leaves', lgbm_shallow, 'fe')
+run('LightGBM 4 leaves raw', lgbm_shallow, 'raw')
+def lgbm_shallow2(Xa, ya, Xb, yb, Xt):                # the same tree size, another seed and a sparser column sample
+    m = lgb.LGBMClassifier(n_estimators=20000, learning_rate=0.05, num_leaves=4, min_child_samples=200, subsample=0.7, subsample_freq=1,
+                           colsample_bytree=0.3, reg_lambda=5.0, random_state=1, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 4 leaves b', lgbm_shallow2, 'fe')
+"""),
+md("""### How big should a tree be? Measure it
+
+One fold, the same inputs, only `num_leaves` changes. A deep tree can express interactions between many columns;
+if the score falls as trees grow, those interactions are mostly noise here, and the target is close to a sum of per-column effects.
+"""),
+code("""
+Xa0, Xb0, _ = frames(0, MODE); ya0, yb0 = y.iloc[FOLDS[0][0]].values, y.iloc[FOLDS[0][1]].values
+sizes, curve = [2, 4, 8, 16, 32, 64], []
+for L in sizes:
+    m = lgb.LGBMClassifier(n_estimators=20000, learning_rate=0.1, num_leaves=L, min_child_samples=100, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa0, ya0, eval_set=[(Xb0, yb0)], eval_metric='auc', callbacks=[lgb.early_stopping(200, verbose=False)])
+    curve.append(m.best_score_['valid_0']['auc'])
+fig, ax = plt.subplots(figsize=(7, 3.5)); ax.plot(sizes, curve, 'o-', color='#4a6fa5'); ax.set_xscale('log', base=2); ax.set_xticks(sizes, sizes)
+ax.set_xlabel('leaves per tree'); ax.set_ylabel('validation AUC (fold 0)'); ax.set_title('Validation AUC against tree size'); plt.show()
+print(dict(zip(sizes, np.round(curve, 5))))
+"""),
+md("""### What the model learned, one column at a time
+
+Trees of depth 1 use one column per tree, so the model is a sum of one curve per column (a *shape function*).
+XGBoost's per-feature contributions (`pred_contribs`) then are exactly those curves. Steps and bumps are what the encodings and digits try to capture.
+"""),
+code("""
+import xgboost as xgb
+Xa1, Xb1, _ = frames(0, 'raw')
+m1 = xgb.XGBClassifier(n_estimators=5000, learning_rate=0.1, max_depth=1, tree_method='hist', device='cuda' if GPU else 'cpu',
+                       enable_categorical=True, eval_metric='auc', early_stopping_rounds=200, n_jobs=THREADS)
+m1.fit(Xa1, ya0, eval_set=[(Xb1, yb0)], verbose=False); m1.set_params(device='cpu')
+smp = Xb1.sample(min(20000, len(Xb1)), random_state=0)
+contrib = pd.DataFrame(m1.get_booster().predict(xgb.DMatrix(smp, enable_categorical=True), pred_contribs=True)[:, :-1], columns=smp.columns)
+top = contrib.abs().mean().sort_values(ascending=False).index[:12]
+fig, axes = plt.subplots(3, 4, figsize=(15, 9))
+for ax, c in zip(axes.ravel(), top):
+    if smp[c].dtype.name == 'category' or smp[c].nunique() <= 12:
+        g = contrib[c].groupby(smp[c].astype(str).values).mean().sort_values(); ax.barh(g.index, g.values, color='#4a6fa5')
+    else:
+        ax.scatter(smp[c], contrib[c], s=2, alpha=0.3, color='#4a6fa5')
+    ax.set_title(c, fontsize=9); ax.axhline(0, color='#999', lw=0.8)
+fig.suptitle('Shape functions of a depth-1 XGBoost (log-odds contribution per column)', y=1.0); plt.tight_layout(); plt.show()
+print(f'depth-1 XGBoost: {m1.best_iteration + 1} trees, fold-0 validation AUC {roc_auc_score(yb0, m1.predict_proba(Xb1)[:, 1]):.5f}')
+"""),
+md("""### Tuning without fooling yourself: small Optuna searches
+
+Each search uses one fold and a 250k-row sample of its training rows, with a fast learning rate, so 30 trials cost minutes, not hours.
+The found settings then train a new member at the usual learning rate on all five folds.
+Tuning on fold 0's validation rows makes that fold slightly optimistic; the other four folds are untouched, which keeps the OOF score honest enough.
+The plots show what a search is for: whether more trials still help (history), and which settings matter at all (importance).
+
+A search is cached in the dataset like the members, keyed by its objective's code, so the next version reloads its trials instead of searching again.
+
+**LightGBM was searched in v8** (30 trials, 28 minutes on 4 CPU cores): the best setting is num_leaves = 2, two-leaf trees, even smaller than our hand-picked 4.
+At the full learning rate that member scores OOF 0.94839, the same as the hand-picked 4-leaf LightGBM (0.94838), and took 62 minutes.
+The hill climb gives it weight 0 and the stacker 0.142; the leaderboard moved from 0.94982 (v6) to 0.94981 (v8).
+So the search confirmed the shallow-tree finding and found nothing beyond it. Its settings are pinned below so it is not searched again.
+"""),
+code("""
+import optuna
+from optuna.visualization.matplotlib import plot_optimization_history, plot_param_importances
+optuna.logging.set_verbosity(optuna.logging.WARNING)
+sub_i = np.random.RandomState(0).permutation(len(Xa0))[:250_000]
+def cached_search(tag, objective, n_trials):
+    \"\"\"An Optuna study for one member, loaded from the dataset when the same objective was searched before, else run and saved.\"\"\"
+    study = optuna.create_study(direction='maximize', sampler=optuna.samplers.TPESampler(seed=0))
+    key = hashlib.sha1((tag + _tree(inspect.getsource(objective)) + repr(len(sub_i))).encode()).hexdigest()[:12]
+    saved = PRED_CACHE / f'optuna_{key}.json' if PRED_CACHE else None
+    if saved is not None and saved.exists():
+        D = optuna.distributions
+        for t in json.loads(saved.read_text()):
+            study.add_trial(optuna.trial.create_trial(params=t['params'], value=t['value'],
+                                                      distributions={k: D.json_to_distribution(v) for k, v in t['dists'].items()}))
+        print(f'{tag}: search loaded from the dataset, {len(study.trials)} trials')
+    else:
+        log_trial = lambda s, t: print(f'  {tag} trial {t.number:2d}: AUC {t.value:.5f}  ({t.duration.total_seconds():.0f} s)', flush=True)
+        study.optimize(objective, n_trials=n_trials, callbacks=[log_trial])   # a fixed trial count, so the result does not depend on the machine
+        (OUT / f'optuna_{key}.json').write_text(json.dumps([dict(params=t.params, value=t.value, seconds=t.duration.total_seconds(),
+            dists={k: optuna.distributions.distribution_to_json(d) for k, d in t.distributions.items()}) for t in study.trials]))
+    print(f'{tag}: best fold-0 AUC {study.best_value:.5f}', study.best_params)
+    plot_optimization_history(study, target_name='fold-0 AUC'); plt.title(f'{tag}: search history'); plt.show()
+    plot_param_importances(study); plt.title(f'{tag}: which settings matter'); plt.show()
+    return study
+
+# LightGBM: searched in v8 (30 trials, best fold-0 AUC 0.94568); the result is pinned, so the member below loads from the dataset
+BEST = {'num_leaves': 2, 'min_child_samples': 455, 'colsample_bytree': 0.48621093026380613, 'subsample': 0.979109441929957, 'reg_lambda': 22.84848036668211}
+def lgbm_tuned(Xa, ya, Xb, yb, Xt):
+    m = lgb.LGBMClassifier(n_estimators=30000, learning_rate=0.03, subsample_freq=1, n_jobs=THREADS, verbose=-1, **BEST)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(400, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM tuned', lgbm_tuned)
+"""),
+code("""
+
+def lgbm_orig(Xa, ya, Xb, yb, Xt):                    # starts from the original-data model's logit and learns only the correction
+    if 'orig_model' not in Xa:
+        return lgbm(Xa, ya, Xb, yb, Xt)
+    lg = lambda d: np.log(np.clip(d['orig_model'].values, 1e-6, 1 - 1e-6) / (1 - np.clip(d['orig_model'].values, 1e-6, 1 - 1e-6)))
+    m = lgb.LGBMClassifier(n_estimators=4000, learning_rate=0.03, num_leaves=63, min_child_samples=50, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, reg_lambda=1.0, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, init_score=lg(Xa), eval_set=[(Xb, yb)], eval_init_score=[lg(Xb)], eval_metric='auc',
+          callbacks=[lgb.early_stopping(200, verbose=False)])
+    return m.predict(Xb, raw_score=True) + lg(Xb), m.predict(Xt, raw_score=True) + lg(Xt)
+run('LightGBM from original', lgbm_orig, 'fe')
+
+# a spline GLM (design from sidhaarthshree's and goodpjw2008's notebooks): the original data looks like a logistic formula,
+# so a linear model on splines + one-hots sees it differently from the trees, which is what a stack wants
+from scipy import sparse
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import OneHotEncoder, SplineTransformer, StandardScaler
+full = pd.concat([train[feats], test[feats]], ignore_index=True)
+nums = [c for c in num if c in feats]
+zz = full[nums].astype(float).copy()
+for c in ('amount_usd', 'account_balance_usd', 'hours_since_last_txn'):
+    zz[c] = np.log1p(zz[c])
+zz = StandardScaler().fit_transform(zz)
+small = [c for c in nums if full[c].nunique() <= 100]
+M = sparse.hstack([sparse.csr_matrix(zz), sparse.csr_matrix(full[boo].values.astype(float)),
+                   OneHotEncoder(handle_unknown='ignore').fit_transform(full[cat].astype(str)),
+                   sparse.csr_matrix(SplineTransformer(n_knots=8, degree=3, knots='quantile').fit_transform(zz)),
+                   OneHotEncoder(handle_unknown='ignore', min_frequency=50).fit_transform(full[small])]).tocsr()
+MA, MT = M[:len(train)], M[len(train):]
+glm_key = 'spline_glm_' + hashlib.sha1(M.data[:200000].tobytes() + repr(M.shape).encode()).hexdigest()[:10]   # keyed by the design matrix
+if glm_key in MANIFEST and (PRED_CACHE / f'oof_{glm_key}.npy').exists():
+    oof['Spline GLM'], pred['Spline GLM'] = np.load(PRED_CACHE / f'oof_{glm_key}.npy'), np.load(PRED_CACHE / f'test_{glm_key}.npy')
+    secs['Spline GLM'] = MANIFEST[glm_key]['minutes'] * 60; _publish(glm_key, 'Spline GLM', 'design')
+    print(f"Spline GLM: OOF AUC {roc_auc_score(y, oof['Spline GLM']):.5f}  (loaded from the dataset, trained in {MANIFEST[glm_key]['version']})")
+else:
+    t0 = time.time(); o = np.zeros(len(X)); p = np.zeros(len(XT))
+    for k, (tr_i, va_i) in enumerate(FOLDS):
+        m = LogisticRegression(C=1.0, max_iter=4000, tol=1e-6).fit(MA[tr_i], y.iloc[tr_i])
+        o[va_i] = m.predict_proba(MA[va_i])[:, 1]; p += m.predict_proba(MT)[:, 1] / len(FOLDS)
+    oof['Spline GLM'], pred['Spline GLM'], secs['Spline GLM'] = o, p, time.time() - t0
+    _publish(glm_key, 'Spline GLM', 'design', trained=True)
+    print(f"Spline GLM: OOF AUC {roc_auc_score(y, o):.5f}  ({secs['Spline GLM'] / 60:.1f} min, {M.shape[1]} design columns)")
+"""),
+code("""
+import xgboost as xgb
+def xgbm(Xa, ya, Xb, yb, Xt):
+    m = xgb.XGBClassifier(n_estimators=4000, learning_rate=0.03, max_depth=6, min_child_weight=5, subsample=0.8, colsample_bytree=0.5,
+                          tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True, eval_metric='auc', early_stopping_rounds=200, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost', xgbm)
+def xgbm_deep(Xa, ya, Xb, yb, Xt):                    # a second XGBoost: deeper, slower learning, different column sampling
+    m = xgb.XGBClassifier(n_estimators=6000, learning_rate=0.02, max_depth=9, min_child_weight=20, subsample=0.7, colsample_bytree=0.35,
+                          reg_lambda=5.0, tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True, eval_metric='auc',
+                          early_stopping_rounds=300, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost deep', xgbm_deep)
+def xgbm_d2(Xa, ya, Xb, yb, Xt):                      # depth 2: the XGBoost version of the 4-leaf trees
+    m = xgb.XGBClassifier(n_estimators=20000, learning_rate=0.05, max_depth=2, min_child_weight=20, subsample=0.8, colsample_bytree=0.5,
+                          tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True, eval_metric='auc',
+                          early_stopping_rounds=300, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost depth 2', xgbm_d2, 'fe')
+run('XGBoost depth 2 raw', xgbm_d2, 'raw')
+def xgbm_d1(Xa, ya, Xb, yb, Xt):                      # depth 1: a purely additive model, one shape function per input
+    m = xgb.XGBClassifier(n_estimators=30000, learning_rate=0.1, max_depth=1, min_child_weight=20, subsample=0.8, colsample_bytree=0.5,
+                          tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True, eval_metric='auc',
+                          early_stopping_rounds=500, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost depth 1', xgbm_d1, 'fe')
+"""),
+code("""
+from catboost import CatBoostClassifier
+def catb(Xa, ya, Xb, yb, Xt):
+    s = lambda d: d.assign(**{c: d[c].astype(str) for c in cat})
+    m = CatBoostClassifier(iterations=CAT_ITERS, learning_rate=0.06, depth=6, eval_metric='AUC', od_type='Iter', od_wait=200,
+                           thread_count=THREADS, verbose=0, cat_features=cat, random_seed=0, train_dir=str(OUT / 'catboost_info'),
+                           task_type='GPU' if GPU else 'CPU')
+    m.fit(s(Xa), ya, eval_set=(s(Xb), yb))
+    return m.predict_proba(s(Xb))[:, 1], m.predict_proba(s(Xt))[:, 1]
+run('CatBoost', catb)
+def catb3(Xa, ya, Xb, yb, Xt):                         # shallow CatBoost: symmetric depth-3 trees
+    s = lambda d: d.assign(**{c: d[c].astype(str) for c in cat})
+    m = CatBoostClassifier(iterations=3 * CAT_ITERS, learning_rate=0.08, depth=3, eval_metric='AUC', od_type='Iter', od_wait=300,
+                           thread_count=THREADS, verbose=0, cat_features=cat, random_seed=0, train_dir=str(OUT / 'catboost_info'),
+                           task_type='GPU' if GPU else 'CPU')
+    m.fit(s(Xa), ya, eval_set=(s(Xb), yb))
+    return m.predict_proba(s(Xb))[:, 1], m.predict_proba(s(Xt))[:, 1]
+run('CatBoost depth 3', catb3)
+"""),
+code("""
+import torch
+from pytabkit import RealMLP_TD_Classifier
+torch.set_num_threads(THREADS)
+print('RealMLP on', 'GPU' if GPU else 'CPU')
+def realmlp(Xa, ya, Xb, yb, Xt):
+    m = RealMLP_TD_Classifier(device='cuda' if GPU else 'cpu', random_state=0, verbosity=0, val_metric_name='1-auc_ovr',
+                              n_ens=8, n_epochs=MLP_EPOCHS, batch_size=512, use_early_stopping=False, lr=0.04, wd=0.01, sq_mom=0.988,
+                              lr_sched='flat_anneal', wd_sched='cos_log_15', first_layer_lr_factor=0.25, embedding_size=5,
+                              max_one_hot_cat_size=2, hidden_sizes=[512, 256, 128], act='mish', p_drop=0.05, p_drop_sched='pow5',
+                              plr_hidden_1=16, plr_hidden_2=8, plr_act_name='gelu', plr_lr_factor=0.1151, plr_sigma=0.75,
+                              ls_eps=0.01, ls_eps_sched='sqrt_cos', add_front_scale=False, bias_init_mode='neg-uniform-dynamic-2',
+                              tfms=['one_hot', 'median_center', 'robust_scale', 'smooth_clip', 'embedding', 'l2_normalize'])
+    m.fit(Xa, ya, X_val=Xb, y_val=yb)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('RealMLP', realmlp, 'fe')
+"""),
+code("""
+import torch
+# TabM (Gorishniy et al., ICLR 2025): k MLPs sharing most weights, trained together as one batch ensemble;
+# piecewise-linear embeddings of the numeric inputs. Early stopping on the fold's validation rows, as the trees do.
+from pytabkit import TabM_D_Classifier
+def tabm(Xa, ya, Xb, yb, Xt):
+    m = TabM_D_Classifier(device='cuda' if GPU else 'cpu', random_state=0, verbosity=0, val_metric_name='1-auc_ovr',
+                          arch_type='tabm-mini', tabm_k=32, num_emb_type='pwl', d_block=512, n_blocks=3, dropout=0.1,
+                          batch_size=1024, lr=2e-3, weight_decay=3e-4, n_epochs=40, patience=6)
+    m.fit(Xa, ya, X_val=Xb, y_val=yb)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('TabM', tabm, 'fe')
+"""),
+md("""### v9: the four "what next" items from v8
+
+1. **Tuning the other shallow members.** The same cached search, run on XGBoost depth 2 and CatBoost depth 3.
+2. **More features**: count encodings (how common a value is across train and test; no labels used), three products and ratios of the strongest numeric columns,
+   and target encodings of triple crosses among the six strongest flags, fitted inside the fold like every other encoding. They feed two new members only,
+   so every member trained before keeps its cached predictions.
+3. **A bigger member library**: a k-nearest-neighbour model (the fraud rate among a row's 100 nearest training rows, GPU), and seed bags
+   (the same depth-1 / depth-2 XGBoost trained with three seeds and averaged). Each is judged by what it adds to the stack, not by its own score.
+4. **More seeds for the blend**: the stacker's held-out AUC is measured over three different outer splits, so the hill climb vs stacker choice comes with its noise.
+   More folds for the members would change every out-of-fold file and retrain everything, so the 5 folds stay.
+"""),
+code("""
+# 1. tuned XGBoost depth <= 3 and CatBoost depth <= 4, searched like LightGBM (fold 0, 250k-row sample, fast learning rate)
+def xgb_objective(trial):
+    prm = dict(max_depth=trial.suggest_int('max_depth', 1, 3), min_child_weight=trial.suggest_float('min_child_weight', 1, 300, log=True),
+               subsample=trial.suggest_float('subsample', 0.5, 1.0), colsample_bytree=trial.suggest_float('colsample_bytree', 0.1, 0.9),
+               reg_lambda=trial.suggest_float('reg_lambda', 1e-3, 100, log=True))
+    m = xgb.XGBClassifier(n_estimators=5000, learning_rate=0.1, tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True,
+                          eval_metric='auc', early_stopping_rounds=200, n_jobs=THREADS, **prm)
+    m.fit(Xa0.iloc[sub_i], ya0[sub_i], eval_set=[(Xb0, yb0)], verbose=False)
+    return m.best_score
+XGB_BEST = cached_search('XGBoost', xgb_objective, 30).best_params
+def xgbm_tuned(Xa, ya, Xb, yb, Xt):
+    m = xgb.XGBClassifier(n_estimators=30000, learning_rate=0.05, tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True,
+                          eval_metric='auc', early_stopping_rounds=400, n_jobs=THREADS, **XGB_BEST)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost tuned', xgbm_tuned, 'fe')
+
+def cat_objective(trial):
+    s = lambda d: d.assign(**{c: d[c].astype(str) for c in cat})
+    prm = dict(depth=trial.suggest_int('depth', 2, 4), l2_leaf_reg=trial.suggest_float('l2_leaf_reg', 0.1, 30, log=True),
+               random_strength=trial.suggest_float('random_strength', 0.1, 10, log=True),
+               bagging_temperature=trial.suggest_float('bagging_temperature', 0.0, 1.0))
+    m = CatBoostClassifier(iterations=3000, learning_rate=0.1, eval_metric='AUC', od_type='Iter', od_wait=200, thread_count=THREADS, verbose=0,
+                           cat_features=cat, random_seed=0, train_dir=str(OUT / 'catboost_info'), task_type='GPU' if GPU else 'CPU', **prm)
+    m.fit(s(Xa0.iloc[sub_i]), ya0[sub_i], eval_set=(s(Xb0), yb0))
+    return roc_auc_score(yb0, m.predict_proba(s(Xb0))[:, 1])
+CAT_BEST = cached_search('CatBoost', cat_objective, 20).best_params
+def catb_tuned(Xa, ya, Xb, yb, Xt):
+    s = lambda d: d.assign(**{c: d[c].astype(str) for c in cat})
+    m = CatBoostClassifier(iterations=3 * CAT_ITERS, learning_rate=0.08, eval_metric='AUC', od_type='Iter', od_wait=300, thread_count=THREADS,
+                           verbose=0, cat_features=cat, random_seed=0, train_dir=str(OUT / 'catboost_info'), task_type='GPU' if GPU else 'CPU', **CAT_BEST)
+    m.fit(s(Xa), ya, eval_set=(s(Xb), yb))
+    return m.predict_proba(s(Xb))[:, 1], m.predict_proba(s(Xt))[:, 1]
+run('CatBoost tuned', catb_tuned, 'fe')
+"""),
+code("""
+# 2. more features, for two new members only (the feature cell above is unchanged, so no earlier member retrains)
+from itertools import combinations
+def plus_features(Xa, ya, Xb, Xt):
+    \"\"\"Count encodings and numeric products (no labels), and in-fold target encodings of triple crosses (fitted on Xa only).\"\"\"
+    out = [Xa.copy(), Xb.copy(), Xt.copy()]
+    for c in ['amount_usd', 'account_balance_usd', 'hours_since_last_txn', 'distance_from_home_km', 'merchant_risk_score',
+              'velocity_score', 'customer_age', 'card_age_months']:
+        vc = both[c].value_counts()                                   # how common the exact value is in train + test
+        for d in out:
+            d['cnt_' + c] = d[c].map(vc).fillna(0).astype('float32').values
+    for d in out:
+        d['amount_over_balance'] = (d['amount_usd'] / (d['account_balance_usd'].abs() + 1)).astype('float32')
+        d['amount_x_risk'] = (d['amount_usd'] * d['merchant_risk_score']).astype('float32')
+        d['velocity_x_risk'] = (d['velocity_score'] * d['merchant_risk_score']).astype('float32')
+    top6 = ['cvv_retry_count', 'ip_country_mismatch', 'is_foreign_transaction', 'is_new_merchant', 'billing_shipping_mismatch', 'auth_method']
+    keys = lambda d: pd.DataFrame({f'{a}__{b}__{c}': d[a].astype(str) + '_' + d[b].astype(str) + '_' + d[c].astype(str)
+                                   for a, b, c in combinations(top6, 3)})
+    enc = TargetEncoder(target_type='binary', cv=5, random_state=0)
+    te = [enc.fit_transform(keys(Xa), ya), enc.transform(keys(Xb)), enc.transform(keys(Xt))]
+    cols = ['te3_' + c for c in keys(Xa.head(1)).columns]
+    return [pd.concat([d.reset_index(drop=True), pd.DataFrame(t, columns=cols).astype('float32')], axis=1) for d, t in zip(out, te)]
+def lgbm_plus(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = plus_features(Xa, ya, Xb, Xt)
+    m = lgb.LGBMClassifier(n_estimators=20000, learning_rate=0.05, num_leaves=4, min_child_samples=100, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, reg_lambda=1.0, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 4 leaves plus', lgbm_plus, 'fe')
+def xgbm_d2_plus(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = plus_features(Xa, ya, Xb, Xt)
+    m = xgb.XGBClassifier(n_estimators=20000, learning_rate=0.05, max_depth=2, min_child_weight=20, subsample=0.8, colsample_bytree=0.5,
+                          tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True, eval_metric='auc',
+                          early_stopping_rounds=300, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost depth 2 plus', xgbm_d2_plus, 'fe')
+"""),
+code("""
+# 3. a bigger library: k nearest neighbours (GPU) and seed bags of the two shallow XGBoost members
+def knn_rate(Xa, ya, Xb, yb, Xt):
+    \"\"\"Smoothed fraud rate among each row's 100 nearest training rows, on standardised numeric columns and the strongest encodings.\"\"\"
+    cols = [c for c in ['merchant_risk_score', 'velocity_score', 'cvv_retry_count', 'customer_age', 'txn_count_last_24h',
+                        'hours_since_last_txn', 'amount_usd', 'prior_disputes', 'te_cvv_retry_count__ip_country_mismatch',
+                        'te_merchant_category', 'te_auth_method', 'te_is_new_merchant__used_vpn'] if c in Xa]
+    mu, sd = Xa[cols].astype(float).mean(), Xa[cols].astype(float).std() + 1e-9
+    dev = 'cuda' if GPU else 'cpu'
+    ref = torch.tensor(((Xa[cols].astype(float) - mu) / sd).values, dtype=torch.float32, device=dev)
+    lab = torch.tensor(ya, dtype=torch.float32, device=dev); prior = float(ya.mean())
+    def rate(D):
+        q = torch.tensor(((D[cols].astype(float) - mu) / sd).values, dtype=torch.float32, device=dev); res = []
+        for i in range(0, len(q), 1024):
+            idx = torch.cdist(q[i:i + 1024], ref).topk(100, largest=False).indices
+            res.append(((lab[idx].sum(1) + 10 * prior) / 110).cpu())
+        return torch.cat(res).numpy()
+    return rate(Xb), rate(Xt)
+if GPU:                                                   # 440k queries against 560k rows per fold: minutes on a GPU, hours on 4 CPU cores
+    run('kNN rate', knn_rate, 'fe')
+def xgb_bag(depth, Xa, ya, Xb, yb, Xt):
+    vo, tp = 0, 0
+    for seed in (1, 2, 3):
+        m = xgb.XGBClassifier(n_estimators=30000, learning_rate=0.05 if depth == 2 else 0.1, max_depth=depth, min_child_weight=20, subsample=0.8,
+                              colsample_bytree=0.5, random_state=seed, tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True,
+                              eval_metric='auc', early_stopping_rounds=300 if depth == 2 else 500, n_jobs=THREADS)
+        m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+        vo, tp = vo + m.predict_proba(Xb)[:, 1] / 3, tp + m.predict_proba(Xt)[:, 1] / 3
+    return vo, tp
+def xgb_d2_bag3(Xa, ya, Xb, yb, Xt): return xgb_bag(2, Xa, ya, Xb, yb, Xt)
+def xgb_d1_bag3(Xa, ya, Xb, yb, Xt): return xgb_bag(1, Xa, ya, Xb, yb, Xt)
+run('XGBoost depth 2 bag3', xgb_d2_bag3, 'fe')
+run('XGBoost depth 1 bag3', xgb_d1_bag3, 'fe')
+"""),
+md("""### v10: the digits carry the label
+
+The synthetic rows come from a generator that writes numbers digit by digit, so how a number is *written* carries signal that its size does not.
+goodpjw2008 measured it ([S6E11 Part 3](https://www.kaggle.com/code/goodpjw2008/s6e11-part-3-digits-leak-the-label-lb-0-95113), LB 0.95113)
+and ektarr's [RealMLP Stacking](https://www.kaggle.com/code/ektarr/lb-0-95121-realmlp-stacking) (LB 0.95121) uses the same keys.
+For each of the six float columns, these keys are target-encoded inside the fold, exactly like the per-value encodings above:
+
+| key | example for 1371.37 | what it groups |
+|---|---|---|
+| cents | 37 | the two decimals (also kept as a plain number) |
+| int(x) | 1371 | the integer part (truncated, not rounded) |
+| int(x/10) | 137 | the integer part without its last digit |
+| int(10x) | 13713 | the value cut to one decimal |
+| first digit, first two digits, number of digits | 1, 13, 4 | the leading digits |
+
+Our v2-v9 features had only a part of this: the first decimal as a raw number, and *rounded* integer keys for four columns.
+Rounding mixes two written forms into one key (13.6 and 14.4 both become 14), which is exactly the information the generator left; truncating keeps them apart.
+Their measurement on one 4-leaf LightGBM: +0.0015 CV. The keys feed new members only, so nothing cached retrains.
+
+The four new members, and why each:
+
+- **LightGBM 4 leaves digits**: the best member so far (4-leaf LightGBM on the engineered set) with the digit encodings added. The direct test of the idea.
+- **LightGBM 4 leaves digits s100**: the same keys with heavier smoothing (100 instead of 20), so rare keys count for less. Its errors differ slightly, which a blend can use; goodpjw2008's blend kept both.
+- **XGBoost depth 2 digits**: the same inputs in another tree library; depth-2 XGBoost was the second-strongest shallow member.
+- **RealMLP digits**: the neural net with the digit encodings as extra inputs. Nets make different mistakes from trees, so it is the member most likely to add to the stack.
+"""),
+code("""
+FLOATS6 = ['amount_usd', 'hours_since_last_txn', 'distance_from_home_km', 'account_balance_usd', 'velocity_score', 'merchant_risk_score']
+def digit_features(Xa, ya, Xb, Xt, smooth=20.0):
+    \"\"\"The digit keys of the six float columns, target-encoded on Xa's labels only (5-way cross-fitted inside it); cents kept as a number.\"\"\"
+    def keys(d):
+        k = {}
+        for c in FLOATS6:
+            x = d[c].astype(float).values; i = np.floor(x + 1e-9).astype(np.int64); s = np.abs(i).astype(str)
+            k[f'cents_{c}'] = np.round(x * 100).astype(np.int64) % 100
+            k[f'int_{c}'], k[f'ten_{c}'], k[f'dec_{c}'] = i, np.floor(x / 10 + 1e-9).astype(np.int64), np.floor(x * 10 + 1e-6).astype(np.int64)
+            k[f'lead1_{c}'] = np.array([v[:1] for v in s]); k[f'lead2_{c}'] = np.array([v[:2] for v in s]); k[f'len_{c}'] = np.array([len(v) for v in s])
+        return pd.DataFrame(k).astype(str)
+    ka, kb, kt = keys(Xa), keys(Xb), keys(Xt)
+    enc = TargetEncoder(target_type='binary', cv=5, smooth=smooth, random_state=0)
+    cols = ['dte_' + c for c in ka.columns]
+    te = [enc.fit_transform(ka, ya), enc.transform(kb), enc.transform(kt)]
+    cents = lambda d: pd.DataFrame({f'cents_{c}': (np.round(d[c].astype(float).values * 100) % 100).astype('float32') for c in FLOATS6})
+    return [pd.concat([d.reset_index(drop=True), cents(d), pd.DataFrame(t, columns=cols).astype('float32')], axis=1)
+            for d, t in zip((Xa, Xb, Xt), te)]
+def lgbm_digits(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = digit_features(Xa, ya, Xb, Xt)
+    m = lgb.LGBMClassifier(n_estimators=20000, learning_rate=0.03, num_leaves=4, min_child_samples=100, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, reg_lambda=1.0, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 4 leaves digits', lgbm_digits, 'fe')
+def lgbm_digits_s100(Xa, ya, Xb, yb, Xt):                # the same with heavier smoothing: a second view the blend can use
+    Xa, Xb, Xt = digit_features(Xa, ya, Xb, Xt, smooth=100.0)
+    m = lgb.LGBMClassifier(n_estimators=20000, learning_rate=0.03, num_leaves=4, min_child_samples=100, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, reg_lambda=1.0, random_state=1, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 4 leaves digits s100', lgbm_digits_s100, 'fe')
+def xgbm_d2_digits(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = digit_features(Xa, ya, Xb, Xt)
+    m = xgb.XGBClassifier(n_estimators=20000, learning_rate=0.03, max_depth=2, min_child_weight=5, subsample=0.8, colsample_bytree=0.5,
+                          tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True, eval_metric='auc',
+                          early_stopping_rounds=300, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost depth 2 digits', xgbm_d2_digits, 'fe')
+def realmlp_digits(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = digit_features(Xa, ya, Xb, Xt)
+    return realmlp(Xa, ya, Xb, yb, Xt)
+run('RealMLP digits', realmlp_digits, 'fe')
+"""),
+md("""### v12: three cheap members suggested by the public notebooks
+
+Our digit members score OOF 0.9495; the public notebooks' 4-leaf members with the same keys score 0.9504-0.9505 (goodpjw2008 Part 4, megayak, bulsahkecici).
+One difference we can name: every `fe` member here also carries the encodings of the 45 column pairs among the top 10.
+Two public notebooks measured those pairs as useless or harmful (areebbb -0.0007 CV on 1 of 5 folds; aphoristicartist 0.95024, no gain).
+
+- **LightGBM 4 leaves digits, no pairs**: `LightGBM 4 leaves digits` with the 45 pair encodings dropped. If the pairs only add noise, this member beats its parent; that is the whole test.
+- **XGBoost depth 2 digits, no pairs**: the same test in the other tree library.
+- **GLM on the encodings**: a logistic regression on the logits of every value and digit encoding. Alone it is the weakest model,
+  but it fits all encodings jointly and has no trees, so its errors differ; aphoristicartist's stack gives this kind of member its largest weight (0.30), megayak's scores 0.9501 alone.
+"""),
+code("""
+NO_PAIR = lambda d: d.drop(columns=[c for c in d.columns if c.startswith('te_') and '__' in c])
+def lgbm_digits_nopair(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = digit_features(NO_PAIR(Xa), ya, NO_PAIR(Xb), NO_PAIR(Xt))
+    m = lgb.LGBMClassifier(n_estimators=20000, learning_rate=0.03, num_leaves=4, min_child_samples=100, subsample=0.8, subsample_freq=1,
+                           colsample_bytree=0.5, reg_lambda=1.0, n_jobs=THREADS, verbose=-1)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 4 leaves digits, no pairs', lgbm_digits_nopair, 'fe')
+def xgbm_d2_digits_nopair(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = digit_features(NO_PAIR(Xa), ya, NO_PAIR(Xb), NO_PAIR(Xt))
+    m = xgb.XGBClassifier(n_estimators=20000, learning_rate=0.03, max_depth=2, min_child_weight=5, subsample=0.8, colsample_bytree=0.5,
+                          tree_method='hist', device='cuda' if GPU else 'cpu', enable_categorical=True, eval_metric='auc',
+                          early_stopping_rounds=300, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost depth 2 digits, no pairs', xgbm_d2_digits_nopair, 'fe')
+def glm_encodings(Xa, ya, Xb, yb, Xt):                   # logistic regression on the logits of every value and digit encoding
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.preprocessing import StandardScaler
+    Xa, Xb, Xt = digit_features(Xa, ya, Xb, Xt)
+    cols = [c for c in Xa.columns if c.startswith(('te_', 'dte_'))]
+    lg = lambda d: np.log(np.clip(d[cols].values, 1e-5, 1 - 1e-5) / (1 - np.clip(d[cols].values, 1e-5, 1 - 1e-5)))
+    sc = StandardScaler().fit(lg(Xa))
+    m = LogisticRegression(C=0.05, max_iter=2000).fit(sc.transform(lg(Xa)), ya)
+    return m.predict_proba(sc.transform(lg(Xb)))[:, 1], m.predict_proba(sc.transform(lg(Xt)))[:, 1]
+run('GLM on the encodings', glm_encodings, 'fe')
+"""),
+md("""### v13: the public recipe, reproduced exactly
+
+v12's test said the pair encodings are not why our digit members (OOF 0.9495) trail the public ones (0.9504).
+Reading goodpjw2008's Part 3 and Part 5 line by line against ours shows three other differences:
+
+| | ours (v10-v12) | goodpjw2008 Part 3 / 5 |
+|---|---|---|
+| encoder | sklearn `TargetEncoder`, `smooth='auto'` for the value keys | an m-estimate: (fraud count + 20 x prior) / (rows + 20), cross-fitted 5 ways inside the fold |
+| what is encoded | every column, rounded keys, 45 pairs, then the digit keys | every column, the cents and every digit key, all with the same encoder |
+| other inputs | first-decimal digits, original-data lookups and model, rounded keys | the raw columns and the cents only |
+
+`smooth='auto'` picks the shrinkage from each key's variance; for a column like `account_balance_usd` (43k distinct values, a few rows each)
+that is a very different amount of shrinkage than a fixed 20. The extra inputs matter too: with half the columns sampled per tree, every extra
+column takes turns from the strong ones.
+
+The three members below are that recipe, copied (credit: goodpjw2008), on our folds, starting from the raw columns:
+
+- **LightGBM 4 leaves, Part 3 recipe**: `lgb_diglead_l4`, the public notebooks' best single model (their CV 0.95040).
+- **LightGBM 3 leaves, Part 5 recipe**: the same with 3 leaves (Part 5: 3 leaves beat 4 on every fold; their 3-seed bag 0.95063).
+- **XGBoost depth 2, Part 3 recipe**: `xgb_dig_d2` with the same encodings.
+
+If the first one reaches about 0.9504 here, the encoder and the extra inputs explain our gap, and the lesson is worth more than the member.
+"""),
+code("""
+def p3_te(Xa, ya, others, cols, smooth=20.0, inner=5, seed=0):
+    \"\"\"goodpjw2008's out-of-fold m-estimate encoding: each value of each column -> (frauds + smooth x prior) / (rows + smooth).\"\"\"
+    prior = ya.mean()
+    Xa, others = Xa.copy(), [o.copy() for o in others]
+    key = lambda X, c: X[c].astype(str).values if str(X[c].dtype) == 'category' else X[c].values
+    rate = lambda k, t: (lambda s: (s['sum'] + prior * smooth) / (s['count'] + smooth))(
+        pd.DataFrame({'k': k, 'y': t}).groupby('k')['y'].agg(['sum', 'count']))
+    for c in cols:
+        ka, enc = key(Xa, c), np.zeros(len(Xa), dtype=np.float32)
+        for i, j in StratifiedKFold(inner, shuffle=True, random_state=seed).split(ka, ya):
+            enc[j] = pd.Series(ka[j]).map(rate(ka[i], ya[i])).fillna(prior).values
+        Xa[f'te_{c}'] = enc
+        r = rate(ka, ya)
+        for o in others:
+            o[f'te_{c}'] = pd.Series(key(o, c)).map(r).fillna(prior).values.astype(np.float32)
+    return Xa, others
+def p3_frames(Xa, ya, Xb, Xt, seed=0):
+    \"\"\"Part 3's digit and leading-digit keys of the six floats, every column and key encoded with p3_te, the keys then dropped.\"\"\"
+    def add_keys(d):
+        d = d.reset_index(drop=True).copy()
+        for c in FLOATS6:
+            x = d[c].astype(float)
+            d[f'cents_{c}'] = (np.round(x * 100) % 100).astype('int16')
+            d[f'key_int_{c}'] = np.floor(x).astype('int64'); d[f'key_ten_{c}'] = np.floor(x / 10).astype('int64')
+            d[f'key_dec_{c}'] = np.floor(x * 10 + 1e-6).astype('int64')
+            i = np.floor(x).astype('int64').astype(str)
+            d[f'key_l1_{c}'] = (i.str.len() * 10 + i.str[0].astype(int)).values
+            d[f'key_l2_{c}'] = (i.str.len() * 100 + i.str[:2].astype(int)).values
+        return d
+    Xa, Xb, Xt = add_keys(Xa), add_keys(Xb), add_keys(Xt)
+    cols = feats + [c for c in Xa.columns if c.startswith(('cents_', 'key_'))]
+    Xa, (Xb, Xt) = p3_te(Xa, ya, [Xb, Xt], cols, seed=seed)
+    drop = lambda d: d[[c for c in d.columns if not c.startswith('key_')]]
+    return drop(Xa), drop(Xb), drop(Xt)
+P3_LGB = dict(n_estimators=20000, learning_rate=0.03, num_leaves=4, min_child_samples=100, subsample=0.8, subsample_freq=1,
+              colsample_bytree=0.5, reg_lambda=1.0, max_bin=255, verbose=-1)
+def lgbm_p3_l4(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = p3_frames(Xa, ya, Xb, Xt)
+    m = lgb.LGBMClassifier(**P3_LGB, random_state=42, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 4 leaves, Part 3 recipe', lgbm_p3_l4, 'raw')
+def lgbm_p3_l3(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = p3_frames(Xa, ya, Xb, Xt)
+    m = lgb.LGBMClassifier(**{**P3_LGB, 'num_leaves': 3}, random_state=42, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('LightGBM 3 leaves, Part 5 recipe', lgbm_p3_l3, 'raw')
+def lgbm_p3_l3_bag(Xa, ya, Xb, yb, Xt):
+    \"\"\"The Part 5 member refitted with five encoder seeds (the inner split p3_te encodes the training rows with), averaged.\"\"\"
+    vo, tp = np.zeros(len(Xb)), np.zeros(len(Xt))
+    for s in range(5):
+        a, b, t = p3_frames(Xa, ya, Xb, Xt, seed=s)
+        m = lgb.LGBMClassifier(**{**P3_LGB, 'num_leaves': 3}, random_state=42 + s, n_jobs=THREADS)
+        m.fit(a, ya, eval_set=[(b, yb)], eval_metric='auc', callbacks=[lgb.early_stopping(300, verbose=False)])
+        vo += m.predict_proba(b)[:, 1] / 5; tp += m.predict_proba(t)[:, 1] / 5
+    return vo, tp
+run('LightGBM 3 leaves, Part 5 recipe, 5 encoder seeds', lgbm_p3_l3_bag, 'raw')
+def xgbm_p3_d2(Xa, ya, Xb, yb, Xt):
+    Xa, Xb, Xt = p3_frames(Xa, ya, Xb, Xt)
+    m = xgb.XGBClassifier(n_estimators=20000, learning_rate=0.03, max_depth=2, subsample=0.8, colsample_bytree=0.5, min_child_weight=5,
+                          reg_lambda=1.0, max_bin=256, tree_method='hist', device='cuda' if GPU else 'cpu', eval_metric='auc',
+                          early_stopping_rounds=300, enable_categorical=True, max_cat_to_onehot=1, random_state=42, n_jobs=THREADS)
+    m.fit(Xa, ya, eval_set=[(Xb, yb)], verbose=False)
+    return m.predict_proba(Xb)[:, 1], m.predict_proba(Xt)[:, 1]
+run('XGBoost depth 2, Part 3 recipe', xgbm_p3_d2, 'raw')
+"""),
+md("""### Blend
+
+Each model's out-of-fold predictions are turned into ranks (AUC only sees order). Two ways to combine them, compared on rows they did not fit:
+
+- a **hill climb** that adds, with replacement, whichever model raises the blend's OOF AUC most;
+- a **logistic-regression stacker** on the members' logit-ranks, the combiner every s6e8 and s6e9 top write-up used.
+
+Both are refitted inside a 5-fold split of the OOF matrix, so neither is scored on the rows it was fitted on; the better one makes the submission.
+"""),
+code("""
+from scipy.stats import rankdata
+R = {k: rankdata(v) / len(v) for k, v in oof.items()}; RT = {k: rankdata(v) / len(v) for k, v in pred.items()}
+names = list(R)                                           # the hill climb gives a weaker LightGBM variant weight 0 itself
+display(pd.DataFrame({k: [roc_auc_score(y, oof[k]), secs[k] / 60] for k in R}, index=['OOF AUC', 'minutes']).T.round(5))
+display(pd.DataFrame(np.corrcoef([R[k] for k in names]), index=names, columns=names).round(3))
+w = {k: 0 for k in names}; best, cur = -1, np.zeros(len(X))
+for step in range(30):
+    cand = {k: roc_auc_score(y, (cur * step + R[k]) / (step + 1)) for k in names}
+    k = max(cand, key=cand.get)
+    if cand[k] <= best + 1e-7: break
+    best = cand[k]; w[k] += 1; cur = (cur * step + R[k]) / (step + 1)
+w = {k: v / sum(w.values()) for k, v in w.items()}
+print('weights', {k: round(v, 3) for k, v in w.items()}, f'| blend OOF AUC {best:.5f} | equal-weight rank mean {roc_auc_score(y, np.mean([R[k] for k in names], 0)):.5f}')
+hc_test = sum(w[k] * RT[k] for k in names)
+
+# a logistic-regression stacker on the members' logit-ranks, scored by its own 5-fold CV over the OOF matrix (so it is not judged on rows it fitted)
+from scipy.special import logit
+Z = np.column_stack([logit(np.clip(R[k], 1e-6, 1 - 1e-6)) for k in names]); ZT = np.column_stack([logit(np.clip(RT[k], 1e-6, 1 - 1e-6)) for k in names])
+st_runs = []                                              # three outer splits: the spread is the noise of this comparison
+for seed in (7, 8, 9):
+    st_oof = np.zeros(len(Z))
+    for tr_i, va_i in StratifiedKFold(5, shuffle=True, random_state=seed).split(Z, y):
+        st_oof[va_i] = LogisticRegression(C=0.05, max_iter=1000).fit(Z[tr_i], y.iloc[tr_i]).decision_function(Z[va_i])
+    st_runs.append(roc_auc_score(y, st_oof))
+st_auc = st_runs[0]                                       # split 7, the one the hill climb is refitted on below
+print(f'logistic stacker held-out AUC over 3 outer splits: {np.mean(st_runs):.5f} +- {np.std(st_runs):.5f}', np.round(st_runs, 5))
+# the hill climb's own number is fitted on the same OOF it is scored on; re-fit it per fold the same way for a fair comparison
+hc_oof = np.zeros(len(Z))
+for tr_i, va_i in StratifiedKFold(5, shuffle=True, random_state=7).split(Z, y):
+    ww = {k: 0 for k in names}; bb, cc = -1, np.zeros(len(tr_i))
+    for step in range(30):
+        cand = {k: roc_auc_score(y.iloc[tr_i], (cc * step + R[k][tr_i]) / (step + 1)) for k in names}
+        k = max(cand, key=cand.get)
+        if cand[k] <= bb + 1e-7: break
+        bb = cand[k]; ww[k] += 1; cc = (cc * step + R[k][tr_i]) / (step + 1)
+    hc_oof[va_i] = sum(ww[k] * R[k][va_i] for k in names) / max(1, sum(ww.values()))   # normalised: folds must share one scale
+hc_auc = roc_auc_score(y, hc_oof)
+stk = LogisticRegression(C=0.05, max_iter=1000).fit(Z, y)
+print(f'held-out AUC: hill climb {hc_auc:.5f}, logistic stacker {st_auc:.5f}; stacker weights', dict(zip(names, np.round(stk.coef_[0], 3))))
+blend = stk.decision_function(ZT) if st_auc > hc_auc else hc_test
+print('submitting the', 'logistic stacker' if st_auc > hc_auc else 'hill climb')
+sub = pd.DataFrame({'id': test['id'], TARGET: rankdata(blend) / len(blend)}); sub.to_csv(OUT / 'submission.csv', index=False)
+print(sub.shape, sub.head(3).to_dict('records'))
+"""),
+md("""### What each member is worth to the blend
+
+Left: each model alone. Right: how much the stacker's held-out AUC falls when that one model is removed and the stacker is refitted.
+A model can be strong on the left and worth nothing on the right, when another member already carries the same information.
+"""),
+code("""
+drop = {}                                                 # 3 folds here (one refit per member), so the base is refitted the same way
+base3 = np.zeros(len(Z))
+for tr_i, va_i in StratifiedKFold(3, shuffle=True, random_state=7).split(Z, y):
+    base3[va_i] = LogisticRegression(C=0.05, max_iter=1000).fit(Z[tr_i], y.iloc[tr_i]).decision_function(Z[va_i])
+base3 = roc_auc_score(y, base3)
+for j, k in enumerate(names):
+    keep = [i for i in range(len(names)) if i != j]; o = np.zeros(len(Z))
+    for tr_i, va_i in StratifiedKFold(3, shuffle=True, random_state=7).split(Z, y):
+        o[va_i] = LogisticRegression(C=0.05, max_iter=1000).fit(Z[tr_i][:, keep], y.iloc[tr_i]).decision_function(Z[va_i][:, keep])
+    drop[k] = base3 - roc_auc_score(y, o)
+own = pd.Series({k: roc_auc_score(y, oof[k]) for k in names}).sort_values()
+fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 0.38 * len(names) + 1.5), sharey=True)
+a1.barh(own.index, own.values, color='#9bb7d4'); a1.set_xlim(own.min() - 0.002, own.max() + 0.0005); a1.set_title('OOF AUC alone')
+d = pd.Series(drop)[own.index]; a2.barh(d.index, d.values * 1e4, color=['#4a6fa5' if v > 0 else '#c0392b' for v in d.values])
+a2.axvline(0, color='#999', lw=0.8); a2.set_title('AUC lost when removed (x 1e-4)'); plt.tight_layout(); plt.show()
+"""),
+md("""### Reading the blend: three lessons that carry to other tabular competitions
+
+**1. A good model can get zero weight.** In v5, RealMLP scored 0.94704 on its own, about as well as CatBoost (0.94721),
+and the blend gave both weight 0. A blend does not reward a member for being good; it rewards it for being *right where the others are wrong*.
+Look at the rank-correlation matrix above: members that correlate above ~0.99 with a stronger one add almost nothing.
+The reverse also happens: in v6, TabM scored only 0.94708 alone, one of the weakest members, and the stacker gave it the third-largest weight (0.123),
+because a neural net's errors differ from the trees'. So judge a new model by the blend AUC with and without it, never by its own score.
+
+**2. Smaller trees won here.** 4-leaf LightGBM scored 0.94838, the same LightGBM with 63 leaves 0.94701, on the same features.
+Deep trees model interactions between many columns at once. When the target is close to a sum of per-column effects
+(the original data looks like a logistic formula), those interactions are mostly noise, and the deep model fits it.
+Check this on your own data: one run with `num_leaves=4` costs minutes and tells you which regime you are in.
+
+**3. Measure the combiner on rows it did not fit.** The hill climb's own number is computed on the same OOF predictions it picked weights on,
+so it always looks a little better than it is. Here both combiners are refitted inside a second 5-fold split.
+In v5 they tied (hill climb 0.94899, logistic stacker 0.94894): with members this similar, the choice of combiner does not matter much.
+"""),
+md("""## 4. How this notebook got here: what helped, what did not
+
+Every version was submitted from this notebook. The public LB scores only part of the test rows, so a difference of a few 0.0001 can be noise.
+
+| version | change | why | public LB |
+|---|---|---|---|
+| v2 | LightGBM + XGBoost + CatBoost + RealMLP, 5 folds, rank blend | a plain, honest baseline: four model families, out-of-fold weights | 0.94720 |
+| v3 | target encoding inside each fold, decimal digits, the original data as lookups | trees split on ranges; an encoding gives them each value's fraud rate directly | 0.94841 |
+| v4 | GPU, coarser rounded keys, more members, logistic stacker | more views of the same data, and a combiner the s6e8/s6e9 winners used | 0.94865 |
+| v5 | 4-leaf / depth-2 trees, every column encoded per value, spline GLM | the target is close to additive, so shallow trees generalise better (lesson 2) | **0.94960** |
+| v6 | more shallow views (depth 1, depth 3 CatBoost, raw inputs), TabM | v5's blend kept only shallow members; give it more of what it uses | **0.94982** |
+| v8 | prediction cache (members load from the dataset), Optuna-tuned LightGBM, tutorial figures | tuning finds 2-leaf trees: same OOF as the hand-picked 4-leaf member, 62 min | 0.94981 |
+| v9 | tuned XGBoost / CatBoost, count + triple-cross features, kNN, seed bags | v8's "what next" list, each judged by what it adds to the stack; the triple-cross members took the largest weights (0.29, 0.21), stacker held-out 0.94917 | 0.95004 |
+| v10 | digit keys (cents, truncated integer levels, leading digits), target-encoded in fold, on 4 new members | the generator writes numbers digit by digit (goodpjw2008, ektarr); each digit tree member alone scores OOF 0.9495, above every earlier member, stacker held-out 0.95019 | **0.95095** |
+| v11 | text only: history, lessons | the same predictions as v10 | (not submitted) |
+| v12 | digit members without the 45 pair encodings, GLM on the encodings | no-pair members 0.94936 vs 0.94951 (the pairs are not the gap); the GLM took the largest stack weight (0.39) and stacker held-out rose to 0.95053, but the board did not move | 0.95093 |
+| v13 | goodpjw2008's Part 3 / 5 recipe reproduced exactly (m-estimate encoder on every column and key, raw inputs, 3 and 4 leaves) | find out why our digit members trail the public ones by 0.0009 | members 0.95036 to 0.95052 alone (ours 0.9495); stacker held-out 0.95019 -> 0.95086, board only +0.00005: **0.95100** |
+| v14 | the Part 5 member refitted with five encoder seeds, averaged | areebbb: seed-bagging the encoder lifted one member 0.95037 -> 0.95077 | member 0.95052 -> 0.95066, stacker held-out 0.95086 -> 0.95091: **0.95101** |
+
+**What did not work, or did not help enough to keep**
+
+- **All 276 pairwise crosses.** The usual playground move. On three earlier playgrounds it measured -0.0036, -0.0004 and +0.0002;
+  with 24 columns most pairs are noise and each one is a chance to overfit. Here only pairs among the ten strongest columns are encoded.
+- **Deep trees as the main model.** 63-leaf LightGBM 0.94701 vs 4-leaf 0.94838 (lesson 2).
+- **A model trained only on the original 20k rows** (LightGBM started from its predictions, v4/v5): 0.94459 alone and weight 0 in the blend.
+  The original data is used as lookup features instead, which keeps what it knows without its smaller, slightly different distribution.
+- **RealMLP**: strong alone (0.94704), weight 0 in the blend (lesson 1). It stays in the notebook as a reference for how to run it.
+- **A plain logistic regression and a small extra-trees LightGBM** (v4): replaced in v5 by the spline GLM and the shallow trees, which give the blend the same kind of view (linear, low-interaction) in a stronger form.
+- **kNN fraud rate** (v9): the fraud rate of each row's 100 nearest neighbours, on GPU. OOF 0.89930 alone and stacker weight -0.018: trees on encoded columns already know what a neighbourhood knows.
+- **Tuning XGBoost and CatBoost with Optuna** (v9): both searches picked the shallowest option (XGBoost depth 1, CatBoost depth 3) and the tuned members took stacker weights 0.001 and 0.082. Tuning confirmed lesson 2 and added almost nothing.
+- **Seed bags of the depth-1/2 XGBoost** (v9): OOF 0.94855 / 0.94844 against 0.94837 / 0.94831 single, weights 0.097 / 0.031. A small gain, not worth three times the training.
+- **A bug worth knowing about.** The first nested hill climb summed fold weights without normalising them, so each fold's predictions
+  were on a different scale and the pooled AUC read 0.895. When an honest re-score is far below the in-sample one, suspect the code before the model.
+"""),
+code("""
+hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101],
+                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds']})
+fig, ax = plt.subplots(figsize=(8, 3.2)); ax.plot(hist['version'], hist['LB'], 'o-', color='#4a6fa5')
+for _, r in hist.iterrows(): ax.annotate(r['change'], (r['version'], r['LB']), textcoords='offset points', xytext=(0, 8), ha='center', fontsize=8)
+ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9515); plt.show()
+"""),
+md("""## 5. What next
+
+v10's digit keys moved the leaderboard more than any change since v5 (+0.0009). The lesson: in a synthetic playground, ask how the generator wrote the numbers, not only what they mean.
+
+- **Digit keys together with the triple crosses** in one member: the two best feature families have so far only met in the stacker.
+- **More digit keys**: the same construction on the counts and the encoded columns, not only the six floats.
+- **A lower learning rate** for the digit members: slower, usually a little better.
+- **Interaction constraints**: let a tree split only within a group of related columns, so each tree stays a small, additive piece.
+
+Companion notebook: [Four months, same screens: what held](https://www.kaggle.com/code/alexchilton/four-months-same-screens-what-held-s6e11), how to measure the noise floor an idea must beat, and how the same feature screens changed verdict over four playgrounds.
+
+## Credits
+
+- Competition and synthetic data: Kaggle Playground Series S6E11; original data by Udit Jain.
+- RealMLP: D. Holzmüller, L. Grinsztajn, I. Steinwart, *Better by Default: Strong Pre-Tuned MLPs and Boosted Trees on Tabular Data* (NeurIPS 2024), pytabkit.
+- TabM: Y. Gorishniy, A. Kotelnikov, A. Babenko, *TabM: Advancing Tabular Deep Learning with Parameter-Efficient Ensembling* (ICLR 2025), via pytabkit.
+- Ideas taken from public S6E11/S6E10 notebooks, measured here: shallow trees, per-value encoding and the spline GLM from
+  [sidhaarthshree](https://www.kaggle.com/code/sidhaarthshree/s6e11-fraud-per-value-te-shallow-trees-stack) and
+  [goodpjw2008](https://www.kaggle.com/code/goodpjw2008/s6e11-part-2-two-view-tree-blend-lb-0-94945); RealMLP settings from
+  [yekenot](https://www.kaggle.com/code/yekenot/ps-s6-e10-realmlp-pytabkit) via [ravi20076](https://www.kaggle.com/code/ravi20076/playgrounds6e11-public-baseline-v1).
+"""),
+]
+
+
+def build(cat_iters=3000, mlp_epochs=16, version=VERSION):
+    nb = nbf.v4.new_notebook()
+    nb.cells = [c.copy() for c in cells if mlp_epochs or 'RealMLP_TD_Classifier' not in c.source]   # 0 epochs: no RealMLP cell
+    core = (Path(__file__).parent / "fp_core.py").read_text()                 # the fingerprint code, shared with tools/rekey_oof.py
+    for c in nb.cells:
+        c.source = c.source.replace("__FP_CORE__", core.strip())
+    # the two run-length knobs live in the first code cell, where a reader can change them
+    nb.cells[2] = code(nb.cells[2].source.replace("TARGET = 'is_fraud'", f"TARGET = 'is_fraud'\nCAT_ITERS, MLP_EPOCHS = {cat_iters}, {mlp_epochs}   # CatBoost max iterations, RealMLP epochs\nVERSION = '{version}'   # this notebook's version, recorded with each member it trains"))
+    if not mlp_epochs:                               # the text must not promise a model the run does not train
+        for c in nb.cells:
+            if c.cell_type == 'markdown':
+                c.source = (c.source.replace('LightGBM, XGBoost, CatBoost and RealMLP', 'LightGBM, XGBoost and CatBoost (RealMLP returns in a later version: too slow on a Kaggle CPU)')
+                            .replace("                       -> RealMLP  ─┘\n", "").replace("-> CatBoost ─┤", "-> CatBoost ─┘"))
+    nb.metadata = {"kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
+                   "language_info": {"name": "python"}}
+    OUT.mkdir(parents=True, exist_ok=True)
+    nbf.write(nb, OUT / "s6e11-first-look.ipynb")
+    meta = {"id": f"alexchilton/{SLUG}", "title": TITLE, "code_file": "s6e11-first-look.ipynb", "language": "python",
+            "kernel_type": "notebook", "is_private": False, "enable_gpu": True, "enable_tpu": False, "enable_internet": True,
+            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions"], "kernel_sources": [],
+            "competition_sources": ["playground-series-s6e11"], "model_sources": []}
+    (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
+    print("wrote", OUT / "s6e11-first-look.ipynb")
+
+
+if __name__ == "__main__":
+    import sys
+    build(*[int(x) for x in sys.argv[1:3]])
