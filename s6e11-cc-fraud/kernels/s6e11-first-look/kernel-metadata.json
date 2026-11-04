@@ -22,10 +22,11 @@
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
     "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid",
     "yekenot/ps-s6-e11-realmlp-pytabkit",
-    "goodpjw2008/s6e11-part-6-glm-boost-stack-lb-0-95215",
+    "goodpjw2008/s6e11-part-7-gpt-2-mlp-stack-lb-0-95222",
     "megayak/s6e11-per-value-digit-te-shallow-tree-stack",
     "masayakawamata/s6e11-logreg-stacking-same-split-oofs",
-    "ektarr/lb-0-95121-realmlp-stacking"
+    "ektarr/lb-0-95121-realmlp-stacking",
+    "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds"
   ],
   "competition_sources": [
     "playground-series-s6e11"
