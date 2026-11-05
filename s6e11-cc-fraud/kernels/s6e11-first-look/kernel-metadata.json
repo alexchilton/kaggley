@@ -16,13 +16,14 @@
   ],
   "dataset_sources": [
     "uditjain13/credit-card-fraud-detection-2026",
-    "alexchilton/s6e11-oof-predictions"
+    "alexchilton/s6e11-oof-predictions",
+    "queyrusi/fraud-shared-digit-cnn-weights"
   ],
   "kernel_sources": [
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
     "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid",
     "yekenot/ps-s6-e11-realmlp-pytabkit",
-    "goodpjw2008/s6e11-part-7-gpt-2-mlp-stack-lb-0-95222",
+    "goodpjw2008/s6e11-part-10-test-bag-fusion-lb-0-95239",
     "megayak/s6e11-per-value-digit-te-shallow-tree-stack",
     "masayakawamata/s6e11-logreg-stacking-same-split-oofs",
     "ektarr/lb-0-95121-realmlp-stacking",

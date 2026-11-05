@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "kernels/s6e11-first-look"
 TITLE = "Credit Card Fraud | LB 0.9521 | Shallow-Tree Stack"
 SLUG = "credit-card-fraud-lb-0-9521-shallow-tree-stack"
-VERSION = "v19"                                       # bump with every push: members trained in this version are recorded under it
+VERSION = "v21"                                       # bump with every push: members trained in this version are recorded under it
 assert len(TITLE) <= 50
 
 md = nbf.v4.new_markdown_cell
@@ -1074,8 +1074,8 @@ code("""BANKS = {   # member name -> (part of the source notebook's slug, OOF fi
     'bank nilanjan LightGBM 96 keys bag': ('96-key', 'lgb_unified_96key_bag_oof.npy', 'lgb_unified_96key_bag_full.npy'),
     'bank nilanjan LightGBM s100 bag': ('96-key', 'lgb_unified_s100_bag_oof.npy', 'lgb_unified_s100_bag_full.npy'),
     'bank nilanjan LightGBM l7': ('96-key', 'lgb_unified_l7_oof.npy', 'lgb_unified_l7_full.npy'),
-    'bank goodpjw2008 GLM boost (Part 6)': ('gpt-2-mlp-stack', 'oof_gb_s0.npy', 'refit_gb_s0.npy'),      # the author renamed Part 6 to Part 7; same files
-    'bank goodpjw2008 joint GLM (Part 6)': ('gpt-2-mlp-stack', 'glmoof_gb_s0.npy', 'glmrefit_gb_s0.npy'),
+    'bank goodpjw2008 GLM boost (Part 6)': ('s6e11-part-', 'oof_gb_s0.npy', 'refit_gb_s0.npy'),          # matched on the series prefix: the author renames the kernel with every part (6, 7, 8); same files
+    'bank goodpjw2008 joint GLM (Part 6)': ('s6e11-part-', 'glmoof_gb_s0.npy', 'glmrefit_gb_s0.npy'),
     'bank megayak GLM boost': ('per-value-digit-te', 'oof_glm_boost.npy', 'refit_glm_boost.npy'),
     'bank megayak GLM boost XGBoost': ('per-value-digit-te', 'oof_glm_boost_xgb.npy', 'refit_glm_boost_xgb.npy'),
     'bank megayak GLM boost raw': ('per-value-digit-te', 'oof_glm_boost_raw.npy', 'refit_glm_boost_raw.npy'),
@@ -1121,6 +1121,21 @@ get a rate from more rows, so this member makes different errors on the rare row
 It adds **+0.00015** (0.95210 -> 0.95224), the only one of 11 new public banks to pass our bar of +0.00005.
 Its highest rank correlation with any member already in the stack is 0.9922. The 5-fold GLM boosters (goodpjw2008's 5-seed bag, 0.9989) add only +0.00004.
 Same model, same data, a different number of folds: the encoder's training share is a free knob that adds diversity to a stack.
+
+**What the board said (v21).** It did not hold up. With it, the stacker's held-out AUC rose and the public LB fell, twice:
+
+| version | members | stacker held-out | public LB |
+|---|---|---|---|
+| v17 | 58, without the ten-fold member | 0.95212 | **0.95211** |
+| v18 | 57 + the ten-fold member (two banks not mounted) | 0.95225 | 0.95195 |
+| v20 | 58 + the ten-fold member | 0.95226 | 0.95202 |
+
+goodpjw2008 measured the reason in [Part 9.2](https://www.kaggle.com/code/goodpjw2008/s6e11-part-10-test-bag-fusion-lb-0-95239):
+a member's out-of-fold predictions come from models that saw 90% of the rows, but its test predictions are a refit on 100% of the rows, the same as every 5-fold member's.
+So ten folds improve only the validation side. The stacker reads the 90%-of-rows OOF, believes the member is stronger than it will be on the test rows,
+and gives it the second-largest weight (0.416 in v20). Credit to goodpjw2008 for the measurement, and to Sadam Torres, who first noticed the large weight.
+The lesson for any stack: **every member's OOF must be made under the same conditions**, or the stacker's weights reward the difference in conditions, not the model.
+The public 20% has a noise of about ±0.00035 (goodpjw2008 Part 7.4), so two scores are evidence, not proof; the member stays in v21 so that v21 changes one thing (the CNN).
 """),
 code("""V18_BANKS = {   # member name -> (part of the source notebook's slug, OOF file, test file); test = the author's full-data refit
     'bank sameershaikh27 GLM boost, ten folds': ('ten-folds', 'gb10_bag_oof.npy', 'gb10_bag_full.npy'),
@@ -1130,6 +1145,37 @@ for name, (owner, fo, ft) in V18_BANKS.items():
     if po is None or pt is None:
         print(f'{name}: not mounted, skipped'); continue
     o, t = np.load(po).ravel(), np.load(pt).ravel()
+    assert len(o) == len(X) and len(t) == len(XT), (name, len(o), len(t))
+    oof[name], pred[name], secs[name] = o, t, 0.0
+    print(f'{name}: OOF AUC {roc_auc_score(y, o):.5f}')
+"""),
+md("""### v21: a CNN that reads the digits
+
+**What it is.** **queyrusi**'s [shared digit CNN](https://www.kaggle.com/code/queyrusi/fraud-a-shared-digit-cnn)
+(OOF 0.94974, public LB 0.95132 in their 90/10 blend with trees). One small convolutional net reads the decimal string of each of 13 numeric columns,
+character by character, with the same filters for every column. A DeepSets layer adds the per-column scores, and embeddings carry the categoricals.
+Three seeds, five folds on the community split `StratifiedKFold(5, shuffle=True, random_state=42)`; the test side is the mean rank of all 15 models.
+The predictions come from the author's dataset `queyrusi/fraud-shared-digit-cnn-weights`. Credit to queyrusi for the model, the weights and the cached predictions.
+
+**What it does differently.** Every other member reads the digits through target encodings: a key such as `int(x/10)` is replaced by the fraud rate of rows with that key.
+The CNN never sees a fraud rate. It learns its own digit patterns from the strings, so it can make errors the encoded members do not make.
+
+**Why it is in.** We measured it offline before adding it, on v20's 59 members with the same stacker:
+stacker held-out **+0.00010** on one 5-fold split of the OOF matrix and **+0.00005** on a second (0.95223 -> 0.95233 and 0.95226 -> 0.95231), at our bar of +0.00005 on both.
+Its highest rank correlation with any member in the stack is 0.9795; the encoded tree banks sit at 0.99+ with each other.
+goodpjw2008 ([Part 9.4](https://www.kaggle.com/code/goodpjw2008/s6e11-part-10-test-bag-fusion-lb-0-95239)) measured the same model on their stack: nested CV +0.00007, public LB 0.95235 -> 0.95224.
+Their public 20% has a noise of about ±0.00035, so that one score does not decide it; v21 measures it on our stack.
+"""),
+code("""V21_NPZ_BANKS = {   # member name -> (part of the dataset path, npz file); the npz holds ids_train, ids_test, oof, test (ranks)
+    'bank queyrusi digit CNN bag': ('digit-cnn', 'predictions.npz'),
+}
+for name, (owner, fz) in V21_NPZ_BANKS.items():
+    pz = _find(fz, owner)
+    if pz is None:
+        print(f'{name}: not mounted, skipped'); continue
+    z = np.load(pz)
+    o = pd.Series(z['oof'], index=z['ids_train']).loc[train['id']].values      # align on id, not on row order
+    t = pd.Series(z['test'], index=z['ids_test']).loc[test['id']].values
     assert len(o) == len(X) and len(t) == len(XT), (name, len(o), len(t))
     oof[name], pred[name], secs[name] = o, t, 0.0
     print(f'{name}: OOF AUC {roc_auc_score(y, o):.5f}')
@@ -1249,7 +1295,9 @@ Every version was submitted from this notebook. The public LB scores only part o
 | v16 | 12 public prediction banks as stack members (lazyyeou, nilanjansaha123, yekenot; OOF + full-refit test) | offline: our 35 members CV 0.95092, + all banks +0.00020; areebbb's pooled stack and nina2025's h-blend lead the public board this way | stacker held-out 0.95099 -> 0.95113: **0.95176** |
 | v17 | four more banks: goodpjw2008 Part 6, megayak, masayakawamata (GPT-2 keys stack), ektarr | offline on v16's 47 members: +0.00097 together (masayakawamata +0.00060 alone); stacker held-out 0.95113 -> 0.95212: **0.95211** |
 | v18 | sameershaikh27's GLM booster trained on ten folds (encodings from 90% of the rows) as a bank member | offline on v17's 58 members: +0.00015, the only one of 11 new public banks above +0.00005 | goodpjw2008 renamed Part 6 to Part 7, so its two banks were not mounted: 57 members, stacker held-out 0.95212 -> 0.95225, board down: **0.95195** |
-| v19 | v18 with goodpjw2008's two banks mounted again (same files, new kernel name) | separates v18's two changes: was the board drop the new member or the two lost ones? | (pending) |
+| v19 | v18 with goodpjw2008's two banks mounted again (same files, new kernel name) | separates v18's two changes: was the board drop the new member or the two lost ones? | goodpjw2008 renamed the kernel again (Part 8) before v19 ran: the banks were again not mounted, the same 57 members as v18; not submitted |
+| v20 | the two goodpjw2008 banks found by the series prefix `s6e11-part-`, so a rename no longer drops them | the v19 question again: 59 members, as measured offline (stacker held-out 0.95223) | all 59 mounted, stacker held-out 0.95226; board below v17 again: **0.95202** (see "What the board said" in the v18 section) |
+| v21 | queyrusi's digit CNN (reads the digit strings, no target encoding) as a bank member; goodpjw2008's kernel source moved to its Part 10 name | offline on v20's 59 members: +0.00010 / +0.00005 on two splits, highest rank correlation with a member 0.9795 | (pending) |
 
 **What did not work, or did not help enough to keep**
 
@@ -1271,12 +1319,19 @@ Every version was submitted from this notebook. The public LB scores only part o
   sadamtorres' TabPFN-3.5 (OOF 0.94883, a different family, rank correlation 0.983) -0.00002 and tuned CatBoost +0.00001; takayuki0127's GLM -0.00002.
   Earlier (2026-11-03): masayakawamata's GPT-2 target-first classifier -0.00010, seven more banks between -0.00010 and +0.00002,
   and GPT-2 / GPT-4 / BERT / T5 token keys -0.00002 to 0.00000. A strong model alone is not enough: the stack has to lack what it knows.
+- **The four ideas of v10's "what next" list** (measured offline for v20 on v19's 59 members, logistic stacker C 0.05, splits 7 and 11; bar +0.00005 on both).
+  Alone, three of them beat the digit member they extend (0.94951): digit keys + triple crosses in one member 0.94974, digit keys of the integer and count columns 0.94960,
+  learning rate 0.01 0.94959; interaction constraints (a tree splits within one source column's group) 0.94934.
+  On top of the stack: +0.00001 / -0.00006, +0.00003 / +0.00001, +0.00002 / -0.00003, +0.00003 / -0.00001. Rank correlation with an existing member 0.991-0.998:
+  better versions of a member the stack already has add nothing. Code: `tools/whatnext_member.py`, `tools/whatnext_addon.py` in github.com/alexchilton/kaggley (s6e11-cc-fraud).
+- **queyrusi's GLM + shallow-tree blend** (measured offline for v21 on v20's 59 members, splits 7 and 11): OOF 0.95107 alone, rank correlation 0.9938 with a member already in the stack, +0.00001 / +0.00002.
+  The same author's digit CNN, weaker alone (0.94974) and less correlated (0.9795), passed the bar and is in v21.
 - **A bug worth knowing about.** The first nested hill climb summed fold weights without normalising them, so each fold's predictions
   were on a different scale and the pooled AUC read 0.895. When an honest re-score is far below the in-sample one, suspect the code before the model.
 """),
 code("""
-hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195],
-                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank']})
+hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v20'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195, 0.95202],
+                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank', 'banks re-mounted']})
 fig, ax = plt.subplots(figsize=(8, 3.2)); ax.plot(hist['version'], hist['LB'], 'o-', color='#4a6fa5')
 for _, r in hist.iterrows(): ax.annotate(r['change'], (r['version'], r['LB']), textcoords='offset points', xytext=(0, 8), ha='center', fontsize=8)
 ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9525); plt.show()
@@ -1285,10 +1340,10 @@ md("""## 5. What next
 
 v10's digit keys moved the leaderboard more than any change since v5 (+0.0009). The lesson: in a synthetic playground, ask how the generator wrote the numbers, not only what they mean.
 
-- **Digit keys together with the triple crosses** in one member: the two best feature families have so far only met in the stacker.
-- **More digit keys**: the same construction on the counts and the encoded columns, not only the six floats.
-- **A lower learning rate** for the digit members: slower, usually a little better.
-- **Interaction constraints**: let a tree split only within a group of related columns, so each tree stays a small, additive piece.
+The four ideas this list held since v10 (digit keys with the triple crosses, more digit keys, a lower learning rate, interaction constraints) were all measured for v20:
+each made a slightly better member and none moved the stack (see "what did not work"). Our own tree members are saturated; since v16 every gain on the board came from a bank that knows something ours do not.
+- **Members from another family**, judged by rank correlation first: below ~0.99 with every member, or it will not add.
+- **The test side**: full-data refits for our strongest members, as v15 did for three of them.
 
 Companion notebook: [Four months, same screens: what held](https://www.kaggle.com/code/alexchilton/four-months-same-screens-what-held-s6e11), how to measure the noise floor an idea must beat, and how the same feature screens changed verdict over four playgrounds.
 
@@ -1324,7 +1379,7 @@ def build(cat_iters=3000, mlp_epochs=16, version=VERSION):
     nbf.write(nb, OUT / "s6e11-first-look.ipynb")
     meta = {"id": f"alexchilton/{SLUG}", "title": TITLE, "code_file": "s6e11-first-look.ipynb", "language": "python",
             "kernel_type": "notebook", "is_private": False, "enable_gpu": True, "enable_tpu": False, "enable_internet": True,
-            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions"], "kernel_sources": ["lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack", "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid", "yekenot/ps-s6-e11-realmlp-pytabkit", "goodpjw2008/s6e11-part-7-gpt-2-mlp-stack-lb-0-95222", "megayak/s6e11-per-value-digit-te-shallow-tree-stack", "masayakawamata/s6e11-logreg-stacking-same-split-oofs", "ektarr/lb-0-95121-realmlp-stacking", "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds"],
+            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions", "queyrusi/fraud-shared-digit-cnn-weights"], "kernel_sources": ["lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack", "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid", "yekenot/ps-s6-e11-realmlp-pytabkit", "goodpjw2008/s6e11-part-10-test-bag-fusion-lb-0-95239", "megayak/s6e11-per-value-digit-te-shallow-tree-stack", "masayakawamata/s6e11-logreg-stacking-same-split-oofs", "ektarr/lb-0-95121-realmlp-stacking", "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds"],
             "competition_sources": ["playground-series-s6e11"], "model_sources": []}
     (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
     print("wrote", OUT / "s6e11-first-look.ipynb")
