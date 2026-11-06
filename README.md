@@ -6,6 +6,12 @@ A collection of Kaggle competition entries and experiments across machine learni
 
 ## Competitions
 
+### Playground Series S6E11 — Credit-card fraud
+Shallow-tree stack with in-fold target encoding, decimal-digit keys and public prediction banks; public LB 0.95211.
+See [s6e11-cc-fraud/](s6e11-cc-fraud/) for what worked, what did not, and the notebook.
+
+---
+
 ### NeurIPS 2025 — Open Polymer Challenge
 Predicting polymer properties from molecular structure using SMILES representations.
 
