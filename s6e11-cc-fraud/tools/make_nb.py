@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "kernels/s6e11-first-look"
 TITLE = "Credit Card Fraud | LB 0.9521 | Shallow-Tree Stack"
 SLUG = "credit-card-fraud-lb-0-9521-shallow-tree-stack"
-VERSION = "v21"                                       # bump with every push: members trained in this version are recorded under it
+VERSION = "v22"                                    # bump with every push: members trained in this version are recorded under it
 assert len(TITLE) <= 50
 
 md = nbf.v4.new_markdown_cell
@@ -1180,6 +1180,31 @@ for name, (owner, fz) in V21_NPZ_BANKS.items():
     oof[name], pred[name], secs[name] = o, t, 0.0
     print(f'{name}: OOF AUC {roc_auc_score(y, o):.5f}')
 """),
+md("""### v22: when a source notebook's output disappears
+
+A bank member is read from the newest version of its author's notebook. On 2026-11-06 masayakawamata reran
+[LogReg Stacking, Same-Split OOFs](https://www.kaggle.com/code/masayakawamata/s6e11-logreg-stacking-same-split-oofs) as a code-only update, and that version has no output files.
+Our stack's largest weight (0.736 in v21) would have dropped out without an error: the loader above prints "not mounted, skipped" and goes on.
+The author kept the old files in the dataset [S6E11 Public Stack v10 Output Archive](https://www.kaggle.com/datasets/masayakawamata/s6e11-public-stack-v10-outputs).
+We checked them against the copy v17-v21 used: `oof.npy` and `test.npy` are byte-identical (OOF AUC 0.95153). Credit and thanks to Masaya Kawamata for keeping the archive.
+The cell below reads the archive only if the notebook output is missing. The lesson for anyone stacking public banks: **print every member you expected and did not get**, and count them before the stacker runs.
+"""),
+code("""V22_ARCHIVE_BANKS = {   # member name -> (part of the dataset path, OOF file, test file); used only if the notebook output did not mount
+    'bank masayakawamata stack (GPT-2 keys)': ('public-stack-v10-outputs', 'oof.npy', 'test.npy'),
+}
+for name, (owner, fo, ft) in V22_ARCHIVE_BANKS.items():
+    if name in oof:
+        print(f'{name}: from the notebook output'); continue
+    po, pt = _find(fo, owner), _find(ft, owner)
+    if po is None or pt is None:
+        print(f'{name}: archive not mounted either, skipped'); continue
+    o, t = np.load(po).ravel(), np.load(pt).ravel()
+    assert len(o) == len(X) and len(t) == len(XT), (name, len(o), len(t))
+    oof[name], pred[name], secs[name] = o, t, 0.0
+    print(f'{name}: from the archive, OOF AUC {roc_auc_score(y, o):.5f}')
+expected = list(BANKS) + list(CSV_BANKS) + list(V18_BANKS) + list(V21_NPZ_BANKS)
+print('bank members expected', len(expected), '| loaded', sum(k in oof for k in expected), '| missing', [k for k in expected if k not in oof])
+"""),
 md("""### Blend
 
 Each model's out-of-fold predictions are turned into ranks (AUC only sees order). Two ways to combine them, compared on rows they did not fit:
@@ -1297,7 +1322,8 @@ Every version was submitted from this notebook. The public LB scores only part o
 | v18 | sameershaikh27's GLM booster trained on ten folds (encodings from 90% of the rows) as a bank member | offline on v17's 58 members: +0.00015, the only one of 11 new public banks above +0.00005 | goodpjw2008 renamed Part 6 to Part 7, so its two banks were not mounted: 57 members, stacker held-out 0.95212 -> 0.95225, board down: **0.95195** |
 | v19 | v18 with goodpjw2008's two banks mounted again (same files, new kernel name) | separates v18's two changes: was the board drop the new member or the two lost ones? | goodpjw2008 renamed the kernel again (Part 8) before v19 ran: the banks were again not mounted, the same 57 members as v18; not submitted |
 | v20 | the two goodpjw2008 banks found by the series prefix `s6e11-part-`, so a rename no longer drops them | the v19 question again: 59 members, as measured offline (stacker held-out 0.95223) | all 59 mounted, stacker held-out 0.95226; board below v17 again: **0.95202** (see "What the board said" in the v18 section) |
-| v21 | queyrusi's digit CNN (reads the digit strings, no target encoding) as a bank member; goodpjw2008's kernel source moved to its Part 10 name | offline on v20's 59 members: +0.00010 / +0.00005 on two splits, highest rank correlation with a member 0.9795 | (pending) |
+| v21 | queyrusi's digit CNN (reads the digit strings, no target encoding) as a bank member; goodpjw2008's kernel source moved to its Part 10 name | offline on v20's 59 members: +0.00010 / +0.00005 on two splits, highest rank correlation with a member 0.9795 | 60 members, stacker held-out 0.95226 -> 0.95235 (CNN weight 0.237); board down again: **0.95190** |
+| v22 | the masayakawamata bank read from the author's archive dataset when the notebook output is missing; a count of expected vs loaded banks | the source notebook's newest version has no output files: without this, our largest stack weight (0.736) drops out silently | (pending) |
 
 **What did not work, or did not help enough to keep**
 
@@ -1326,12 +1352,20 @@ Every version was submitted from this notebook. The public LB scores only part o
   better versions of a member the stack already has add nothing. Code: `tools/whatnext_member.py`, `tools/whatnext_addon.py` in github.com/alexchilton/kaggley (s6e11-cc-fraud).
 - **queyrusi's GLM + shallow-tree blend** (measured offline for v21 on v20's 59 members, splits 7 and 11): OOF 0.95107 alone, rank correlation 0.9938 with a member already in the stack, +0.00001 / +0.00002.
   The same author's digit CNN, weaker alone (0.94974) and less correlated (0.9795), passed the bar and is in v21.
+- **A better stacker that the board does not see, again (v18-v21).** Every version since v17 raised our stacker's held-out AUC and lowered the public LB:
+  0.95212 / **0.95211** (v17), 0.95225 / 0.95195 (v18), 0.95226 / 0.95202 (v20), 0.95235 / 0.95190 (v21). Two other authors measured the same thing on their own stacks.
+  [SIDHAARTH SHREE](https://www.kaggle.com/code/sidhaarthshree/s6e11-100-self-trained-stack-lb-0-95154) (section 6), every model self-trained: a plain 7-member stack CV 0.95084, **LB 0.95154**;
+  adding GLM-boost and residual-MLP members (anything that starts from a GLM's logit) CV 0.95133-0.95136, LB 0.95141; GLM-boost alone CV 0.95128, LB 0.95097.
+  [Sameer Shaikh](https://www.kaggle.com/code/sameershaikh27/s6e11-fraud-pooled-stack-of-public-oof-banks): 89 -> 93 pooled members, nested CV +0.00004, LB 0.95191 -> 0.95189.
+  The public score covers 20% of the test rows and moves about ±0.0003 between random draws, so each pair is noise-sized; what is not noise-sized is that three independent stacks moved the same way.
+  HYPOTHESIS (unverified): the GLM-started members, which hold large stack weights (in v21: ten-fold GLM boost 0.421, goodpjw2008 and megayak GLM boost 0.234 each, megayak GLM boost XGBoost 0.180),
+  fit something in the 700k training rows that the public 20% does not reward. The private board will say which.
 - **A bug worth knowing about.** The first nested hill climb summed fold weights without normalising them, so each fold's predictions
   were on a different scale and the pooled AUC read 0.895. When an honest re-score is far below the in-sample one, suspect the code before the model.
 """),
 code("""
-hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v20'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195, 0.95202],
-                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank', 'banks re-mounted']})
+hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v20', 'v21'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195, 0.95202, 0.95190],
+                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank', 'banks re-mounted', 'digit CNN']})
 fig, ax = plt.subplots(figsize=(8, 3.2)); ax.plot(hist['version'], hist['LB'], 'o-', color='#4a6fa5')
 for _, r in hist.iterrows(): ax.annotate(r['change'], (r['version'], r['LB']), textcoords='offset points', xytext=(0, 8), ha='center', fontsize=8)
 ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9525); plt.show()
@@ -1379,7 +1413,7 @@ def build(cat_iters=3000, mlp_epochs=16, version=VERSION):
     nbf.write(nb, OUT / "s6e11-first-look.ipynb")
     meta = {"id": f"alexchilton/{SLUG}", "title": TITLE, "code_file": "s6e11-first-look.ipynb", "language": "python",
             "kernel_type": "notebook", "is_private": False, "enable_gpu": True, "enable_tpu": False, "enable_internet": True,
-            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions", "queyrusi/fraud-shared-digit-cnn-weights"], "kernel_sources": ["lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack", "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid", "yekenot/ps-s6-e11-realmlp-pytabkit", "goodpjw2008/s6e11-part-10-test-bag-fusion-lb-0-95239", "megayak/s6e11-per-value-digit-te-shallow-tree-stack", "masayakawamata/s6e11-logreg-stacking-same-split-oofs", "ektarr/lb-0-95121-realmlp-stacking", "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds"],
+            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions", "queyrusi/fraud-shared-digit-cnn-weights", "masayakawamata/s6e11-public-stack-v10-outputs"], "kernel_sources": ["lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack", "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid", "yekenot/ps-s6-e11-realmlp-pytabkit", "goodpjw2008/s6e11-part-10-test-bag-fusion-lb-0-95239", "megayak/s6e11-per-value-digit-te-shallow-tree-stack", "masayakawamata/s6e11-logreg-stacking-same-split-oofs", "ektarr/lb-0-95121-realmlp-stacking", "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds"],
             "competition_sources": ["playground-series-s6e11"], "model_sources": []}
     (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
     print("wrote", OUT / "s6e11-first-look.ipynb")

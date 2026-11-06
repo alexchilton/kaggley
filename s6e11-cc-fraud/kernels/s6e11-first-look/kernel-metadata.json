@@ -17,7 +17,8 @@
   "dataset_sources": [
     "uditjain13/credit-card-fraud-detection-2026",
     "alexchilton/s6e11-oof-predictions",
-    "queyrusi/fraud-shared-digit-cnn-weights"
+    "queyrusi/fraud-shared-digit-cnn-weights",
+    "masayakawamata/s6e11-public-stack-v10-outputs"
   ],
   "kernel_sources": [
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
