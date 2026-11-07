@@ -30,14 +30,22 @@ The notebook is a tutorial: every version says what each change is, what it does
    - "ideas already in our notebook" in one line each;
    - your decision for step 2, with the reason.
 
-## Every run, step 2: update the same day if anything is worth it
+## Every run, step 2: release a new version every day
 
-Interest in the notebook is highest in the first days of the competition, so do not save ideas for later.
-Update when at least one idea is not yet in our notebook and either claims a CV or LB gain, or teaches something a reader would vote for (a measured finding, an original method).
-If nothing qualifies, or an interactive session already pushed a version today (check `git log` and `kaggle kernels list --mine`), stop after the report.
-If a previous version is still running or not yet scored, do not push over it.
+The goal is votes, not a better score: a notebook that does not change shows nothing new and gets no new votes.
+Release one new version every day (Alex, 2026-11-07: "if we dont release we dont show anything ... an improved score is not the goal - goal is to validate and also doc what is better and why or how it works or doesnt").
+A version is worth releasing when it validates something a reader wants to know, whether the result is a gain or a null:
+- the best public notebooks' method, reproduced and measured (for example: why a rank mean of two public files scores above every stack, what each part contributes, whether it holds on our OOF);
+- a new public member or idea, measured against our stack, with the number either way;
+- a finding of ours (a member that hurts on the board, a CV-vs-LB gap) explained with a diagram.
+No noise bar, offline result or "within noise" verdict ever stops a release: a bar only decides whether a member enters the submitted stack.
+A result below the bar is released as a measured null, with its number and why it did not help.
+Each one goes in the notebook with: what it is, how it works, the measured number, why it helped or did not, and the credit.
+If a public source we mount changed or vanished, freeze it instead of waiting: publish our cached copy of its files in our dataset, mount that, and say so in the notebook. A changed source is never a reason to skip the day.
+Skip only when an interactive session already pushed a version today (check `git log` and `kaggle kernels list --mine`), or a previous version is still running or not yet scored.
+Fill every section of the report before ending the run; a placeholder left in the report (DECISION, RESULTS_...) means the run did not finish.
 
-1. Pick at most three ideas from today's table and earlier reports' tables not yet used. Prefer new members that differ from the existing ones (the stacker weights in the last run's log show which kinds earn weight; the "plus" triple-cross members earned the most in v9).
+1. Pick at most three ideas from today's table and earlier reports' tables not yet used, validated or not; a measured null is a section too. Prefer new members that differ from the existing ones (the stacker weights in the last run's log show which kinds earn weight; the "plus" triple-cross members earned the most in v9).
 2. Add them to `tools/make_nb.py` as new members. Rules:
    - The prediction cache keys each member by its function's AST and the settings it reads: never edit an existing member's function or a helper it calls, or it retrains. New members get new function and variable names.
    - Every new member gets its markdown: what it is, what it does, why, and the credit with the author's name and LB.
