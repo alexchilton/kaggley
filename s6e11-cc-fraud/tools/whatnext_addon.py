@@ -10,7 +10,7 @@ base_names = list(oof)
 import numpy as np
 from sklearn.metrics import roc_auc_score
 W = 'scratch/whatnext/'
-CAND = {n: (np.load(f'{W}{n}_oof.npy'), np.load(f'{W}{n}_test.npy')) for n in ['digits_triples', 'more_digits', 'digits_lr01', 'digits_ic'] if Path(f'{W}{n}_oof.npy').exists()}
+CAND = {n: (np.load(f'{W}{n}_oof.npy'), np.load(f'{W}{n}_test.npy')) for n in ['digits_triples', 'more_digits', 'digits_lr01', 'digits_ic', 'tabicl'] if Path(f'{W}{n}_oof.npy').exists()}
 def lr(v):
     r = rankdata(v) / len(v); return logit(np.clip(r, 1e-6, 1 - 1e-6))
 def score(Z, seed=7):

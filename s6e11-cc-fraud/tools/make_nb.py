@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "kernels/s6e11-first-look"
 TITLE = "Credit Card Fraud | LB 0.9524 | Shallow-Tree Stack"
 SLUG = "credit-card-fraud-lb-0-9524-shallow-tree-stack"
-VERSION = "v23"                                    # bump with every push: members trained in this version are recorded under it
+VERSION = "v25"                                    # bump with every push: members trained in this version are recorded under it
 assert len(TITLE) <= 50
 
 md = nbf.v4.new_markdown_cell
@@ -1266,11 +1266,12 @@ hc_test = sum(w[k] * RT[k] for k in names)
 from scipy.special import logit
 Z = np.column_stack([logit(np.clip(R[k], 1e-6, 1 - 1e-6)) for k in names]); ZT = np.column_stack([logit(np.clip(RT[k], 1e-6, 1 - 1e-6)) for k in names])
 st_runs = []                                              # three outer splits: the spread is the noise of this comparison
+st_hold = {}                                              # v25: the held-out predictions per split, for the two-stack mix below
 for seed in (7, 8, 9):
     st_oof = np.zeros(len(Z))
     for tr_i, va_i in StratifiedKFold(5, shuffle=True, random_state=seed).split(Z, y):
         st_oof[va_i] = LogisticRegression(C=0.05, max_iter=1000).fit(Z[tr_i], y.iloc[tr_i]).decision_function(Z[va_i])
-    st_runs.append(roc_auc_score(y, st_oof))
+    st_runs.append(roc_auc_score(y, st_oof)); st_hold[seed] = st_oof.copy()
 st_auc = st_runs[0]                                       # split 7, the one the hill climb is refitted on below
 print(f'logistic stacker held-out AUC over 3 outer splits: {np.mean(st_runs):.5f} +- {np.std(st_runs):.5f}', np.round(st_runs, 5))
 # the hill climb's own number is fitted on the same OOF it is scored on; re-fit it per fold the same way for a fair comparison
@@ -1422,10 +1423,11 @@ ZW = np.column_stack([Z] + [lr_(pool[k][0]) for k in kept]); ZWT = np.column_sta
 wnames = names + kept
 def _fold(A, yy, tr_i, va_i): return va_i, LogisticRegression(C=0.01, max_iter=3000, tol=1e-6).fit(A[tr_i], yy[tr_i]).decision_function(A[va_i])
 wide_runs = []
+wide_hold = {}                                            # v25: kept for the two-stack mix below
 for seed in (7, 8, 9):                                    # the same three outer splits as the 60-member stacker above
     s = np.zeros(len(ZW))
     for va_i, dv in Parallel(n_jobs=-1)(delayed(_fold)(ZW, y.values, tr_i, va_i) for tr_i, va_i in StratifiedKFold(5, shuffle=True, random_state=seed).split(ZW, y)): s[va_i] = dv
-    wide_runs.append(roc_auc_score(y, s))
+    wide_runs.append(roc_auc_score(y, s)); wide_hold[seed] = s
 print(f'held-out AUC over splits 7, 8, 9: {len(names)}-member stacker {np.mean(st_runs):.5f} {np.round(st_runs, 5)} | wide stacker ({len(wnames)} members, C 0.01) {np.mean(wide_runs):.5f} {np.round(wide_runs, 5)}')
 wstk = LogisticRegression(C=0.01, max_iter=3000, tol=1e-6).fit(ZW, y)
 wcoef = pd.Series(wstk.coef_[0], index=wnames)
@@ -1473,6 +1475,82 @@ Credit: megayak for training and publishing the model, goodpjw2008 for the out-o
 **What to read in the output.** The wide-stacker line of the cell above now includes this member. v22 printed **0.95251** for the same three splits (7 / 8 / 9) without it,
 and every other source in the pool was checked byte-identical to v22's copy on 2026-11-08. The difference between the two lines is what this member adds; the weights line shows its stacker weight.
 """),
+md("""### v25: the 0.95300 public recipe, measured on our own two stacks
+
+**The question.** On 2026-11-08 three public notebooks reached public LB **0.95300** with the same two files:
+[malyshevdanil's Fraud Signal Lab](https://www.kaggle.com/code/malyshevdanil/fraud-signal-lab-gpt-2-and-glm-fusion) (v5, the recipe),
+[areebbb's Wide Stack + Shallow-Tree Fusion](https://www.kaggle.com/code/areebbb/s6e11-wide-stack-shallow-tree-fusion-0-95300) and
+[lucifer19's Golden Signal V22](https://www.kaggle.com/code/lucifer19/the-golden-signal-consensus-blend-v22).
+Our best is 0.95260. What is in that recipe, and does it hold on rows a model did not fit?
+
+**What it is.** 65% of [goodpjw2008 Part 12](https://www.kaggle.com/code/goodpjw2008/s6e11-part-12-wide-stack-2nd-lm-lb-0-95298)'s wide stack (201 public and own members, one logistic stacker)
+and 35% of goodpjw2008's **Part 9**, their earlier, narrower stack of their own members, with the test side averaged over every refit.
+Both files are turned into ranks, then logits (`logit((rank - 0.5) / n)`), and mixed. Nothing is trained.
+The files are frozen in [s6e11-fraud-series-artifacts](https://www.kaggle.com/datasets/goodpjw2008/s6e11-fraud-series-artifacts); the cell below checks their SHA-256 against the hashes the 0.95300 notebooks check.
+
+**What goodpjw2008 measured themselves** (Part 11, section 11.2, the same mix with the older wide stack):
+
+| weight of the wide stack | nested CV | public LB |
+|---|---|---|
+| 1 | 0.952504 | 0.95267 |
+| 0.8 | 0.952480 | 0.95282 |
+| 0.7 | 0.952452 | 0.95285 |
+| 0.5 | 0.952368 | 0.95283 |
+
+The cross-validated AUC **falls** as Part 9 comes in, and the public score rises. Part 9 has no published out-of-fold predictions, so the 0.95300 mix cannot be scored on the training rows.
+
+**How we test it.** Our notebook has the same two kinds of stack: the 60-member stacker (our own members and the v16-v21 banks, the role of Part 9) and the wide stacker (those 60 plus 107 public members, the role of Part 12).
+The wide stack already contains every member of the narrow one, so a mix can only help if the narrow stacker, with fewer columns and less regularisation, ranks some rows better.
+Both stackers are held out on the same three outer splits (7, 8, 9), so their mix is scored on rows neither fitted. The cell prints the AUC for wide-stack weights 1, 0.9, 0.8, 0.65, 0.5 and 0 (the narrow stack alone).
+
+**The test side.** The cell also prints how far apart the test files are (1 - rank correlation, in 1e-4): our wide and narrow stacks, Part 9, Part 12, and both 65/35 mixes.
+goodpjw2008 measured their wide stack 95.0e-4 from Part 9 and called it "an unusually large distance between strong files"; the same number for our two stacks says whether our narrow stack can play Part 9's role at all.
+
+**What is submitted.** `submission.csv` stays the wide stacker, unless the 65/35 mix of our two stacks beats it on all three splits (the weight is fixed at the public recipe's 0.65, not picked on these splits).
+Two more files are written for the public board, where the recipe's evidence lives: `submission_mix_ours.csv` (65% our wide + 35% our narrow) and `submission_mix_part9.csv` (65% our wide + 35% goodpjw2008's Part 9, i.e. the recipe with our wide stack in Part 12's place).
+
+**Credit.** goodpjw2008 for both stacks, the frozen files and the honest CV-vs-LB table; malyshevdanil for the 65/35 rank-logit recipe; areebbb and lucifer19 for the public-board probes around it. Please upvote them.
+"""),
+code("""# v25: the two-stack mix (malyshevdanil's 65/35 rank-logit recipe), scored on held-out rows of our own two stackers
+import hashlib
+def _lr(v): return logit(np.clip((rankdata(v) - 0.5) / len(v), 1e-7, 1 - 1e-7))
+_sp = (7, 8, 9)
+mix = {w: [roc_auc_score(y, w * _lr(wide_hold[s]) + (1 - w) * _lr(st_hold[s])) for s in _sp] for w in (1.0, 0.9, 0.8, 0.65, 0.5)}
+mix[0.0] = [roc_auc_score(y, st_hold[s]) for s in _sp]
+mt = pd.DataFrame(mix, index=[f'split {s}' for s in _sp]).T.sort_index(ascending=False); mt['mean'] = mt.mean(1)
+mt['vs wide alone (x 1e-4)'] = (mt['mean'] - mt.loc[1.0, 'mean']) * 1e4
+mt.index.name = 'weight of the wide stack'; display(mt.round(5))
+print('rank correlation of the two held-out stacks per split:', [round(np.corrcoef(rankdata(wide_hold[s]), rankdata(st_hold[s]))[0, 1], 5) for s in _sp])
+t_w, t_n = wstk.decision_function(ZWT), stk.decision_function(ZT)
+T = {'our wide': t_w, 'our narrow (60)': t_n}
+_h = {'part9_test.npy': 'e899205391b8755e82a2ae6b06fb1e026ef29132e4bcdbfad96535d7f5608abd', 'wide_lm_stack_test.npy': 'b37471e6c34a50715284e807d68e15e5f3ad033e72400904f27876b24041f8cc'}
+for f_, lab in [('part9_test.npy', 'goodpjw2008 Part 9'), ('wide_lm_stack_test.npy', 'goodpjw2008 Part 12 wide')]:
+    p_ = _find(f_, 'fraud-series-artifacts')
+    if p_ is None: print(f_, 'not mounted, skipped'); continue
+    hx = hashlib.sha256(open(p_, 'rb').read()).hexdigest()
+    print(f_, 'SHA-256 matches the 0.95300 notebooks' if hx == _h[f_] else f'SHA-256 CHANGED: {hx}')
+    T[lab] = np.load(p_).ravel(); assert len(T[lab]) == len(XT)
+T['mix 0.65 our wide + 0.35 our narrow'] = 0.65 * _lr(t_w) + 0.35 * _lr(t_n)
+if 'goodpjw2008 Part 9' in T:
+    T['mix 0.65 our wide + 0.35 Part 9'] = 0.65 * _lr(t_w) + 0.35 * _lr(T['goodpjw2008 Part 9'])
+if 'goodpjw2008 Part 9' in T and 'goodpjw2008 Part 12 wide' in T:
+    T['mix 0.65 Part 12 + 0.35 Part 9 (LB 0.95300)'] = 0.65 * _lr(T['goodpjw2008 Part 12 wide']) + 0.35 * _lr(T['goodpjw2008 Part 9'])
+TR = np.corrcoef([rankdata(v) for v in T.values()])
+print('test files: distance 1 - rank correlation, x 1e-4'); display(pd.DataFrame((1 - TR) * 1e4, index=list(T), columns=list(T)).round(1))
+fig, a1 = plt.subplots(figsize=(8, 4))
+for j, s in enumerate(_sp): a1.plot(mt.index, mt[f'split {s}'], 'o-', alpha=0.5, label=f'split {s}')
+a1.plot(mt.index, mt['mean'], 'k-', lw=2, label='mean'); a1.axvline(0.65, color='#c98b2b', ls='--', lw=1, label='public recipe 0.65')
+a1.set_xlabel('weight of the wide stack (rest: the 60-member stack)'); a1.set_ylabel('held-out AUC'); a1.set_ylim(mt['mean'].max() - 0.0004, mt['mean'].max() + 0.0001)
+a1.set_title('the two-stack mix on held-out rows'); a1.legend(fontsize=8); plt.tight_layout(); plt.show()
+for n_, v_ in [('submission_mix_ours.csv', T['mix 0.65 our wide + 0.35 our narrow']), ('submission_mix_part9.csv', T.get('mix 0.65 our wide + 0.35 Part 9'))]:
+    if v_ is not None: pd.DataFrame({'id': test['id'], TARGET: rankdata(v_) / len(v_)}).to_csv(OUT / n_, index=False); print('wrote', n_)
+if np.mean(wide_runs) > np.mean(st_runs) and all(a > b for a, b in zip(mix[0.65], mix[1.0])):
+    v_ = T['mix 0.65 our wide + 0.35 our narrow']
+    pd.DataFrame({'id': test['id'], TARGET: rankdata(v_) / len(v_)}).to_csv(OUT / 'submission.csv', index=False)
+    print('the 65/35 mix beats the wide stacker on all three splits: submission.csv is the mix')
+else:
+    print('the 65/35 mix does not beat the wide stacker on all three splits: submission.csv stays as written above')
+"""),
 md("""### Reading the blend: three lessons that carry to other tabular competitions
 
 **1. A good model can get zero weight.** In v5, RealMLP scored 0.94704 on its own, about as well as CatBoost (0.94721),
@@ -1516,7 +1594,9 @@ Every version was submitted from this notebook. The public LB scores only part o
 | v20 | the two goodpjw2008 banks found by the series prefix `s6e11-part-`, so a rename no longer drops them | the v19 question again: 59 members, as measured offline (stacker held-out 0.95223) | all 59 mounted, stacker held-out 0.95226; board below v17 again: **0.95202** (see "What the board said" in the v18 section) |
 | v21 | queyrusi's digit CNN (reads the digit strings, no target encoding) as a bank member; goodpjw2008's kernel source moved to its Part 10 name | offline on v20's 59 members: +0.00010 / +0.00005 on two splits, highest rank correlation with a member 0.9795 | 60 members, stacker held-out 0.95226 -> 0.95235 (CNN weight 0.237); board down again: **0.95190** |
 | v22 | the masayakawamata bank read from the author's archive dataset when the notebook output is missing; a count of expected vs loaded banks; megayak's four banks frozen in our dataset; goodpjw2008's kernel source moved to Part 11; a wide pool of 106 more public members, stacker C 0.01 | the source notebook's newest version has no output files: without this, our largest stack weight (0.736) drops out silently; the wide pool is what the 0.9528 public notebooks have and we did not: offline +0.00017 / +0.00013 on v21's 60 members | stacker held-out 0.95235 -> wide stacker 0.95251 (166 members): **0.95239**, the first gain on the board since v17 |
-| v23 | megayak's target-first GPT-2 member (out-of-fold, on our folds) in the wide pool; goodpjw2008's kernel source moved to its Part 12 name | goodpjw2008 Part 12: +0.00006 nested CV, public 0.95285 -> 0.95298 on their stack; rank correlation 0.98 with our members | (pending) |
+| v23 | megayak's target-first GPT-2 member (out-of-fold, on our folds) in the wide pool; goodpjw2008's kernel source moved to its Part 12 name | goodpjw2008 Part 12: +0.00006 nested CV, public 0.95285 -> 0.95298 on their stack; rank correlation 0.98 with our members | 0.95260 |
+| v24 | text only: section 5 (what next) and the credits brought to v23's state | the same predictions as v23 | (not submitted) |
+| v25 | TabICL measured as a member (null, section 4); the 0.95300 public recipe (65/35 rank-logit mix of a wide and a narrow stack) measured on our own two stackers' held-out rows, plus two extra files for the board | three public notebooks reached 0.95300 with a mix that lowers the author's own CV; does it hold on our OOF? | (pending) |
 
 **What did not work, or did not help enough to keep**
 
@@ -1536,6 +1616,8 @@ Every version was submitted from this notebook. The public LB scores only part o
   goodpjw2008's 5-seed GLM boost +0.00004, its XGBoost GLM boost +0.00002, its residual MLPs (an MLP added to the GLM logit) +0.00003 and +0.00001,
   its joint-GLM bag 0.00000, its EBM bag -0.00003; sameershaikh27's 5-fold, 3-seed GLM boost +0.00002;
   sadamtorres' TabPFN-3.5 (OOF 0.94883, a different family, rank correlation 0.983) -0.00002 and tuned CatBoost +0.00001; takayuki0127's GLM -0.00002.
+  Our TabICL member (v24's kernel s6e11-tabicl-member: 4 estimators, 60k-row context, 5 folds; OOF 0.94503, rank correlation 0.975 with its nearest member)
+  on v19's 59 members, splits 7 and 11: +0.00002 / -0.00004. A foundation model ranks rows differently and still adds nothing the stack lacks.
   Earlier (2026-11-03): masayakawamata's GPT-2 target-first classifier -0.00010, seven more banks between -0.00010 and +0.00002,
   and GPT-2 / GPT-4 / BERT / T5 token keys -0.00002 to 0.00000. A strong model alone is not enough: the stack has to lack what it knows.
 - **The four ideas of v10's "what next" list** (measured offline for v20 on v19's 59 members, logistic stacker C 0.05, splits 7 and 11; bar +0.00005 on both).
@@ -1561,8 +1643,8 @@ Every version was submitted from this notebook. The public LB scores only part o
   were on a different scale and the pooled AUC read 0.895. When an honest re-score is far below the in-sample one, suspect the code before the model.
 """),
 code("""
-hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v20', 'v21', 'v22'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195, 0.95202, 0.95190, 0.95239],
-                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank', 'banks re-mounted', 'digit CNN', 'wide pool']})
+hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v20', 'v21', 'v22', 'v23'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195, 0.95202, 0.95190, 0.95239, 0.95260],
+                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank', 'banks re-mounted', 'digit CNN', 'wide pool', 'second LM']})
 fig, ax = plt.subplots(figsize=(8, 3.2)); ax.plot(hist['version'], hist['LB'], 'o-', color='#4a6fa5')
 for _, r in hist.iterrows(): ax.annotate(r['change'], (r['version'], r['LB']), textcoords='offset points', xytext=(0, 8), ha='center', fontsize=8)
 ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9530); plt.show()
@@ -1571,9 +1653,10 @@ md("""## 5. What next
 
 v10's digit keys moved the leaderboard more than any change since v5 (+0.0009). The lesson: in a synthetic playground, ask how the generator wrote the numbers, not only what they mean.
 
-The four ideas this list held since v10 (digit keys with the triple crosses, more digit keys, a lower learning rate, interaction constraints) were all measured for v20:
-each made a slightly better member and none moved the stack (see "what did not work"). Our own tree members are saturated; since v16 every gain on the board came from a bank that knows something ours do not.
-- **Members from another family**, judged by rank correlation first: below ~0.99 with every member, or it will not add.
+Status at v23 (public 0.95260); TabICL measured for v25, a null (section 4); the 0.95300 two-stack recipe measured for v25 (section 3, v25). Our own tree members are saturated: the four ideas this list held since v10 were all measured for v20, each made a slightly better member and none moved the stack.
+The gains since then came from members of another family: v22's wide pool of public members (its GPT-2 member took the largest weight) and v23's target-first GPT-2 (megayak). That is the rule this list now follows: a new member must rank rows differently, below ~0.99 rank correlation with every member, or it will not add.
+- **Our own target-first GPT-2 seed on our folds**: a second seed added +0.00014 on fold 0 for goodpjw2008.
+- **Forensic and density features**: how the generator wrote each row, as in S6E8.
 - **The test side**: full-data refits for our strongest members, as v15 did for three of them.
 
 Companion notebook: [Four months, same screens: what held](https://www.kaggle.com/code/alexchilton/four-months-same-screens-what-held-s6e11), how to measure the noise floor an idea must beat, and how the same feature screens changed verdict over four playgrounds.
@@ -1583,6 +1666,11 @@ Companion notebook: [Four months, same screens: what held](https://www.kaggle.co
 - Competition and synthetic data: Kaggle Playground Series S6E11; original data by Udit Jain.
 - RealMLP: D. Holzmüller, L. Grinsztajn, I. Steinwart, *Better by Default: Strong Pre-Tuned MLPs and Boosted Trees on Tabular Data* (NeurIPS 2024), pytabkit.
 - TabM: Y. Gorishniy, A. Kotelnikov, A. Babenko, *TabM: Advancing Tabular Deep Learning with Parameter-Efficient Ensembling* (ICLR 2025), via pytabkit.
+- Target-first language-model members: C. Deotte's GPT-2 recipe ([kaggle-playground-solutions](https://github.com/cdeotte/kaggle-playground-solutions), Apache 2.0), as trained and published by
+  [megayak](https://www.kaggle.com/datasets/megayak/s6e11-target-first-lm) and [masayakawamata](https://www.kaggle.com/datasets/masayakawamata/s6e11-gpt2-target-first-oof).
+- Public members and prediction banks in the stack and the wide pool (each listed in the notebook's sources): goodpjw2008 (OOF bank, wide stack Part 12),
+  queyrusi (digit CNN), sadamtorres (TabPFN and GBDT pairs), sameershaikh27 (ten-fold GLM boost, digit-sequence CNN), masayakawamata (public stack, tabpack),
+  malyshevdanil (pooled stack), wguesdon (tree ensembles), lazyyeou (digit-trie target encoding), nilanjansaha123 (digit trie with GPT-2), ektarr (RealMLP stacking).
 - Ideas taken from public S6E11/S6E10 notebooks, measured here: shallow trees, per-value encoding and the spline GLM from
   [sidhaarthshree](https://www.kaggle.com/code/sidhaarthshree/s6e11-fraud-per-value-te-shallow-trees-stack) and
   [goodpjw2008](https://www.kaggle.com/code/goodpjw2008/s6e11-part-2-two-view-tree-blend-lb-0-94945); RealMLP settings from
@@ -1610,7 +1698,7 @@ def build(cat_iters=3000, mlp_epochs=16, version=VERSION):
     nbf.write(nb, OUT / "s6e11-first-look.ipynb")
     meta = {"id": f"alexchilton/{SLUG}", "title": TITLE, "code_file": "s6e11-first-look.ipynb", "language": "python",
             "kernel_type": "notebook", "is_private": False, "enable_gpu": True, "enable_tpu": False, "enable_internet": True,
-            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions", "queyrusi/fraud-shared-digit-cnn-weights", "masayakawamata/s6e11-public-stack-v10-outputs", "alexchilton/s6e11-frozen-public-banks", "sadamtorres/ps-s6e11-tabpfn-gbdt-oof-test-pairs", "masayakawamata/s6e11-gpt2-target-first-oof", "masayakawamata/s6e11-tabpack-cpu-starter-predictions", "wguesdon/s6e11-tree-ensemble-predictions", "malyshevdanil/s6e11-pooled-stack-v9", "goodpjw2008/s6e11-oof-bank", "megayak/s6e11-target-first-lm"], "kernel_sources": ["lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack", "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid", "yekenot/ps-s6-e11-realmlp-pytabkit", "goodpjw2008/s6e11-part-12-wide-stack-2nd-lm-lb-0-95298", "megayak/s6e11-per-value-digit-te-shallow-tree-stack", "masayakawamata/s6e11-logreg-stacking-same-split-oofs", "ektarr/lb-0-95121-realmlp-stacking", "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds", "sameershaikh27/s6e11-fraud-digit-sequence-cnn-member"],
+            "keywords": ["tabular", "binary classification", "ensembling", "eda"], "dataset_sources": ["uditjain13/credit-card-fraud-detection-2026", "alexchilton/s6e11-oof-predictions", "queyrusi/fraud-shared-digit-cnn-weights", "masayakawamata/s6e11-public-stack-v10-outputs", "alexchilton/s6e11-frozen-public-banks", "sadamtorres/ps-s6e11-tabpfn-gbdt-oof-test-pairs", "masayakawamata/s6e11-gpt2-target-first-oof", "masayakawamata/s6e11-tabpack-cpu-starter-predictions", "wguesdon/s6e11-tree-ensemble-predictions", "malyshevdanil/s6e11-pooled-stack-v9", "goodpjw2008/s6e11-oof-bank", "megayak/s6e11-target-first-lm", "goodpjw2008/s6e11-fraud-series-artifacts"], "kernel_sources": ["lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack", "nilanjansaha123/96-key-digit-trie-gpt-2-full-refit-hybrid", "yekenot/ps-s6-e11-realmlp-pytabkit", "goodpjw2008/s6e11-part-12-wide-stack-2nd-lm-lb-0-95298", "megayak/s6e11-per-value-digit-te-shallow-tree-stack", "masayakawamata/s6e11-logreg-stacking-same-split-oofs", "ektarr/lb-0-95121-realmlp-stacking", "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds", "sameershaikh27/s6e11-fraud-digit-sequence-cnn-member"],
             "competition_sources": ["playground-series-s6e11"], "model_sources": []}
     (OUT / "kernel-metadata.json").write_text(json.dumps(meta, indent=2) + "\n")
     print("wrote", OUT / "s6e11-first-look.ipynb")

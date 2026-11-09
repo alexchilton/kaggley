@@ -26,7 +26,8 @@
     "wguesdon/s6e11-tree-ensemble-predictions",
     "malyshevdanil/s6e11-pooled-stack-v9",
     "goodpjw2008/s6e11-oof-bank",
-    "megayak/s6e11-target-first-lm"
+    "megayak/s6e11-target-first-lm",
+    "goodpjw2008/s6e11-fraud-series-artifacts"
   ],
   "kernel_sources": [
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
