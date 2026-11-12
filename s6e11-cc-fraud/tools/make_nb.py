@@ -11,7 +11,7 @@ import nbformat as nbf
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "kernels/s6e11-first-look"
 TITLE = "Credit Card Fraud | LB 0.9530 | Shallow-Tree Stack"
-SLUG = "credit-card-fraud-lb-0-9524-shallow-tree-stack"
+SLUG = "credit-card-fraud-lb-0-9530-shallow-tree-stack"
 VERSION = "v27"                                 # bump with every push: members trained in this version are recorded under it
 assert len(TITLE) <= 50
 

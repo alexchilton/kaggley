@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-KERNEL = "alexchilton/credit-card-fraud-lb-0-9524-shallow-tree-stack"
+KERNEL = "alexchilton/credit-card-fraud-lb-0-9530-shallow-tree-stack"
 DATASET = "alexchilton/s6e11-oof-predictions"
 
 
