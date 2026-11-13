@@ -30,7 +30,9 @@
     "goodpjw2008/s6e11-fraud-series-artifacts",
     "moranzavdi/s6e11-strike9-lb-095330",
     "amanatar/s6e11-strike10-podium-apex-095340",
-    "goodpjw2008/s6e11-compact-lm-seed7"
+    "goodpjw2008/s6e11-compact-lm-seed7",
+    "amanatar/s6e11-rank1-q17-meta-bundle",
+    "goodpjw2008/s6e11-target-first-gpt2-seed-2026"
   ],
   "kernel_sources": [
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
