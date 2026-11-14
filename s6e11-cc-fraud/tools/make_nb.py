@@ -10,10 +10,12 @@ import nbformat as nbf
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "kernels/s6e11-first-look"
-TITLE = "Credit Card Fraud | LB 0.9530 | Shallow-Tree Stack"
-SLUG = "credit-card-fraud-lb-0-9530-shallow-tree-stack"
-VERSION = "v28"                                 # bump with every push: members trained in this version are recorded under it
+TITLE = "Credit Card Fraud | LB 0.9537 | Shallow-Tree Stack"
+SLUG = "credit-card-fraud-lb-0-9537-shallow-tree-stack"
+VERSION = "v29"                                 # bump with every push: members trained in this version are recorded under it
 assert len(TITLE) <= 50
+# v29: the weights of four public mixes, copied from areebbb's 'Bold, Then Bolder' (bolder, LB 0.95388) and goodpjw2008's 'LM Ladder | Public and CV Up' (bold 0.95386, balanced 0.95380, careful 0.95376)
+R29_JSON = '{"bolder": {"s:alex_glm_gen": 0.004659655001642133, "b:lgb_diglead_l3": 0.07037499081158276, "s:daoviet_gpdvae": 0.16759272015867438, "b:realmlp_v1": 0.028265988392542088, "b:gb_bag10": -0.018152655535374172, "b:lgb_dig_l7": 0.026162003105571548, "b:lgb_dig_s100_bag5": 0.023205824985217123, "s:lm7_5fold": -0.04643526723210693, "b:lgb_te_l4_s300": 0.012845944273216886, "b:lgb_diglead_bag": -0.008520524531314792, "s:masaya_gpt2": -0.06938586034217065, "b:lgb_dig_s100": -0.06905761136150596, "b:gbx_bag3": -0.025385082895315353, "b:lgb_te_l4": 0.035196443631714015, "s:sadam_v6_gb_xgb": -0.13553456267863312, "b:lgb_dig_l4": 0.04984890049165017, "b:glm_sb": -0.015572335325911311, "b:glm_dl_s50_bag": -0.043295376575860016, "b:lgb_te_l4_s100": 0.010731651329495398, "b:glm_ohk_c01": -0.0005446893557200782, "b:gbn_bag5_w512": 0.0551862603361086, "b:glm_ohk": -0.022950181793756356, "b:glm_dl_bag": 0.015527551247048318, "b:realmlp_dig_s100": 0.019529287294532443, "b:gbr_bag3": -0.007872454837865235, "wide": -0.0567073526172608, "s:gbn_bag5_w512": 0.024585711783519787, "b:xgb_dig_d2": -0.04001405009889738, "b:ebm_i25_bag4": 0.052776831945719284, "s:megayak_shallow_tree": 0.3676405944329277, "s:gb_bag5": 0.0022942519878240766, "b:lgb_dig_s100_bag": -0.0031388296177910285, "s:gpt2_seed2026": -0.02172163397492512, "b:gbe_bag3": 0.016771631110015763, "s:yekenot_realmlp": -0.018220789336614255, "s:sadam_tabpfn_100k_tp3": -0.08146952344397645, "s:sadam_v6_gb_lgb": 0.09202978068795398, "b:glm_ohk2": -0.010746902043578546, "b:gb_ohk": -0.0403299060795074, "b:ebm_dig": -0.025668026406425494, "b:ebm_diglead_r11": 0.021711464683545754, "b:xgb_te_d2": -0.017507176405797825, "b:realmlp_rawdig": -0.03995919213462431, "b:gbn_bag5_w128": -0.03944938723524659, "s:sadam_v4_cat": 0.044170457123327754, "b:gb_l3": -0.08781795649166141, "b:lgb_diglead_bag5": -0.0691076844266097, "b:ebm_diglead_r13": 0.03797203360211246, "b:glm_dl": -0.0066911606091787906, "b:ebm_all_bag": -0.05809235897307825, "b:ebm_diglead_bag": -0.011299892151034639, "b:lgb_dig_s100_l3_bag": -0.017863982273807155, "b:realmlp_te_s2": -0.0007511365624976998, "b:realmlp_cnt": 0.010152092525701466, "b:ebm_i25_bag": 0.022755487867529373, "b:lgb_dig_s100_l3": 0.054036258199026535, "b:glm_dig": 0.004367002340381022, "b:lgb_diglead_l2": -0.060799370916732313, "b:lgb_diglead_l3_bag": -0.016998031665317204, "b:lgb_rawdig_l4": 0.018367968146419205, "b:realmlp_te_cnt": -0.0029453567331327295, "b:ebm_dig_r7": 0.04840096288719489, "b:gb_bag5": 0.033276434668693684, "b:gbx_bag5": 0.007256671781074796, "b:glm_ohkl": 0.010941852623233855, "s:tabpfn_slimypunk_tp1": -0.05059762171891728, "b:glm_dl_s50": -0.06411999038593352, "s:sameer_glm10f": 0.09096559940413664, "b:ebm_diglead_i25": -0.020509275358757188, "b:lgb_te_l4_s5": 0.011694566527880524, "b:ebm_dig_bag": -0.02860322960251588, "b:lgb_raw_l31": -0.00015178805153019635, "b:glm_ohk2_bag": -0.03766304548255879, "b:lgb_raw_l4": 0.0091529109828078, "b:xgb_raw_d3": 0.018532570780381338, "b:ebm_lead4_bag": -0.01900597337730603, "s:megayak_5f_lm": -0.1500914472131036, "b:glm_te": -0.005973898251156665, "b:glm_ohkl_bag": 0.021686855681833317, "b:realmlp_allcat": -0.014402601850564621, "b:lgb_raw_l4_cnt": -0.08232013696341364, "b:realmlp_dig": -0.034559470951024046, "b:lgb_dk_l4": 0.013571307927505006, "b:realmlp_dig_s2": 0.018038024291734817, "b:lgb_diglead_l4": 0.006437648823683151, "b:realmlp_te": 0.016229843827016463, "b:gbc_bag3": -0.016244727973699344}, "bold": {"s:megayak_5f_lm": -0.12205919443860914, "s:masaya_gpt2": -0.06997547490341371, "s:lm7_5fold": -0.040956430057266076, "s:gpt2_seed2026": -0.012508511564926699, "s:tabpfn_slimypunk_tp1": -0.039316699160350764, "s:sadam_tabpfn_100k_tp3": -0.061677762652753675, "s:yekenot_realmlp": -0.014637185195237004, "s:alex_glm_gen": 0.004537993603062768, "s:daoviet_gpdvae": 0.1359104270990657, "s:gbn_bag5_w512": 0.015432253915041055, "s:sameer_glm10f": 0.06272836350651828, "s:sadam_v6_gb_xgb": -0.10228295915095288, "s:sadam_v6_gb_lgb": 0.06627713517089104, "s:sadam_v4_cat": 0.03126101632182668, "s:gb_bag5": 0.008855983394809901, "s:megayak_shallow_tree": 0.28129985621486264, "wide": -0.034852407295305754, "b:ebm_all_bag": -0.050611080400723436, "b:ebm_dig": -0.016392951045769617, "b:ebm_dig_bag": -0.021971929033966105, "b:ebm_dig_r7": 0.03715898221284049, "b:ebm_diglead_bag": -0.011280640758210015, "b:ebm_diglead_i25": -0.01760600397929515, "b:ebm_diglead_r11": 0.020606132176681696, "b:ebm_diglead_r13": 0.031952532024431754, "b:ebm_i25_bag": 0.019937230510505454, "b:ebm_i25_bag4": 0.04011014273129195, "b:ebm_lead4_bag": -0.016285931935351022, "b:gb_bag10": -0.017390237028207023, "b:gb_bag5": 0.026782938331671603, "b:gb_l3": -0.06609634322241796, "b:gb_ohk": -0.02882833922678926, "b:gbc_bag3": -0.012871505523924395, "b:gbe_bag3": 0.012674094986094425, "b:gbn_bag5_w128": -0.029120675300013294, "b:gbn_bag5_w512": 0.04504705483635584, "b:gbr_bag3": -0.005251606394839109, "b:gbx_bag3": -0.01901561844474828, "b:gbx_bag5": 0.006799891770028022, "b:glm_dig": 0.003088377583964293, "b:glm_dl": -0.006428517981988452, "b:glm_dl_bag": 0.01502056793927036, "b:glm_dl_s50": -0.0501984153162254, "b:glm_dl_s50_bag": -0.028630562092033966, "b:glm_ohk": -0.017070904616440657, "b:glm_ohk2": -0.004903067440865727, "b:glm_ohk2_bag": -0.029877217995289047, "b:glm_ohk_c01": 0.0003448885987200072, "b:glm_ohkl": 0.006673473442067076, "b:glm_ohkl_bag": 0.01766365615186144, "b:glm_sb": -0.01145379830324528, "b:glm_te": -0.004792258197303907, "b:lgb_dig_l4": 0.0366960138715965, "b:lgb_dig_l7": 0.01949687340453925, "b:lgb_dig_s100": -0.051481356730372616, "b:lgb_dig_s100_bag": -7.44946546564366e-05, "b:lgb_dig_s100_bag5": 0.016566984017469158, "b:lgb_dig_s100_l3": 0.039879653631481535, "b:lgb_dig_s100_l3_bag": -0.014332571073509623, "b:lgb_diglead_bag": -0.00442949281469811, "b:lgb_diglead_bag5": -0.05069793900237127, "b:lgb_diglead_l2": -0.0434403013635199, "b:lgb_diglead_l3": 0.051384825410253424, "b:lgb_diglead_l3_bag": -0.014548087315257047, "b:lgb_diglead_l4": 0.005059024340666011, "b:lgb_dk_l4": 0.010395272568768744, "b:lgb_raw_l31": 6.272373140902098e-05, "b:lgb_raw_l4": 0.006062225361634528, "b:lgb_raw_l4_cnt": -0.060074422527671846, "b:lgb_rawdig_l4": 0.012821826099948688, "b:lgb_te_l4": 0.026453964192257394, "b:lgb_te_l4_s100": 0.007166689614341422, "b:lgb_te_l4_s300": 0.009325395175060891, "b:lgb_te_l4_s5": 0.00877347694863135, "b:realmlp_allcat": -0.010498730399732318, "b:realmlp_cnt": 0.00748969325179405, "b:realmlp_dig": -0.026045115561739243, "b:realmlp_dig_s100": 0.01482032375010226, "b:realmlp_dig_s2": 0.012780340101831603, "b:realmlp_rawdig": -0.029224792823957325, "b:realmlp_te": 0.011902655678168103, "b:realmlp_te_cnt": -0.0016811066269879565, "b:realmlp_te_s2": -0.00033527900132535184, "b:realmlp_v1": 0.02099235698670545, "b:xgb_dig_d2": -0.027214651902440812, "b:xgb_raw_d3": 0.013799277379315805, "b:xgb_te_d2": -0.012792356993134408}, "balanced": {"s:megayak_5f_lm": -0.0659946888896202, "s:masaya_gpt2": -0.07115470402589986, "s:lm7_5fold": -0.029998755707584368, "s:gpt2_seed2026": 0.005917733255070143, "s:tabpfn_slimypunk_tp1": -0.016754854043217735, "s:sadam_tabpfn_100k_tp3": -0.02209424107030813, "s:yekenot_realmlp": -0.007469976912482503, "s:alex_glm_gen": 0.004294670805904037, "s:daoviet_gpdvae": 0.07254584097984837, "s:gbn_bag5_w512": -0.002874661821916413, "s:sameer_glm10f": 0.006253891711281581, "s:sadam_v6_gb_xgb": -0.035779752095592386, "s:sadam_v6_gb_lgb": 0.014771844136765163, "s:sadam_v4_cat": 0.005442134718824526, "s:gb_bag5": 0.02197944620878155, "s:megayak_shallow_tree": 0.10861837977873254, "wide": 0.008857483348604336, "b:ebm_all_bag": -0.035648523256013816, "b:ebm_dig": 0.0021571996755421373, "b:ebm_dig_bag": -0.00870932789686656, "b:ebm_dig_r7": 0.014675020864131676, "b:ebm_diglead_bag": -0.011242137972560769, "b:ebm_diglead_i25": -0.011799461220371074, "b:ebm_diglead_r11": 0.018395467162953583, "b:ebm_diglead_r13": 0.019913528869070343, "b:ebm_i25_bag": 0.014300715796457614, "b:ebm_i25_bag4": 0.014776764302437287, "b:ebm_lead4_bag": -0.010845849051441005, "b:gb_bag10": -0.01586540001387272, "b:gb_bag5": 0.013795945657627443, "b:gb_l3": -0.022653116683931083, "b:gb_ohk": -0.005825205521352985, "b:gbc_bag3": -0.006125060624374499, "b:gbe_bag3": 0.004479022738251753, "b:gbn_bag5_w128": -0.008463251429546712, "b:gbn_bag5_w512": 0.02476864383685032, "b:gbr_bag3": -9.909508786856773e-06, "b:gbx_bag3": -0.006276689543614139, "b:gbx_bag5": 0.005886331747934474, "b:glm_dig": 0.0005311280711308347, "b:glm_dl": -0.0059032327276077766, "b:glm_dl_bag": 0.014006601323714443, "b:glm_dl_s50": -0.022355265176809174, "b:glm_dl_s50_bag": 0.0006990668756181338, "b:glm_ohk": -0.005312350261809259, "b:glm_ohk2": 0.00678460176455991, "b:glm_ohk2_bag": -0.014305563020749566, "b:glm_ohk_c01": 0.002124044507600178, "b:glm_ohkl": -0.0018632849202664824, "b:glm_ohkl_bag": 0.009617257091917682, "b:glm_sb": -0.0032167242579132175, "b:glm_te": -0.0024289780895983912, "b:lgb_dig_l4": 0.010390240631489167, "b:lgb_dig_l7": 0.006166614002474661, "b:lgb_dig_s100": -0.016328847468105947, "b:lgb_dig_s100_bag": 0.006054175271612747, "b:lgb_dig_s100_bag5": 0.0032893020819732264, "b:lgb_dig_s100_l3": 0.01156644449639154, "b:lgb_dig_s100_l3_bag": -0.0072697486729145595, "b:lgb_diglead_bag": 0.003752570618535255, "b:lgb_diglead_bag5": -0.01387844815389441, "b:lgb_diglead_l2": -0.008722162257095078, "b:lgb_diglead_l3": 0.01340449460759475, "b:lgb_diglead_l3_bag": -0.009648198615136732, "b:lgb_diglead_l4": 0.0023017753746317295, "b:lgb_dk_l4": 0.00404320185129622, "b:lgb_raw_l31": 0.0004917472972874557, "b:lgb_raw_l4": -0.00011914588071201624, "b:lgb_raw_l4_cnt": -0.015582993656188236, "b:lgb_rawdig_l4": 0.001729542007007652, "b:lgb_te_l4": 0.008969005313344148, "b:lgb_te_l4_s100": 3.676618403346857e-05, "b:lgb_te_l4_s300": 0.0022842969787489017, "b:lgb_te_l4_s5": 0.002931297790132998, "b:realmlp_allcat": -0.0026909874980677114, "b:realmlp_cnt": 0.0021648947039792175, "b:realmlp_dig": -0.009016404783169642, "b:realmlp_dig_s100": 0.005402396661241892, "b:realmlp_dig_s2": 0.0022649717220251738, "b:realmlp_rawdig": -0.007755994202623359, "b:realmlp_te": 0.0032482793804713803, "b:realmlp_te_cnt": 0.000847393585301589, "b:realmlp_te_s2": 0.0004964361210193442, "b:realmlp_v1": 0.0064450941750321756, "b:xgb_dig_d2": -0.001615855509527677, "b:xgb_raw_d3": 0.00433269057718474, "b:xgb_te_d2": -0.0033627181678075714}, "careful": {"s:megayak_5f_lm": -0.08450474886996073, "s:masaya_gpt2": -0.04902561986411483, "s:lm7_5fold": -0.016891411336523863, "s:gpt2_seed2026": 0.014547738041531408, "s:tabpfn_slimypunk_tp1": -0.0123457470481866, "s:sadam_tabpfn_100k_tp3": -0.015910384586476225, "s:yekenot_realmlp": -0.003253325303861341, "s:alex_glm_gen": 0.002612752988313417, "s:daoviet_gpdvae": 0.04685747302679586, "s:gbn_bag5_w512": 0.0043515522989154235, "s:sameer_glm10f": 0.015478953160303576, "s:sadam_v6_gb_xgb": -0.028037375140335462, "s:sadam_v6_gb_lgb": 0.019533386719025193, "s:sadam_v4_cat": 0.00589878484038633, "s:gb_bag5": 0.02217844040888381, "s:megayak_shallow_tree": 0.10122717023890326, "wide": 0.08081797187087163, "b:ebm_all_bag": -0.03128848896508937, "b:ebm_dig": 0.002420259254897357, "b:ebm_dig_bag": -0.006646622819934664, "b:ebm_dig_r7": 0.010794306141448952, "b:ebm_diglead_bag": -0.0117042245417344, "b:ebm_diglead_i25": -0.008918615668229131, "b:ebm_diglead_r11": 0.017495433781515475, "b:ebm_diglead_r13": 0.019436209350096583, "b:ebm_i25_bag": 0.008522596080523918, "b:ebm_i25_bag4": 0.016476990933893144, "b:ebm_lead4_bag": -0.01130787311582097, "b:gb_bag10": -0.013583645440115318, "b:gb_bag5": 0.016684891246275074, "b:gb_l3": -0.019083828087590973, "b:gb_ohk": -0.006177878317621568, "b:gbc_bag3": -0.007269120619879105, "b:gbe_bag3": 0.004681311487245302, "b:gbn_bag5_w128": -0.005040768827170892, "b:gbn_bag5_w512": 0.023637688632069328, "b:gbr_bag3": -0.00024830818253431273, "b:gbx_bag3": -0.006400911249302103, "b:gbx_bag5": 0.0036937689629500865, "b:glm_dig": -3.7306124542630744e-05, "b:glm_dl": -0.007156160004066149, "b:glm_dl_bag": 0.008441014574504154, "b:glm_dl_s50": -0.01334934207158471, "b:glm_dl_s50_bag": 0.001844211766019183, "b:glm_ohk": -0.00562390612264448, "b:glm_ohk2": 0.008907953791620765, "b:glm_ohk2_bag": -0.015300133811741116, "b:glm_ohk_c01": -0.005892186175925242, "b:glm_ohkl": -0.00010117004854648993, "b:glm_ohkl_bag": 0.008342574170709143, "b:glm_sb": -0.003455433101783884, "b:glm_te": -0.0018554925449663707, "b:lgb_dig_l4": 0.012788668778136636, "b:lgb_dig_l7": 0.006133544143597403, "b:lgb_dig_s100": -0.01581131868317444, "b:lgb_dig_s100_bag": 0.005976683240784171, "b:lgb_dig_s100_bag5": 0.003272572328457066, "b:lgb_dig_s100_l3": 0.011358913543846424, "b:lgb_dig_s100_l3_bag": -0.007671455946372908, "b:lgb_diglead_bag": 0.0026446221720072436, "b:lgb_diglead_bag5": -0.014415491763205732, "b:lgb_diglead_l2": -0.009879458752685616, "b:lgb_diglead_l3": 0.015081200121801388, "b:lgb_diglead_l3_bag": -0.01231464394864841, "b:lgb_diglead_l4": 0.0027104104670708385, "b:lgb_dk_l4": 0.002097897271309318, "b:lgb_raw_l31": 0.0010331280960220208, "b:lgb_raw_l4": -0.0013378069288362123, "b:lgb_raw_l4_cnt": -0.013507197348019013, "b:lgb_rawdig_l4": 0.0028805514532224763, "b:lgb_te_l4": 0.008125965905514013, "b:lgb_te_l4_s100": 0.0030857860977705903, "b:lgb_te_l4_s300": 0.0022465238467168505, "b:lgb_te_l4_s5": -0.0007517378836866291, "b:realmlp_allcat": -0.00013519997284003595, "b:realmlp_cnt": 0.0031564480735426013, "b:realmlp_dig": -0.009290279722601536, "b:realmlp_dig_s100": 0.005582584293801132, "b:realmlp_dig_s2": 0.0018383277487227473, "b:realmlp_rawdig": -0.009112515110809292, "b:realmlp_te": 0.003079185734258433, "b:realmlp_te_cnt": -0.00037244665110067394, "b:realmlp_te_s2": -0.0021716481344977163, "b:realmlp_v1": 0.005001493601478614, "b:xgb_dig_d2": -0.004210955412618814, "b:xgb_raw_d3": 0.004254033686957146, "b:xgb_te_d2": -0.0023974804930285173}}'
 
 md = nbf.v4.new_markdown_cell
 code = nbf.v4.new_code_cell
@@ -36,9 +38,11 @@ All model predictions are published as a dataset ([s6e11-oof-predictions](https:
 so you can blend them in your own notebook without training. If it helps you, an upvote is appreciated.
 
 **Which file has which score.** `submission.csv` is our own stack, checked on held-out rows: public LB **0.95260**.
-`submission_p12_ours.csv` is 65% goodpjw2008's Part 12 wide stack and 35% our stack: public LB **0.95305**, the score in the title (section 3, v26).
+`submission_a370_wide10.csv` (v28) is 90% Aman Atar's public 0.95370 file and 10% our stack: public LB **0.95367**, the score in the title. Most of that file is another author's work; our own stack is the 0.95260.
+`submission_p12_ours.csv` is 65% goodpjw2008's Part 12 wide stack and 35% our stack: public LB **0.95305** (section 3, v26).
 Section v27 replays the public "ladder" files (0.95330 to 0.95347) on held-out rows, to see what a step picked on the public board is worth on rows it was not picked on.
-The newest section (v28) takes the public 0.95370 file apart into 16 public models and scores its mix on labelled rows (0.95186, against 0.95257 for our stack), adds two more language-model seeds to the pool, and runs two checks on every pool member.
+Section v28 takes the public 0.95370 file apart into 16 public models and scores its mix on labelled rows (0.95186, against 0.95257 for our stack), adds two more language-model seeds to the pool, and runs two checks on every pool member.
+The newest section (v29) rebuilds the public 0.95388 file byte for byte from its published weights and scores it on labelled rows (0.95246, in-sample, against 0.95257 for our held-out stack), and applies the same 87-member move to our own stack.
 """),
 code("%pip install -q pytabkit"),
 code("""
@@ -1872,7 +1876,7 @@ A wide pool takes other people's files on trust. [dariushafshar's 145 OOF Pairs,
 **1. The fold signature.** Out-of-fold predictions come from five models, one per fold, and each model has its own offset. So the mean prediction differs between the five folds by more than chance allows, *if* the column was built on these folds.
 `F` = the variance of the five fold means, divided by what random groups of the same size would give. About 1 means no signature. The control: the same statistic on a split no member was built on (seed 7).
 
-- On our folds: median F **76**; on the control split: median 0.52, largest 2.3. The statistic separates the two cases cleanly.
+- On our folds: median F **74**; on the control split: median 0.52, largest 2.3. The statistic separates the two cases cleanly.
 - Six members have F below 5 on our folds: queyrusi's digit CNN bag (0.0), three of sadamtorres' v6 pairs (1.1 to 1.2), ektarr's RealMLP stack (1.2) and sadamtorres' raw LightGBM (3.6).
   sameershaikh27's ten-fold GLM boost has 5.0, as it should: ten folds, not our five. goodpjw2008's seed-7 LM has 6.0 and is on our folds by its README.
 - **A low F is a question, not a verdict.** We looked at the lowest one. queyrusi's bank ships its fold ids, and they are our partition; its out-of-fold column has mean 0.5 and the same 10% and 90% quantiles in every fold: it was turned into ranks *inside each fold*, which removes the signature by construction.
@@ -1882,7 +1886,7 @@ A wide pool takes other people's files on trust. [dariushafshar's 145 OOF Pairs,
 **2. Is a member closer to the stack on the test rows than out of fold?** For each member: its rank correlation with the wide stack on out-of-fold rows, and the same on the test rows.
 An out-of-fold row is scored by **one** fold model. A test row is usually scored by the **average of five** (or by a refit on all rows). An average is less noisy, so the test column sits closer to the stack than the OOF column.
 
-- Nearly every member is closer to the stack on test. Medians by source: members trained here +0.006, public banks +0.005, the public pool +0.004. The neural members move most: RealMLP on digits +0.038, RealMLP +0.032, TabM +0.021.
+- Nearly every member is closer to the stack on test. Medians by source: members trained here +0.0058, public banks +0.0035, the public pool +0.0038 (v28's text said +0.006, +0.005 and +0.004, written from a smoke run; corrected in v29 to the values the cell prints). The neural members move most: RealMLP on digits +0.038, RealMLP +0.032, TabM +0.021.
 - The language models give a clean natural experiment. megayak's LM and seed 7 average five fold models on test: **+0.0024** and **+0.0035**. Seed 2026 scores the test rows with the fold-0 model only: **0.0000**. masayakawamata's GPT-2: +0.0005.
 - Why it matters: the stacker learns each member's weight from its out-of-fold column, the noisy version. A member whose test column is five times averaged is better on test than the stacker was told, so its weight is too low for the test rows.
   This is a measured piece of v27's hypothesis for why the public board rewards "a step towards the LM" that held-out rows reject. It is not proof: the board gains of the ladders are also the size of selection noise (v27).
@@ -2013,6 +2017,150 @@ if new28 and all(a_ > b_ for a_, b_ in zip(w28_runs, wide_runs)) and np.mean(w28
 else:
     print('the two seeds are below the bar (+0.00005 on the mean of three splits, every split up): submission.csv stays as written above')
 """),
+md("""### What the board said about v28 (submitted 2026-11-13)
+
+| file | what | public LB | AUC on labelled rows |
+|---|---|---|---|
+| `submission_a370_wide10.csv` | 90% Aman Atar's 0.95370 file + 10% our wide stack | **0.95367** | 0.95200 (replay) |
+| `submission_a370_wide25.csv` | 75% file + 25% our wide stack | 0.95359 | 0.95217 (replay) |
+| `submission_wide_seeds.csv` | our wide stack + two language-model seeds (169 members) | 0.95260 | 0.95259 (held-out, mean of 3 splits) |
+| `submission.csv` | our wide stack (167 members), as v23 | 0.95260 | 0.95257 |
+
+- Ten percent of our stack costs the 0.95370 file 3 public points (1 point = 0.00001) and adds 13 on labelled rows; 25% costs 11 and adds 31. goodpjw2008 measured 2 and 8 with their own stack: two independent stacks, the same trade.
+- The board and the labelled rows rank the three files (file, 90/10, 75/25) in opposite order, in steps of 3 to 8 points. v26 measured the noise of a public difference between files this close at 3 to 9 points, so the board's order of these three is not established.
+- The two seeds: +0.00000 on the board, +1.7 points held-out. The public-sized noise of that change is ± 7.6 points (v28), so the board could not have shown it.
+
+### v29: the 0.95388 file, rebuilt byte for byte and scored on labelled rows
+
+**The question.** On 2026-11-14 the public best is **0.95388**, [areebbb's Bold, Then Bolder](https://www.kaggle.com/code/areebbb/s6e11-bold-then-bolder-lb-0-95388), one step past
+[goodpjw2008's LM Ladder | Public and CV Up](https://www.kaggle.com/code/goodpjw2008/s6e11-lm-ladder-public-and-cv-up-lb-0-95386) (0.95386).
+Both report a gain on out-of-fold rows in all five folds, which no earlier ladder did. What does that gain mean next to a stack fitted on the labels?
+
+**How the files are made (goodpjw2008's method).**
+1. Start from the 0.95370 file with a small language-model step: `base = rank(file + 0.06 (LM seed 7 - megayak's LM))`.
+2. Move towards 87 public members (the 16 models of Aman Atar's bundle, goodpjw2008's wide LM stack and 70 models of goodpjw2008's OOF bank): `score = (1 - sum w) logit(base) + sum w_k logit_rank(member_k)`.
+3. Pick the weights `w` to raise two things together: the out-of-fold AUC of the same mix, and a *forecast of the public score*.
+   The forecast is a ridge model fitted on goodpjw2008's 44 scored files: each scored file is one linear equation about the public rows' labels, so a new file's public score can be predicted from how it re-ranks rows (1.4 points error, leave one out).
+   Three settings of that trade gave three files: careful (0.95376), balanced (0.95380), bold (0.95386).
+4. areebbb extrapolated: `bolder = bold + 0.5 (bold - balanced)`, public **0.95388**.
+
+Both notebooks publish every weight, and each input file is pinned by SHA-256. This cell rebuilds the bolder file from those weights and checks its SHA-256 against areebbb's published one.
+
+**The out-of-fold side.** The file itself has no out-of-fold predictions. goodpjw2008 replays it: least squares of the 0.95370 file on the 16 bundle models *and* their wide stack (test rows), the same weights on the out-of-fold columns, plus the same LM step. Call that the reference.
+The mix weights are then applied to the 87 members' out-of-fold columns. The weights were chosen with these out-of-fold rows in view, so every mix number below is **in-sample** (optimistic); goodpjw2008's nested check keeps about 60% of it for the bold mix (+19.5 of +32.8).
+Our referee is the same as in v28: the wide stacker's held-out score on split 7, where every row is scored by a stacker that did not see it.
+
+**What we measured** (offline on the published files before this version ran, `scratch/banks/v29_1114/sim29.py`; the cell below prints its own numbers):
+
+| | AUC on labelled rows | points against our held-out stack | public LB |
+|---|---|---|---|
+| the 0.95370 file, replayed (16 models) | 0.95186 (v28) | -70 | 0.95370 |
+| the reference: 16 models + their wide stack + LM step | 0.95208 | -48 | 0.95370 |
+| careful (in-sample) | 0.95237 | -20 | 0.95376 |
+| balanced (in-sample) | 0.95227 | -29 | 0.95380 |
+| bold (in-sample) | 0.95241 | -15 | 0.95386 |
+| **bolder, the 0.95388 file** (in-sample) | **0.95246** | **-11** | **0.95388** |
+| our wide stack (held-out) | **0.95257** | 0 | 0.95260 |
+
+- **The rebuild is exact.** Our file has the SHA-256 areebbb publishes (`b0979694...`). Every test input is therefore the one they used.
+- **The ladder closed most of the gap on labelled rows.** The 0.95370 file sat 70 points below our held-out stack; the 0.95388 file sits 11 below, and that number is in-sample. On random subsets of public-board size the gap is -9 ± 27 points (the file ahead in 37 of 100 draws), at private-board size -11 ± 13 (19 of 100).
+  For the first time a public ladder file is within sampling noise of a label-fitted stack on labelled rows, measured by a second referee.
+- **Where the gain comes from.** The largest moves of the bold mix: megayak's shallow trees +0.28, daoviet's GP + DVAE +0.14, megayak's LM -0.12, sadamtorres' XGBoost -0.10, masayakawamata's GPT-2 -0.07.
+  v28 found the 0.95370 file holding megayak's shallow trees at -0.19 where the labels choose +0.14, and sadamtorres' XGBoost at 0.67 where the labels choose 0.16. The bold move undoes part of both: it moves the file towards the weights the labels choose.
+
+**The same move on our stack.** If the 87-member move carries information that a label-fitted stack lacks, it should help ours too. Applied to our held-out wide stack instead of the reference, `(1 - sum w) stack + sum w_k member_k`:
+
+| move | points on the reference (in-sample) | points on our held-out stack | folds up |
+|---|---|---|---|
+| careful | +28.4 | **+4.6** | 3 of 5 |
+| balanced | +19.0 | +2.3 | 3 of 5 |
+| bold | +32.8 | -1.3 | 1 of 5 |
+| bolder (0.95388) | +37.1 | -6.3 | 1 of 5 |
+| bold + 1.0 (bold - balanced) | +39.8 | -13.6 | 1 of 5 |
+| bold + 2.0 (bold - balanced) | +40.1 | -34.6 | 1 of 5 |
+
+- **The direction that raises the reference lowers our stack.** Along `bold - balanced`, the reference gains up to +40.8 points (areebbb's table reproduces to the decimal) and our stack loses up to 35, with one fold of five up.
+  The move is a correction of the 0.95370 file's weights towards what labels choose. A stack that was fitted on the labels has no such error to correct, so the move only adds noise to it.
+- **The careful mix gains +4.6 on our stack, below our +5 bar and with 3 of 5 folds.** It is also in-sample. `submission.csv` does not change.
+- **The board peaks earlier than out-of-fold AUC** (areebbb: half a step 0.95388, 1.5 steps 0.95387, 2 steps 0.95385), and our stack peaks earlier still (at careful). Three referees, three different best step sizes; only the public one was used to choose.
+
+**Board files from this version:** `submission_b388_wide10.csv` (90% the 0.95388 file + 10% our wide stack; on labelled rows +4.7 points over the file, 5 of 5 folds), `submission_b388_wide50.csv` (50 / 50; +15.3, 5 of 5, and +4.3 over our stack alone),
+and `submission_wide_bold.csv` (our wide stack + the bold move; -1.3 points on labelled rows): if the board rewards the bold move on our stack too, the board and the labelled rows disagree about it.
+The results go in the next version.
+
+**Credit.** areebbb (the bolder step, the rebuild and its probes), goodpjw2008 (the method: moves chosen on CV and a public forecast together, the three mixes, the replay, the OOF bank and the wide LM stack), Aman Atar (the 0.95370 file and its bundle),
+asteriospanoras (the noise of a public gap), and the authors of the 87 members (listed in both source notebooks). Please upvote them.
+"""),
+code("""# v29: the public 0.95388 file rebuilt from its published weights, replayed on labelled rows, and its move applied to our own stack
+R29 = json.loads(R29_STR)                                  # weights of four public mixes; s: bundle model, b: OOF-bank model, wide: goodpjw2008's wide LM stack
+_bank29 = _find('manifest.csv', 'oof-bank'); _bank29 = Path(_bank29).parent if _bank29 else None
+_p29 = {k: _find(f, o) for k, (f, o) in {'wide_oof': ('wide_lm_stack_nested.npy', 'fraud-series'), 'wide_te': ('wide_lm_stack_test.npy', 'fraud-series'),
+                                        'lm7': ('lm7_test_5fold.npy', 'compact-lm'), 'lm': ('megalm_test_sha3168.npy', 'compact-lm')}.items()}
+_ok29 = AO28 is not None and _bank29 is not None and all(_p29.values())
+if not _ok29: print('v29 skipped: inputs not mounted', {k: v is not None for k, v in _p29.items()}, 'bank', _bank29 is not None)
+if _ok29:
+    def _u29(v): return (rankdata(v) - 0.5) / len(v)
+    def _L29(v): return logit(_u29(v))
+    WO29, WT29 = _L29(np.load(_p29['wide_oof'])), _L29(np.load(_p29['wide_te']))
+    _one = lambda A: np.column_stack([A, np.ones(len(A))])
+    b29 = np.linalg.lstsq(_one(np.column_stack([XT28, WT29])), AT28, rcond=None)[0]       # goodpjw2008's replay: the 0.95370 file on 16 models + their wide stack, test rows
+    REF29 = _one(np.column_stack([XO28, WO29])) @ b29 + 0.06 * (XO28[:, N28.index('lm7_5fold')] - XO28[:, N28.index('megayak_5f_lm')])
+    U029 = _u29(AT28 + 0.06 * (_L29(np.load(_p29['lm7'])) - _L29(np.load(_p29['lm']))))
+    SO29 = {r: np.zeros(len(X)) for r in R29}; ST29 = {r: 0 for r in R29}
+    for k in R29['bolder']:                                # areebbb's order: the test-side sum must add up in the same order to give the same bytes
+        if k.startswith('s:'): o_, t_ = _L29(Zb['oof_' + k[2:]]), _L29(Zb['test_' + k[2:]])
+        elif k.startswith('b:'): o_, t_ = _L29(np.load(_bank29 / f'oof_{k[2:]}.npy')), _L29(np.load(_bank29 / f'test_{k[2:]}.npy'))
+        else: o_, t_ = WO29, WT29
+        for r in R29: SO29[r] = SO29[r] + R29[r][k] * o_; ST29[r] = ST29[r] + R29[r][k] * t_
+    sw29 = {r: sum(R29[r].values()) for r in R29}
+    b388 = (1 - sw29['bolder']) * logit(U029) + ST29['bolder']
+    _f29 = OUT / 'submission_b388_rebuilt.csv'; pd.DataFrame({'id': test['id'], TARGET: _u29(b388)}).to_csv(_f29, index=False)
+    h29 = hashlib.sha256(open(_f29, 'rb').read()).hexdigest()
+    print('the 0.95388 file rebuilt:', 'SHA-256 matches areebbb\\'s published b0979694...' if h29 == 'b097969454128762dcd4929116d08fc9f00b3a6ebfe65fcbf7979ffaea3d729b' else f'SHA-256 differs ({h29[:16]}); the ranks may still agree')
+    print(f'rank correlation of the rebuild with the 0.95370 file: {np.corrcoef(rankdata(b388), rankdata(AT28))[0, 1]:.6f}')
+    _f29.unlink()                                          # not ours to submit: only the check is kept
+    F29 = F28; a29 = a28
+    def _mix29(w, s_, base): return (1 - w) * base + s_
+    print(f'our wide stacker, held-out split 7: {a29:.6f} | the reference (16 models + their wide stack + LM step), replayed: {_fauc(yv28, REF29):.6f}')
+    rows29 = []
+    for r in ['careful', 'balanced', 'bold', 'bolder']:
+        o_ = _mix29(sw29[r], SO29[r], REF29); o2_ = _mix29(sw29[r], SO29[r], F29)
+        rows29.append([r, _fauc(yv28, o_), (_fauc(yv28, o_) - _fauc(yv28, REF29)) * 1e5, _ups28(o_, REF29), (_fauc(yv28, o_) - a29) * 1e5, (_fauc(yv28, o2_) - a29) * 1e5, _ups28(o2_, F29)])
+    M29 = pd.DataFrame(rows29, columns=['mix', 'AUC (in-sample)', 'pts vs reference', 'folds up', 'pts vs our held-out stack', 'the move on our stack, pts', 'folds up on our stack']).set_index('mix')
+    print('the four public mixes on labelled rows (1 point = 0.00001):'); print(M29.round({'AUC (in-sample)': 6, 'pts vs reference': 2, 'pts vs our held-out stack': 2, 'the move on our stack, pts': 2}).to_string())
+    ts29 = [0.0, 0.5, 1.0, 1.5, 2.0]; S29 = []
+    for t in ts29:                                         # steps along bold - balanced: linear in the weights, so linear in the sums
+        w_ = sw29['bold'] + t * (sw29['bold'] - sw29['balanced']); s_ = SO29['bold'] + t * (SO29['bold'] - SO29['balanced'])
+        o_, o2_ = _mix29(w_, s_, REF29), _mix29(w_, s_, F29)
+        S29.append([t, (_fauc(yv28, o_) - _fauc(yv28, REF29)) * 1e5, _ups28(o_, REF29), (_fauc(yv28, o2_) - a29) * 1e5, _ups28(o2_, F29)])
+    S29 = pd.DataFrame(S29, columns=['t', 'on the reference, pts', 'folds up', 'on our stack, pts', 'folds up ']).set_index('t')
+    print('steps bold + t (bold - balanced):'); print(S29.round(2).to_string())
+    bo29 = _mix29(sw29['bolder'], SO29['bolder'], REF29); rng29 = np.random.default_rng(29)
+    for n_ in (n_pub28, n_prv28):
+        d_ = []
+        for _ in range(100):
+            i_ = rng29.choice(len(yv28), n_, replace=False); d_.append((_fauc(yv28[i_], bo29[i_]) - _fauc(yv28[i_], F29[i_])) * 1e5)
+        print(f'gap (the 0.95388 mix, in-sample - our held-out stack) on {n_} random rows: {np.mean(d_):+.1f} +- {np.std(d_):.1f} points; the file ahead in {np.mean(np.array(d_) > 0):.0%} of 100 draws')
+    MX29 = pd.DataFrame([[w, _fauc(yv28, (1 - w) * bo29 + w * F29), (_fauc(yv28, (1 - w) * bo29 + w * F29) - _fauc(yv28, bo29)) * 1e5, _ups28((1 - w) * bo29 + w * F29, bo29)] for w in (0.0, 0.1, 0.25, 0.5, 0.75, 1.0)],
+                        columns=['share of our wide stack', 'AUC on labelled rows', 'pts vs the file', 'folds up']).set_index('share of our wide stack')
+    print('the 0.95388 mix with our held-out wide stack:'); print(MX29.round({'AUC on labelled rows': 6, 'pts vs the file': 1}).to_string())
+    _bw = pd.Series(R29['bold']); print('largest moves of the bold mix:', _bw.reindex(_bw.abs().sort_values(ascending=False).index).head(8).round(3).to_dict())
+    T['the 0.95388 file (rebuilt)'] = b388
+    for n_, v_ in [('submission_b388_wide10.csv', 0.9 * b388 + 0.1 * _lr(t_w)), ('submission_b388_wide50.csv', 0.5 * b388 + 0.5 * _lr(t_w)),
+                   ('submission_wide_bold.csv', _mix29(sw29['bold'], ST29['bold'], _lr(t_w)))]:
+        T[n_] = v_; pd.DataFrame({'id': test['id'], TARGET: rankdata(v_) / len(v_)}).to_csv(OUT / n_, index=False); print('wrote', n_, f'| distance from our wide stack {_dist28(v_, t_w):.1f}e-4, from the 0.95388 file {_dist28(v_, b388):.1f}e-4')
+    fig, (b1, b2) = plt.subplots(1, 2, figsize=(14, 4.6))
+    lab_ = ['0.95370 file\\n(16 models)', 'reference\\n(+ wide, LM step)'] + list(M29.index); val_ = [_fauc(yv28, AO28), _fauc(yv28, REF29)] + list(M29['AUC (in-sample)'])
+    pub_ = [0.95370, 0.95370, 0.95376, 0.95380, 0.95386, 0.95388]
+    b1.bar(range(len(val_)), val_, color=['#c98b2b'] * 2 + ['#d9a864'] * 4); b1.axhline(a29, color='#4a6fa5', lw=2, label=f'our wide stack, held-out {a29:.5f} (public 0.95260)')
+    for i_, (v_, p_) in enumerate(zip(val_, pub_)): b1.annotate(f'public {p_:.5f}', (i_, v_), textcoords='offset points', xytext=(0, 4), ha='center', fontsize=7)
+    b1.set_xticks(range(len(val_))); b1.set_xticklabels(lab_, fontsize=8); b1.set_ylim(min(val_) - 0.0002, a29 + 0.0002); b1.set_ylabel('AUC on labelled rows (mixes: in-sample)')
+    b1.set_title('the public ladder on labelled rows: each rung closer to a label-fitted stack', fontsize=10); b1.legend(fontsize=8, loc='upper left')
+    b2.plot(S29.index, S29['on the reference, pts'], 'o-', color='#c98b2b', label='on the replayed 0.95370 file (in-sample)'); b2.plot(S29.index, S29['on our stack, pts'], 'o-', color='#4a6fa5', label='the same move on our held-out stack')
+    b2.axhline(0, color='#999', lw=1); bx = b2.twinx(); bx.plot([0.0, 0.5, 1.0, 1.5, 2.0], [0.95386, 0.95388, 0.95387, 0.95387, 0.95385], 's--', color='#b0413e', label='public LB (areebbb\\'s probes)'); bx.set_ylabel('public LB', color='#b0413e'); bx.ticklabel_format(axis='y', useOffset=False, style='plain')
+    b2.set_xlabel('t in bold + t (bold - balanced)'); b2.set_ylabel('change in AUC, points (0.00001)'); b2.set_title('one direction, three referees, three best step sizes', fontsize=10)
+    h1, l1 = b2.get_legend_handles_labels(); h2, l2 = bx.get_legend_handles_labels(); b2.legend(h1 + h2, l1 + l2, fontsize=8, loc='lower left'); plt.tight_layout(); plt.show()
+""".replace('R29_STR', repr(R29_JSON))),
 md("""### Reading the blend: three lessons that carry to other tabular competitions
 
 **1. A good model can get zero weight.** In v5, RealMLP scored 0.94704 on its own, about as well as CatBoost (0.94721),
@@ -2061,7 +2209,8 @@ Every version was submitted from this notebook. The public LB scores only part o
 | v25 | TabICL measured as a member (null, section 4); the 0.95300 public recipe (65/35 rank-logit mix of a wide and a narrow stack) measured on our own two stackers' held-out rows, plus two extra files for the board | three public notebooks reached 0.95300 with a mix that lowers the author's own CV; does it hold on our OOF? | held-out wide 0.95257 / 0.95259 / 0.95255, 65/35 mix 0.95255 / 0.95259 / 0.95255 (null); submission.csv unchanged (v23's ranking, 0.95260); board probes: 0.65 our wide + 0.35 Part 9 0.95259, 0.65 our wide + 0.35 our narrow 0.95244 |
 | v26 | the 0.95330 public file (Moran Z, Strike 9) measured on the test side; the 0.95300 recipe with our wide stack in Part 9's place as a board file; the noise of a public-board step, measured on held-out rows | the public best rose by ten public-board steps of 0.00001 to 0.00005, chosen by their public score: are they larger than the noise? | `submission.csv` unchanged (0.95260); `submission_p12_ours.csv` (0.65 Part 12 + 0.35 our wide) **0.95305**; noise of a public difference for files 33e-4 apart: 2.8e-4 |
 | v27 | the public ladder (Strike 10 0.95340, LM Ladder 0.95346, Three Ladders 0.95347) replayed on held-out rows: steps picked on a public-sized subset, scored on a private-sized one; the 0.95347 file rebuilt and measured on the test side; the ladder's LM step from our own files as two board files | six public-board steps of 0.00001 to 0.00010 moved the public best; what is a step picked on the board worth on rows it was not picked on? | replay: public +2.2e-4, private -1.6e-4 over 100 draws; board: the LM step changed neither file at five decimals, `submission_p12_ours_lm12.csv` **0.95305** (without the step 0.95305), `submission_wide_lm12.csv` 0.95260 (0.95260) |
-| v28 | the public 0.95370 file (Aman Atar) taken apart into 16 public models and replayed on out-of-fold rows against our held-out stack; two more language-model seeds (goodpjw2008) in the wide pool; a fold-signature and a test-against-OOF check on every pool member | the public best is now one file with no out-of-fold score: what is in it, and what does its mix score on labelled rows? | the file's mix on labelled rows 0.95186, our held-out stack 0.95257 (-70 points for the file; on the public board +110); the same 16 models with weights fitted on labels 0.95211; the two seeds +1.2 to +2.1 points on three splits, below the +5 bar, `submission.csv` unchanged (0.95260); board files `submission_a370_wide10.csv`, `submission_a370_wide25.csv`, `submission_wide_seeds.csv`: see the next version |
+| v28 | the public 0.95370 file (Aman Atar) taken apart into 16 public models and replayed on out-of-fold rows against our held-out stack; two more language-model seeds (goodpjw2008) in the wide pool; a fold-signature and a test-against-OOF check on every pool member | the public best is now one file with no out-of-fold score: what is in it, and what does its mix score on labelled rows? | the file's mix on labelled rows 0.95186, our held-out stack 0.95257 (-70 points for the file; on the public board +110); the same 16 models with weights fitted on labels 0.95211; the two seeds +1.2 to +2.1 points on three splits, below the +5 bar, `submission.csv` unchanged (0.95260); board: `submission_a370_wide10.csv` **0.95367** (the title), `submission_a370_wide25.csv` 0.95359, `submission_wide_seeds.csv` 0.95260 |
+| v29 | the public 0.95388 file (areebbb, one step past goodpjw2008's 0.95386 bold mix) rebuilt byte for byte from its published weights and replayed on labelled rows; the same 87-member move applied to our held-out stack; v28's board results; two v28 numbers corrected | the first public ladder file that reports a gain on out-of-fold rows in all five folds: is it a gain over a label-fitted stack, or over the 0.95370 file? | the 0.95388 mix on labelled rows 0.95246 in-sample, our held-out stack 0.95257 (-11 points; the 0.95370 file was -70); the move on our stack: careful +4.6 (3 of 5 folds), bold -1.3, bolder -6.3 (1 of 5); `submission.csv` unchanged (0.95260); board files `submission_b388_wide10.csv`, `submission_b388_wide50.csv`, `submission_wide_bold.csv`: see the next version |
 
 **What did not work, or did not help enough to keep**
 
@@ -2114,22 +2263,25 @@ Every version was submitted from this notebook. The public LB scores only part o
   Seed 7 of megayak's LM alone +0.6, seed 2026 of masayakawamata's GPT-2 alone +1.5 (split 7). Real and small: on a public-sized subset the same change is +1.3 ± 7.6 points.
 - **The best public file's weights, on labelled rows** (v28): the 0.95370 file's mix of 16 public models scores 0.95186 out of fold; the same 16 models with weights fitted on labels 0.95211; our wide stack 0.95257.
   We do not submit the file as ours. Two mixes of it with our stack are written for the board, because the board score of a mix next to its labelled-row score is the measurement.
+  On the board (2026-11-13): 90% file + 10% our stack 0.95367, 75 / 25 0.95359; on labelled rows the same two mixes are +13 and +31 points above the file. The two referees rank them in opposite order.
+- **The public ladder's move on our own stack** (v29, held-out split 7; the move's weights were chosen on these out-of-fold rows, so a gain would be optimistic): goodpjw2008's careful mix +4.6 points (3 of 5 folds), balanced +2.3 (3 of 5), bold -1.3 (1 of 5), areebbb's bolder -6.3 (1 of 5), two steps past bold -34.6.
+  On the replayed 0.95370 file the same moves gain +19 to +41 points. The move corrects that file's weights towards what labels choose (megayak's shallow trees from -0.19 back up, sadamtorres' XGBoost down); a stack fitted on labels has no such error to correct.
 - **A stronger stacker penalty alone** (v22, splits 7 and 11): C 0.01 instead of 0.05 on v21's 60 members, 0.95231 / 0.95230 against 0.95233 / 0.95232. It only helps once the pool is wide.
 - **A bug worth knowing about.** The first nested hill climb summed fold weights without normalising them, so each fold's predictions
   were on a different scale and the pooled AUC read 0.895. When an honest re-score is far below the in-sample one, suspect the code before the model.
 """),
 code("""
-hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v20', 'v21', 'v22', 'v23', 'v25', 'v26', 'v27'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195, 0.95202, 0.95190, 0.95239, 0.95260, 0.95259, 0.95305, 0.95305],
-                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank', 'banks re-mounted', 'digit CNN', 'wide pool', 'second LM', 'mix + Part 9 (probe)', 'Part 12 + ours (probe)', '+ LM step (probe)']})
+hist = pd.DataFrame({'version': ['v2', 'v3', 'v4', 'v5', 'v6', 'v8', 'v9', 'v10', 'v12', 'v13', 'v14', 'v15', 'v16', 'v17', 'v18', 'v20', 'v21', 'v22', 'v23', 'v25', 'v26', 'v27', 'v28'], 'LB': [0.94720, 0.94841, 0.94865, 0.94960, 0.94982, 0.94981, 0.95004, 0.95095, 0.95093, 0.95100, 0.95101, 0.95146, 0.95176, 0.95211, 0.95195, 0.95202, 0.95190, 0.95239, 0.95260, 0.95259, 0.95305, 0.95305, 0.95367],
+                     'change': ['4-family baseline', 'in-fold target encoding', 'more members, stacker', 'shallow trees', 'more shallow views, TabM', 'cache, tuned LightGBM', 'triple crosses', 'digit keys', 'no-pair digits, GLM', 'Part 3 recipe', '5 encoder seeds', 'full refit, joint GLM', 'public banks', 'four more banks', 'ten-fold bank', 'banks re-mounted', 'digit CNN', 'wide pool', 'second LM', 'mix + Part 9 (probe)', 'Part 12 + ours (probe)', '+ LM step (probe)', '0.95370 file + ours (probe)']})
 fig, ax = plt.subplots(figsize=(8, 3.2)); ax.plot(hist['version'], hist['LB'], 'o-', color='#4a6fa5')
 for _, r in hist.iterrows(): ax.annotate(r['change'], (r['version'], r['LB']), textcoords='offset points', xytext=(0, 8), ha='center', fontsize=8)
-ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9535); plt.show()
+ax.set_ylabel('public LB AUC'); ax.set_title('Public LB per version of this notebook'); ax.set_ylim(0.9465, 0.9542); plt.show()
 """),
 md("""## 5. What next
 
 v10's digit keys moved the leaderboard more than any change since v5 (+0.0009). The lesson: in a synthetic playground, ask how the generator wrote the numbers, not only what they mean.
 
-Status at v23 (public 0.95260); TabICL measured for v25, a null (section 4); the 0.95300 two-stack recipe measured for v25, a null on held-out rows and on the board (section 3, v25); the 0.95330 file and the noise of a public-board step measured for v26 (section 3, v26); the public ladder replayed on held-out rows for v27 (section 3, v27); the 0.95370 file taken apart, two more language-model seeds and the pool checks for v28 (section 3, v28). Our own tree members are saturated: the four ideas this list held since v10 were all measured for v20, each made a slightly better member and none moved the stack.
+Status at v23 (public 0.95260); TabICL measured for v25, a null (section 4); the 0.95300 two-stack recipe measured for v25, a null on held-out rows and on the board (section 3, v25); the 0.95330 file and the noise of a public-board step measured for v26 (section 3, v26); the public ladder replayed on held-out rows for v27 (section 3, v27); the 0.95370 file taken apart, two more language-model seeds and the pool checks for v28 (section 3, v28); the 0.95388 file rebuilt and its move applied to our stack for v29 (section 3, v29: the ladder's move corrects the 0.95370 file towards label-fitted weights and does not help a label-fitted stack). Our own tree members are saturated: the four ideas this list held since v10 were all measured for v20, each made a slightly better member and none moved the stack.
 The gains since then came from members of another family: v22's wide pool of public members (its GPT-2 member took the largest weight) and v23's target-first GPT-2 (megayak). That is the rule this list now follows: a new member must rank rows differently, below ~0.99 rank correlation with every member, or it will not add.
 - **Our own target-first GPT-2 seed on our folds**: a second seed added +0.00014 on fold 0 for goodpjw2008. v28 measured goodpjw2008's two published seeds in our pool: +0.00002 on held-out rows. More seeds of the same two models will add less each time; a third kind of language model (another architecture or row format) is the open question.
 - **Forensic and density features**: how the generator wrote each row, as in S6E8.
@@ -2147,7 +2299,7 @@ Companion notebook: [Four months, same screens: what held](https://www.kaggle.co
 - Public members and prediction banks in the stack and the wide pool (each listed in the notebook's sources): goodpjw2008 (OOF bank, wide stack Part 12),
   queyrusi (digit CNN), sadamtorres (TabPFN and GBDT pairs), sameershaikh27 (ten-fold GLM boost, digit-sequence CNN), masayakawamata (public stack, tabpack),
   amanatar (Strike 10 file, the 0.95370 file and its bundle of 16 models), Moran Z (Strike 9 file), areebbb (the ladder recipes and their probes),
-  goodpjw2008 (seed 7 of the compact LM, seed 2026 of the GPT-2, the replay of a file's weights on out-of-fold rows), dariushafshar (the pool checks), asteriospanoras (the noise of a public gap),
+  goodpjw2008 (seed 7 of the compact LM, seed 2026 of the GPT-2, the replay of a file's weights on out-of-fold rows, the public-forecast mixes behind the 0.95386 file), areebbb (the 0.95388 bolder step), dariushafshar (the pool checks), asteriospanoras (the noise of a public gap),
   malyshevdanil (pooled stack), wguesdon (tree ensembles), lazyyeou (digit-trie target encoding), nilanjansaha123 (digit trie with GPT-2), ektarr (RealMLP stacking).
 - Ideas taken from public S6E11/S6E10 notebooks, measured here: shallow trees, per-value encoding and the spline GLM from
   [sidhaarthshree](https://www.kaggle.com/code/sidhaarthshree/s6e11-fraud-per-value-te-shallow-trees-stack) and
