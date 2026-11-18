@@ -32,7 +32,8 @@
     "amanatar/s6e11-strike10-podium-apex-095340",
     "goodpjw2008/s6e11-compact-lm-seed7",
     "amanatar/s6e11-rank1-q17-meta-bundle",
-    "goodpjw2008/s6e11-target-first-gpt2-seed-2026"
+    "goodpjw2008/s6e11-target-first-gpt2-seed-2026",
+    "busyaprime/s6e11-33-own-members"
   ],
   "kernel_sources": [
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
@@ -43,7 +44,9 @@
     "masayakawamata/s6e11-logreg-stacking-same-split-oofs",
     "ektarr/lb-0-95121-realmlp-stacking",
     "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds",
-    "sameershaikh27/s6e11-fraud-digit-sequence-cnn-member"
+    "sameershaikh27/s6e11-fraud-digit-sequence-cnn-member",
+    "yekenot/ps-s6-e11-realmlp-pytorch",
+    "goodpjw2008/s6e11-board-model-realmlp-lb-0-95482"
   ],
   "competition_sources": [
     "playground-series-s6e11"
