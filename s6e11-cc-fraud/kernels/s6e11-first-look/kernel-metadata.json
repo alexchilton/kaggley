@@ -1,6 +1,6 @@
 {
-  "id": "alexchilton/credit-card-fraud-lb-0-9542-shallow-tree-stack",
-  "title": "Credit Card Fraud | LB 0.9542 | Shallow-Tree Stack",
+  "id": "alexchilton/credit-card-fraud-lb-0-9548-shallow-tree-stack",
+  "title": "Credit Card Fraud | LB 0.9548 | Shallow-Tree Stack",
   "code_file": "s6e11-first-look.ipynb",
   "language": "python",
   "kernel_type": "notebook",
@@ -46,7 +46,8 @@
     "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds",
     "sameershaikh27/s6e11-fraud-digit-sequence-cnn-member",
     "yekenot/ps-s6-e11-realmlp-pytorch",
-    "goodpjw2008/s6e11-board-model-realmlp-lb-0-95482"
+    "goodpjw2008/s6e11-board-model-realmlp-lb-0-95504",
+    "davutkursun/s6e11-one-model-no-public-inputs-lb-0-9514"
   ],
   "competition_sources": [
     "playground-series-s6e11"
