@@ -1,6 +1,6 @@
 {
-  "id": "alexchilton/credit-card-fraud-lb-0-9548-shallow-tree-stack",
-  "title": "Credit Card Fraud | LB 0.9548 | Shallow-Tree Stack",
+  "id": "alexchilton/credit-card-fraud-lb-0-9550-shallow-tree-stack",
+  "title": "Credit Card Fraud | LB 0.9550 | Shallow-Tree Stack",
   "code_file": "s6e11-first-look.ipynb",
   "language": "python",
   "kernel_type": "notebook",
@@ -33,7 +33,8 @@
     "goodpjw2008/s6e11-compact-lm-seed7",
     "amanatar/s6e11-rank1-q17-meta-bundle",
     "goodpjw2008/s6e11-target-first-gpt2-seed-2026",
-    "busyaprime/s6e11-33-own-members"
+    "busyaprime/s6e11-33-own-members",
+    "wenimohamed/s6e11-diverse-bpe-realmlp-tabm-oof-pack"
   ],
   "kernel_sources": [
     "lazyyeou/s6e11-digit-trie-te-joint-glm-nested-stack",
@@ -46,7 +47,7 @@
     "sameershaikh27/s6e11-fraud-glm-boost-on-ten-folds",
     "sameershaikh27/s6e11-fraud-digit-sequence-cnn-member",
     "yekenot/ps-s6-e11-realmlp-pytorch",
-    "goodpjw2008/s6e11-board-model-realmlp-lb-0-95504",
+    "goodpjw2008/s6e11-board-model-realmlp-lb-0-95527",
     "davutkursun/s6e11-one-model-no-public-inputs-lb-0-9514"
   ],
   "competition_sources": [
